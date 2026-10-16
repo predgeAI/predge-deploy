@@ -1,0 +1,5 @@
+node_modules/
+.env
+*.key
+deployer.json
+.DS_Store

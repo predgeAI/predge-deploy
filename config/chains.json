@@ -1,0 +1,239 @@
+{
+  "ethereum": {
+    "chainId": 1,
+    "rpc": [
+      "https://ethereum-rpc.publicnode.com",
+      "https://eth.drpc.org"
+    ],
+    "native": "ETH",
+    "coingecko": "ethereum",
+    "explorer": "https://etherscan.io",
+    "verify": {
+      "kind": "etherscan-v2"
+    }
+  },
+  "base": {
+    "chainId": 8453,
+    "rpc": [
+      "https://base-rpc.publicnode.com",
+      "https://mainnet.base.org"
+    ],
+    "native": "ETH",
+    "coingecko": "ethereum",
+    "explorer": "https://basescan.org",
+    "verify": {
+      "kind": "etherscan-v2"
+    },
+    "l1fee": "op-stack"
+  },
+  "bnb": {
+    "chainId": 56,
+    "rpc": [
+      "https://bsc-dataseed.bnbchain.org",
+      "https://bsc-rpc.publicnode.com"
+    ],
+    "native": "BNB",
+    "coingecko": "binancecoin",
+    "explorer": "https://bscscan.com",
+    "verify": {
+      "kind": "etherscan-v2"
+    }
+  },
+  "celo": {
+    "chainId": 42220,
+    "rpc": [
+      "https://forno.celo.org",
+      "https://celo-rpc.publicnode.com"
+    ],
+    "native": "CELO",
+    "coingecko": "celo",
+    "explorer": "https://celoscan.io",
+    "verify": {
+      "kind": "etherscan-v2"
+    },
+    "l1fee": "op-stack"
+  },
+  "polygon": {
+    "chainId": 137,
+    "rpc": [
+      "https://polygon-bor-rpc.publicnode.com",
+      "https://polygon.drpc.org",
+      "https://1rpc.io/matic"
+    ],
+    "native": "POL",
+    "coingecko": "polygon-ecosystem-token",
+    "explorer": "https://polygonscan.com",
+    "verify": {
+      "kind": "etherscan-v2"
+    }
+  },
+  "optimism": {
+    "chainId": 10,
+    "rpc": [
+      "https://optimism-rpc.publicnode.com",
+      "https://mainnet.optimism.io"
+    ],
+    "native": "ETH",
+    "coingecko": "ethereum",
+    "explorer": "https://optimistic.etherscan.io",
+    "verify": {
+      "kind": "etherscan-v2"
+    },
+    "l1fee": "op-stack"
+  },
+  "arbitrum": {
+    "chainId": 42161,
+    "rpc": [
+      "https://arb1.arbitrum.io/rpc",
+      "https://arbitrum-one-rpc.publicnode.com"
+    ],
+    "native": "ETH",
+    "coingecko": "ethereum",
+    "explorer": "https://arbiscan.io",
+    "verify": {
+      "kind": "etherscan-v2"
+    },
+    "legacy": "predge-robinhood/deploy/arbitrum-one (deployer 0x1d48\u2026cF3c): validator, job, bond v2.1, settlement; no arbiter",
+    "l1fee": "arbitrum"
+  },
+  "avalanche": {
+    "chainId": 43114,
+    "rpc": [
+      "https://api.avax.network/ext/bc/C/rpc",
+      "https://avalanche-c-chain-rpc.publicnode.com"
+    ],
+    "native": "AVAX",
+    "coingecko": "avalanche-2",
+    "explorer": "https://snowtrace.io",
+    "verify": {
+      "kind": "etherscan-v2"
+    }
+  },
+  "gnosis": {
+    "chainId": 100,
+    "rpc": [
+      "https://rpc.gnosischain.com",
+      "https://gnosis-rpc.publicnode.com"
+    ],
+    "native": "xDAI",
+    "coingecko": "xdai",
+    "explorer": "https://gnosisscan.io",
+    "verify": {
+      "kind": "etherscan-v2"
+    }
+  },
+  "linea": {
+    "chainId": 59144,
+    "rpc": [
+      "https://rpc.linea.build",
+      "https://linea-rpc.publicnode.com"
+    ],
+    "native": "ETH",
+    "coingecko": "ethereum",
+    "explorer": "https://lineascan.build",
+    "verify": {
+      "kind": "etherscan-v2"
+    }
+  },
+  "scroll": {
+    "chainId": 534352,
+    "rpc": [
+      "https://rpc.scroll.io",
+      "https://scroll-rpc.publicnode.com"
+    ],
+    "native": "ETH",
+    "coingecko": "ethereum",
+    "explorer": "https://scrollscan.com",
+    "verify": {
+      "kind": "etherscan-v2"
+    },
+    "l1fee": "scroll"
+  },
+  "unichain": {
+    "chainId": 130,
+    "rpc": [
+      "https://mainnet.unichain.org",
+      "https://unichain-rpc.publicnode.com"
+    ],
+    "native": "ETH",
+    "coingecko": "ethereum",
+    "explorer": "https://uniscan.xyz",
+    "verify": {
+      "kind": "etherscan-v2"
+    },
+    "l1fee": "op-stack"
+  },
+  "sonic": {
+    "chainId": 146,
+    "rpc": [
+      "https://rpc.soniclabs.com",
+      "https://sonic-rpc.publicnode.com"
+    ],
+    "native": "S",
+    "coingecko": "sonic-3",
+    "explorer": "https://sonicscan.org",
+    "verify": {
+      "kind": "etherscan-v2"
+    }
+  },
+  "mantle": {
+    "chainId": 5000,
+    "rpc": [
+      "https://rpc.mantle.xyz",
+      "https://mantle-rpc.publicnode.com"
+    ],
+    "native": "MNT",
+    "coingecko": "mantle",
+    "explorer": "https://mantlescan.xyz",
+    "verify": {
+      "kind": "etherscan-v2"
+    },
+    "l1fee": "op-stack"
+  },
+  "arc": {
+    "chainId": 5042,
+    "rpc": [
+      "https://rpc.mainnet.arc.io"
+    ],
+    "native": "USDC",
+    "coingecko": "usd-coin",
+    "explorer": "https://explorer.arc.io",
+    "verify": {
+      "kind": "blockscout",
+      "api": "https://explorer.arc.io/api"
+    },
+    "legacy": "predge-arc/deployments/arc-mainnet (deployer 0xEc7A\u20266223): full set incl. bond v2.1 + arbiter v2"
+  },
+  "monad": {
+    "chainId": 143,
+    "rpc": [
+      "https://rpc.monad.xyz",
+      "https://rpc1.monad.xyz"
+    ],
+    "native": "MON",
+    "coingecko": "monad",
+    "explorer": "https://monadvision.com",
+    "verify": {
+      "kind": "etherscan-v2"
+    },
+    "legacy": "erc8004-outcome-validator/monad/mainnet/deployment.json (deployer 0x9F0A\u20269Fc9): validator, job, bond v2.1, settlement; no arbiter",
+    "feeOnGasLimit": true,
+    "gasLimitPct": 115,
+    "note": "Monad charges gasLimit x price, not gasUsed: gas limit kept at estimate +15%."
+  },
+  "robinhood": {
+    "chainId": 4663,
+    "rpc": [
+      "https://rpc.mainnet.chain.robinhood.com/rpc"
+    ],
+    "native": "ETH",
+    "coingecko": "ethereum",
+    "explorer": "https://robinhoodchain.blockscout.com",
+    "verify": {
+      "kind": "blockscout",
+      "api": "https://robinhoodchain.blockscout.com/api"
+    },
+    "legacy": "predge-robinhood/deploy/rh-mainnet (deployer 0x1d48\u2026cF3c): validator, job, bond v2.1, settlement; no arbiter",
+    "l1fee": "arbitrum"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "predge-deploy",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "One-command multi-chain deploy of the Predge agent-settlement contract set (same bytecode, same addresses on every EVM chain).",
+  "bin": { "predge-deploy": "./deploy.mjs" },
+  "scripts": {
+    "deploy": "node deploy.mjs",
+    "keygen": "node scripts/keygen.mjs",
+    "chains": "node scripts/probe-chains.mjs",
+    "fork-all": "node scripts/fork-all.mjs",
+    "funding": "node scripts/funding.mjs",
+    "test": "node --test test/"
+  },
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "ethers": "6.13.4",
+    "solc": "0.8.26"
+  }
+}

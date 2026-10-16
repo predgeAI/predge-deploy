@@ -1,0 +1,155 @@
+{
+  "ethereum": {
+    "ok": true,
+    "seconds": 31,
+    "gasUsed": "4226284",
+    "cost": "0.000412339418623752",
+    "native": "ETH",
+    "e2eTxs": 13,
+    "smokeChecks": 23
+  },
+  "base": {
+    "ok": true,
+    "seconds": 20,
+    "gasUsed": "4226284",
+    "cost": "0.00002546665680715",
+    "native": "ETH",
+    "e2eTxs": 13,
+    "smokeChecks": 23
+  },
+  "bnb": {
+    "ok": true,
+    "seconds": 28,
+    "gasUsed": "4226284",
+    "cost": "0.0002113142",
+    "native": "BNB",
+    "e2eTxs": 13,
+    "smokeChecks": 23
+  },
+  "celo": {
+    "ok": true,
+    "seconds": 35,
+    "gasUsed": "4226284",
+    "cost": "0.85582251",
+    "native": "CELO",
+    "e2eTxs": 13,
+    "smokeChecks": 23
+  },
+  "polygon": {
+    "ok": true,
+    "seconds": 30,
+    "gasUsed": "4226284",
+    "cost": "1.15608107285314682",
+    "native": "POL",
+    "e2eTxs": 13,
+    "smokeChecks": 23
+  },
+  "optimism": {
+    "ok": true,
+    "seconds": 25,
+    "gasUsed": "4226284",
+    "cost": "0.000004457712515581",
+    "native": "ETH",
+    "e2eTxs": 13,
+    "smokeChecks": 23
+  },
+  "arbitrum": {
+    "ok": true,
+    "seconds": 35,
+    "gasUsed": "4226284",
+    "cost": "0.000085081495386",
+    "native": "ETH",
+    "e2eTxs": 13,
+    "smokeChecks": 23
+  },
+  "avalanche": {
+    "ok": true,
+    "seconds": 20,
+    "gasUsed": "4226284",
+    "cost": "0.0211314206339426",
+    "native": "AVAX",
+    "e2eTxs": 13,
+    "smokeChecks": 23
+  },
+  "gnosis": {
+    "ok": true,
+    "seconds": 36,
+    "gasUsed": "4226284",
+    "cost": "0.000000000038036556",
+    "native": "xDAI",
+    "e2eTxs": 13,
+    "smokeChecks": 23
+  },
+  "linea": {
+    "ok": true,
+    "seconds": 47,
+    "gasUsed": "4226284",
+    "cost": "0.001219017299371748",
+    "native": "ETH",
+    "e2eTxs": 13,
+    "smokeChecks": 23
+  },
+  "scroll": {
+    "ok": true,
+    "seconds": 21,
+    "gasUsed": "4226284",
+    "cost": "0.000098384735736185",
+    "native": "ETH",
+    "e2eTxs": 13,
+    "smokeChecks": 23
+  },
+  "unichain": {
+    "ok": true,
+    "seconds": 22,
+    "gasUsed": "4226284",
+    "cost": "0.000006421059352589",
+    "native": "ETH",
+    "e2eTxs": 13,
+    "smokeChecks": 23
+  },
+  "sonic": {
+    "ok": true,
+    "seconds": 17,
+    "gasUsed": "4226284",
+    "cost": "0.23244562",
+    "native": "S",
+    "e2eTxs": 13,
+    "smokeChecks": 23
+  },
+  "mantle": {
+    "ok": true,
+    "seconds": 84,
+    "gasUsed": "4226284",
+    "cost": "0.211317556308415458",
+    "native": "MNT",
+    "e2eTxs": 13,
+    "smokeChecks": 23
+  },
+  "arc": {
+    "ok": true,
+    "seconds": 24,
+    "gasUsed": "4226284",
+    "cost": "0.090822960113957132",
+    "native": "USDC",
+    "e2eTxs": 13,
+    "smokeChecks": 23
+  },
+  "monad": {
+    "ok": true,
+    "seconds": 16,
+    "gasUsed": "4234725",
+    "cost": "0.43194195",
+    "native": "MON",
+    "e2eTxs": 13,
+    "smokeChecks": 23
+  },
+  "robinhood": {
+    "ok": true,
+    "seconds": 34,
+    "gasUsed": "4226284",
+    "cost": "0.0000881180214",
+    "native": "ETH",
+    "e2eTxs": 13,
+    "smokeChecks": 23
+  }
+}

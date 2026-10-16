@@ -1,0 +1,18 @@
+{
+  "_comment": "The canonical Predge set. Order = deployer nonce: contract i is created at nonce i, so with the same fresh deployer and the same args every chain gets the same addresses. Never reorder or insert; append only, and only after every chain has the current list.",
+  "version": "2026-10-16",
+  "params": {
+    "operator": "$deployer",
+    "disputeWindow": "86400",
+    "challengeWindow": "86400",
+    "minBond": "1000000000000000"
+  },
+  "plan": [
+    { "name": "PredgeAgentValidator", "args": ["$operator"], "source": "predge-arc@0b48435 (= erc8004-outcome-validator monad/contracts)", "role": "ERC-8004 Validation-Registry-shaped validator, commit-before-outcome" },
+    { "name": "AgentJob", "args": [], "source": "predge-arc@0b48435", "role": "ERC-8183 job escrow with Predge as named evaluator" },
+    { "name": "PredgeValidatorBond", "args": ["$operator", "$AgentJob", "$disputeWindow"], "source": "predge-robinhood@bc57c52 = predge-arc@c0762ea (v2.1, audit fix F1)", "role": "validator bond, slashable by anyone in the window after the verdict" },
+    { "name": "PredgeSettlement", "args": [], "source": "predge-arc@6f29672", "role": "pay-per-route receipts in the native token" },
+    { "name": "MockRefundProtocol", "args": ["$PredgeRefundArbiter"], "source": "predge-arc@293bd70", "role": "stand-in Refund Protocol the arbiter drives (no Circle Refund Protocol on these chains)" },
+    { "name": "PredgeRefundArbiter", "args": ["$MockRefundProtocol", "$operator", "$challengeWindow", "$minBond"], "source": "predge-arc@95b723d (v2, audit fix F2)", "role": "bonded refund arbiter; rule() needs evidence filed on-chain first" }
+  ]
+}
