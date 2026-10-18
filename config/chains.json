@@ -235,5 +235,20 @@
     },
     "legacy": "predge-robinhood/deploy/rh-mainnet (deployer 0x1d48\u2026cF3c): validator, job, bond v2.1, settlement; no arbiter",
     "l1fee": "arbitrum"
+  },
+  "rootstock": {
+    "chainId": 30,
+    "rpc": [
+      "https://public-node.rsk.co",
+      "https://mycrypto.rsk.co"
+    ],
+    "native": "RBTC",
+    "coingecko": "rootstock",
+    "explorer": "https://explorer.rootstock.io",
+    "verify": {
+      "kind": "blockscout",
+      "api": "https://rootstock.blockscout.com/api"
+    },
+    "note": "RskJ VM, legacy (type 0) txs only, no baseFee; min gas price ~0.024 gwei. eth_call on init code returns 0x instead of an error on INVALID (REVERT does error), so the probe's INVALID negative control reads as a false NO; PUSH0/MCOPY verified by return data. Explorer for humans: explorer.rootstock.io; verification via rootstock.blockscout.com."
   }
 }
