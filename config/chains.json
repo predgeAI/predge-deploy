@@ -250,5 +250,33 @@
       "api": "https://rootstock.blockscout.com/api"
     },
     "note": "RskJ VM, legacy (type 0) txs only, no baseFee; min gas price ~0.024 gwei. eth_call on init code returns 0x instead of an error on INVALID (REVERT does error), so the probe's INVALID negative control reads as a false NO; PUSH0/MCOPY verified by return data. Explorer for humans: explorer.rootstock.io; verification via rootstock.blockscout.com."
+  },
+  "plasma": {
+    "chainId": 9745,
+    "rpc": [
+      "https://rpc.plasma.to",
+      "https://9745.rpc.thirdweb.com"
+    ],
+    "native": "XPL",
+    "coingecko": "plasma",
+    "explorer": "https://plasmascan.to",
+    "verify": {
+      "kind": "etherscan-v2"
+    },
+    "note": "Tether-aligned stablechain (USDT0 0xB8CE59FC3717ada4C02eaDF9682A9e934F625ebb, EIP-3009). Gas token XPL. RPCs: Tether WDK docs (docs.wdk.tether.io/ai/x402) + thirdweb public."
+  },
+  "stable": {
+    "chainId": 988,
+    "rpc": [
+      "https://rpc.stable.xyz",
+      "https://988.rpc.thirdweb.com"
+    ],
+    "native": "USDT0",
+    "coingecko": "usdt0",
+    "explorer": "https://stablescan.xyz",
+    "verify": {
+      "kind": "etherscan-v2"
+    },
+    "note": "Tether stablechain. The native gas token IS USDT0: eth_getBalance (18 dp) and USDT0 0x779Ded0c9e1022225f8E0630b35a9b54bE713736 balanceOf (6 dp) are one ledger, so funding the deployer = sending it USDT0. baseFee 1 gwei."
   }
 }
