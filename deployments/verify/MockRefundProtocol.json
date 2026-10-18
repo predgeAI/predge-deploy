@@ -1,0 +1,26 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "MockRefundProtocol.sol": {
+      "content": "// SPDX-License-Identifier: MIT\npragma solidity 0.8.26;\n\n/// @notice A stand-in for Circle's Refund Protocol, only for exercising the arbiter end to end.\n/// It records the calls the arbiter makes so a demo run has something to read back on chain.\ncontract MockRefundProtocol {\n    address public arbiter;\n    uint256 public refundCount;\n    mapping(uint256 => bool) public refunded;\n    mapping(address => uint256) public lockupSeconds;\n\n    event RefundByArbiter(uint256 indexed paymentID, address indexed caller);\n    event LockupSet(address indexed recipient, uint256 seconds_);\n\n    error CallerNotAllowed();\n\n    constructor(address arbiter_) {\n        arbiter = arbiter_;\n    }\n\n    function setArbiter(address arbiter_) external {\n        if (msg.sender != arbiter) revert CallerNotAllowed();\n        arbiter = arbiter_;\n    }\n\n    function refundByArbiter(uint256 paymentID) external {\n        if (msg.sender != arbiter) revert CallerNotAllowed();\n        refunded[paymentID] = true;\n        refundCount += 1;\n        emit RefundByArbiter(paymentID, msg.sender);\n    }\n\n    function setLockupSeconds(address recipient, uint256 recipientLockupSeconds) external {\n        if (msg.sender != arbiter) revert CallerNotAllowed();\n        lockupSeconds[recipient] = recipientLockupSeconds;\n        emit LockupSet(recipient, recipientLockupSeconds);\n    }\n}\n"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "evmVersion": "cancun",
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode.object",
+          "evm.deployedBytecode.object",
+          "evm.deployedBytecode.immutableReferences",
+          "metadata"
+        ]
+      }
+    }
+  }
+}

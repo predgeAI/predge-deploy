@@ -1,0 +1,274 @@
+{
+  "chain": "arbitrum",
+  "chainId": 42161,
+  "deployer": "0x5d016C1B4d7A42eB7c982da1Ae7fFdB958CFCAe9",
+  "operator": "0x5d016C1B4d7A42eB7c982da1Ae7fFdB958CFCAe9",
+  "setVersion": "2026-10-16",
+  "compiler": {
+    "solc": "v0.8.26+commit.8a97fa7a",
+    "settings": {
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "evmVersion": "cancun"
+    }
+  },
+  "deployedAt": "2026-10-18T10:14:31.336Z",
+  "explorer": "https://arbiscan.io",
+  "contracts": {
+    "PredgeAgentValidator": {
+      "name": "PredgeAgentValidator",
+      "address": "0x925767fdce6C819F027f55CC50464e3bCdfD2671",
+      "nonce": 0,
+      "args": [
+        "0x5d016C1B4d7A42eB7c982da1Ae7fFdB958CFCAe9"
+      ],
+      "constructorArgs": "0x0000000000000000000000005d016c1b4d7a42eb7c982da1ae7ffdb958cfcae9",
+      "sourceSha256": "7c452fef0a77be8d886fbf251d918db95f1ac851268c2e3c13ed7c65ae9fee56",
+      "source": "predge-arc@0b48435 (= erc8004-outcome-validator monad/contracts)",
+      "txHash": "0x6bf091c7193754fb36d8ef504059ddc72bb97b4e44fe51333d5289eaf5c7deb5",
+      "block": 515942486,
+      "gasUsed": "918439",
+      "effectiveGasPrice": "20006000",
+      "verified": {
+        "ok": true,
+        "via": "sourcify",
+        "match": "exact_match"
+      }
+    },
+    "AgentJob": {
+      "name": "AgentJob",
+      "address": "0xcBaB4a9FA4d756b4C5e2a18F055d2E0132CE7D1D",
+      "nonce": 1,
+      "args": [],
+      "constructorArgs": "0x",
+      "sourceSha256": "9d958d5266d1876e16f95f26b2b437be32e2f45fe8bf10879ab93eea9a8ccba5",
+      "source": "predge-arc@0b48435",
+      "txHash": "0xeb3719a002da8678ef37c75d7ede0bcd52003a64f62f975721f1baf53a81828f",
+      "block": 515942498,
+      "gasUsed": "571093",
+      "effectiveGasPrice": "20046000",
+      "verified": {
+        "ok": true,
+        "via": "sourcify",
+        "match": "exact_match"
+      }
+    },
+    "PredgeValidatorBond": {
+      "name": "PredgeValidatorBond",
+      "address": "0x800B5596a8540e752dE8f8a8AF99E927d139A643",
+      "nonce": 2,
+      "args": [
+        "0x5d016C1B4d7A42eB7c982da1Ae7fFdB958CFCAe9",
+        "0xcBaB4a9FA4d756b4C5e2a18F055d2E0132CE7D1D",
+        "86400"
+      ],
+      "constructorArgs": "0x0000000000000000000000005d016c1b4d7a42eb7c982da1ae7ffdb958cfcae9000000000000000000000000cbab4a9fa4d756b4c5e2a18f055d2e0132ce7d1d0000000000000000000000000000000000000000000000000000000000015180",
+      "sourceSha256": "085e2deaf0c32a45ff4de240215f68e8c80841ac135d762f5ddea421f46b064a",
+      "source": "predge-robinhood@bc57c52 = predge-arc@c0762ea (v2.1, audit fix F1)",
+      "txHash": "0x625862da612fe4ee15aa319616263cfc6e9baa1b9cc7995a9aca12fda30ec100",
+      "block": 515942507,
+      "gasUsed": "1052949",
+      "effectiveGasPrice": "20002000",
+      "verified": {
+        "ok": true,
+        "via": "sourcify",
+        "match": "exact_match"
+      }
+    },
+    "PredgeSettlement": {
+      "name": "PredgeSettlement",
+      "address": "0x47BE8a7d461De505723a0Ac1d74982e53f8E412b",
+      "nonce": 3,
+      "args": [],
+      "constructorArgs": "0x",
+      "sourceSha256": "fca0ec609a3374d93ee68e973618ae675d93abf43fd5bea3f03b653f23690711",
+      "source": "predge-arc@6f29672",
+      "txHash": "0x9f0eeb2b311202a52044edf1ce3b69ed1d1f5c5cf06fdddf9027734a0e507356",
+      "block": 515942514,
+      "gasUsed": "275672",
+      "effectiveGasPrice": "20006000",
+      "verified": {
+        "ok": true,
+        "via": "sourcify",
+        "match": "exact_match"
+      }
+    },
+    "MockRefundProtocol": {
+      "name": "MockRefundProtocol",
+      "address": "0xcaC30945CDF0F963f38972d939e111B87b80Cf79",
+      "nonce": 4,
+      "args": [
+        "0xb2972B4944Eec83946EB7B23D572AbE04F46E22c"
+      ],
+      "constructorArgs": "0x000000000000000000000000b2972b4944eec83946eb7b23d572abe04f46e22c",
+      "sourceSha256": "c37ac127c5eb469af4e9adf7293e4a3db6c483e178efc2cc735fc3b99c841230",
+      "source": "predge-arc@293bd70",
+      "txHash": "0x2ad89a956dc32f5e2e30250b037de4898ffe65754a86c373c0c0d989ad24cfb6",
+      "block": 515942524,
+      "gasUsed": "271411",
+      "effectiveGasPrice": "20000000",
+      "verified": {
+        "ok": true,
+        "via": "sourcify",
+        "match": "exact_match"
+      }
+    },
+    "PredgeRefundArbiter": {
+      "name": "PredgeRefundArbiter",
+      "address": "0xb2972B4944Eec83946EB7B23D572AbE04F46E22c",
+      "nonce": 5,
+      "args": [
+        "0xcaC30945CDF0F963f38972d939e111B87b80Cf79",
+        "0x5d016C1B4d7A42eB7c982da1Ae7fFdB958CFCAe9",
+        "86400",
+        "1000000000000000"
+      ],
+      "constructorArgs": "0x000000000000000000000000cac30945cdf0f963f38972d939e111b87b80cf790000000000000000000000005d016c1b4d7a42eb7c982da1ae7ffdb958cfcae9000000000000000000000000000000000000000000000000000000000001518000000000000000000000000000000000000000000000000000038d7ea4c68000",
+      "sourceSha256": "4a2c59b0067800de698f33c10e64c14441c2cc56004a94d39e0d4eea90e6c465",
+      "source": "predge-arc@95b723d (v2, audit fix F2)",
+      "txHash": "0xa4abda2ca31036b66105f39b602711e74f9f6bacbd66205e7dcf7db4b84607a8",
+      "block": 515942531,
+      "gasUsed": "1147935",
+      "effectiveGasPrice": "20006000",
+      "verified": {
+        "ok": true,
+        "via": "sourcify",
+        "match": "exact_match"
+      }
+    }
+  },
+  "erc8004": {
+    "IdentityRegistry": {
+      "address": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
+      "version": "2.0.0"
+    },
+    "ReputationRegistry": {
+      "address": "0x8004BAa17C55a88189AE136b182e5fdA19dE9b63",
+      "version": "2.0.0"
+    },
+    "ValidationRegistry": {
+      "address": "0x8004Cc8439f36fd5F9F049D9fF86523Df6dAAB58",
+      "version": "2.0.0"
+    }
+  },
+  "smoke": [
+    {
+      "check": "PredgeAgentValidator runtime == compiled",
+      "ok": true,
+      "detail": "0x925767fdce6C819F027f55CC50464e3bCdfD2671"
+    },
+    {
+      "check": "AgentJob runtime == compiled",
+      "ok": true,
+      "detail": "0xcBaB4a9FA4d756b4C5e2a18F055d2E0132CE7D1D"
+    },
+    {
+      "check": "PredgeValidatorBond runtime == compiled",
+      "ok": true,
+      "detail": "0x800B5596a8540e752dE8f8a8AF99E927d139A643"
+    },
+    {
+      "check": "PredgeSettlement runtime == compiled",
+      "ok": true,
+      "detail": "0x47BE8a7d461De505723a0Ac1d74982e53f8E412b"
+    },
+    {
+      "check": "MockRefundProtocol runtime == compiled",
+      "ok": true,
+      "detail": "0xcaC30945CDF0F963f38972d939e111B87b80Cf79"
+    },
+    {
+      "check": "PredgeRefundArbiter runtime == compiled",
+      "ok": true,
+      "detail": "0xb2972B4944Eec83946EB7B23D572AbE04F46E22c"
+    },
+    {
+      "check": "validator.owner == deployer",
+      "ok": true,
+      "detail": "0x5d016C1B4d7A42eB7c982da1Ae7fFdB958CFCAe9"
+    },
+    {
+      "check": "validator.validator == operator",
+      "ok": true,
+      "detail": "0x5d016C1B4d7A42eB7c982da1Ae7fFdB958CFCAe9"
+    },
+    {
+      "check": "validator.getValidationStatus(unknown) is empty",
+      "ok": true,
+      "detail": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "check": "job.jobCount readable",
+      "ok": true,
+      "detail": "0"
+    },
+    {
+      "check": "job.createJob(value 0) reverts ZeroEscrow (eth_call)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "bond.owner == deployer",
+      "ok": true,
+      "detail": "0x5d016C1B4d7A42eB7c982da1Ae7fFdB958CFCAe9"
+    },
+    {
+      "check": "bond.validator == operator",
+      "ok": true,
+      "detail": "0x5d016C1B4d7A42eB7c982da1Ae7fFdB958CFCAe9"
+    },
+    {
+      "check": "bond.job == AgentJob",
+      "ok": true,
+      "detail": "0xcBaB4a9FA4d756b4C5e2a18F055d2E0132CE7D1D"
+    },
+    {
+      "check": "bond.disputeWindow",
+      "ok": true,
+      "detail": "86400"
+    },
+    {
+      "check": "bond.wouldSlash(unknown) == false",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "settlement.owner == deployer",
+      "ok": true,
+      "detail": "0x5d016C1B4d7A42eB7c982da1Ae7fFdB958CFCAe9"
+    },
+    {
+      "check": "arbiter.owner == deployer",
+      "ok": true,
+      "detail": "0x5d016C1B4d7A42eB7c982da1Ae7fFdB958CFCAe9"
+    },
+    {
+      "check": "arbiter.operator == operator",
+      "ok": true,
+      "detail": "0x5d016C1B4d7A42eB7c982da1Ae7fFdB958CFCAe9"
+    },
+    {
+      "check": "arbiter.refundProtocol == mock",
+      "ok": true,
+      "detail": "0xcaC30945CDF0F963f38972d939e111B87b80Cf79"
+    },
+    {
+      "check": "mock.arbiter == arbiter",
+      "ok": true,
+      "detail": "0xb2972B4944Eec83946EB7B23D572AbE04F46E22c"
+    },
+    {
+      "check": "arbiter.challengeWindow/minBond",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "arbiter.rulingOf(0) empty",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "legacy": "predge-robinhood/deploy/arbitrum-one (deployer 0x1d48…cF3c): validator, job, bond v2.1, settlement; no arbiter"
+}

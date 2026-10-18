@@ -1,0 +1,26 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "PredgeSettlement.sol": {
+      "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.24;\n\n/// @title  PredgeSettlement\n/// @notice Minimal on-chain settlement + receipt layer for Predge's pay-per-call\n///         data API, deployed on Circle Arc. On Arc, USDC is the native token, so\n///         an agent pays for a Predge API route in native USDC and this contract\n///         records the payment and emits a verifiable `Paid` receipt. This is the\n///         Arc-native settlement leg of Predge's keyless x402 pay-per-call model\n///         (Circle grant Milestone 1: settlement runs natively on Arc).\n/// @dev    Deliberately tiny and audited-by-inspection. No admin beyond owner\n///         withdraw; no upgradeability; receipts are events (cheap, indexable).\ncontract PredgeSettlement {\n    address public owner;\n\n    /// @param payer     the agent/account that paid\n    /// @param route     keccak256 of the Predge route id (e.g. \"v1/wallets/{address}\")\n    /// @param amount    native USDC paid (Arc native, 18-decimals wei of USDC)\n    /// @param timestamp block time of settlement\n    /// @param meta      optional request reference (e.g. the wallet being scored)\n    event Paid(\n        address indexed payer,\n        bytes32 indexed route,\n        uint256 amount,\n        uint256 timestamp,\n        string meta\n    );\n\n    event Withdrawn(address indexed to, uint256 amount);\n\n    error NotOwner();\n    error ZeroPayment();\n    error WithdrawFailed();\n\n    constructor() {\n        owner = msg.sender;\n    }\n\n    /// @notice Pay for a Predge API route in native USDC; emits a `Paid` receipt.\n    ///         The x402 path can require this settlement + verify the receipt on Arc.\n    /// @param route keccak256 route id\n    /// @param meta  optional request reference\n    function payForRoute(bytes32 route, string calldata meta) external payable {\n        if (msg.value == 0) revert ZeroPayment();\n        emit Paid(msg.sender, route, msg.value, block.timestamp, meta);\n    }\n\n    /// @notice Owner withdraws accumulated settlement to `to`.\n    function withdraw(address payable to) external {\n        if (msg.sender != owner) revert NotOwner();\n        uint256 bal = address(this).balance;\n        (bool ok, ) = to.call{value: bal}(\"\");\n        if (!ok) revert WithdrawFailed();\n        emit Withdrawn(to, bal);\n    }\n\n    /// @notice Bare payment (no route metadata) still produces a receipt.\n    receive() external payable {\n        if (msg.value == 0) revert ZeroPayment();\n        emit Paid(msg.sender, bytes32(\"direct\"), msg.value, block.timestamp, \"\");\n    }\n}\n"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "evmVersion": "cancun",
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode.object",
+          "evm.deployedBytecode.object",
+          "evm.deployedBytecode.immutableReferences",
+          "metadata"
+        ]
+      }
+    }
+  }
+}
