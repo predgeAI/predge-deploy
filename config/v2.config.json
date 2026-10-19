@@ -1,0 +1,6 @@
+{
+  "_comment": "Owner-supplied v2 identities. All null on purpose: nothing real exists yet. `deployer` = a NEW key created by the owner (pays gas only, holds no role, nonce 0 on every chain). `owner` = the Safe multisig (on EVERY chain you deploy to, at the same address if you want the same wiring everywhere). `operator` = the hot ops key (rotatable by the owner). dry-run and --broadcast refuse to run while any of these is null. --fork ignores this file and uses throwaway anvil accounts.",
+  "deployer": null,
+  "owner": null,
+  "operator": null
+}

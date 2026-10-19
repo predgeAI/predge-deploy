@@ -42,6 +42,8 @@ import {IAgentJobV2} from "./interfaces/IAgentJobV2.sol";
 ///             up to the uncovered fraction.
 ///           * A false verdict is only slashable if the harmed party (or someone for them) calls
 ///             `challenge` inside the window. Nobody is paid to watch except the harmed party.
+///           * The operator's capital is locked until the job ends. A client picks the job's
+///             `expiredAt`, so an operator should read it before staking.
 ///           * Only the deterministic `sha256(deliverable) == expected` test is covered. Subjective
 ///             or "void" outcomes are not bonded.
 ///

@@ -11,7 +11,11 @@
     "chains": "node scripts/probe-chains.mjs",
     "fork-all": "node scripts/fork-all.mjs",
     "funding": "node scripts/funding.mjs",
-    "test": "node --test test/"
+    "test": "node --test test/",
+    "v2:test": "FOUNDRY_CONFIG=foundry-v2.toml forge test",
+    "v2:coverage": "FOUNDRY_CONFIG=foundry-v2.toml forge coverage --no-match-coverage \"(test/|foundry-lib|contracts/[A-Za-z]+\\.sol)\"",
+    "v2:fork": "node deploy.mjs --set v2 --fork --chain",
+    "v2:mutate": "node scripts/mutate-v2.mjs"
   },
   "engines": { "node": ">=20" },
   "dependencies": {

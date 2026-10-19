@@ -50,7 +50,10 @@ interface IRefundProtocolV2 {
 ///         Trust, stated plainly: for disputed rulings the owner Safe is the court of last
 ///         resort. An operator that rules wrongly is only punished if the harmed party notices and
 ///         disputes inside the window, and the owner then agrees. The window must close before the
-///         Refund Protocol's lockup ends, which `rule` enforces for a Refund.
+///         Refund Protocol's lockup ends, which `rule` enforces for a Refund. `finalize` should be
+///         called promptly (the operator, who wants its bond back, and the payer, who wants the refund,
+///         both have a reason to): once `expiresAt` has passed anyone can `expire` the ruling instead,
+///         which executes nothing and returns the bond.
 ///
 /// @dev    Native value only, in the chain's native wei. The contract holds `totalBonded +
 ///         totalCredit` and never user payments. Parameters are bounded and not retroactive: the
@@ -203,7 +206,8 @@ contract PredgeRefundArbiterV2 is Operated, PullCredit {
         uint256 required = requiredBond(amount);
         if (msg.value < required) revert BondTooSmall(required);
         uint64 window = challengeWindow;
-        // A refund must still be possible when the window closes, with room for finalize.
+        // A refund must still be possible when the window closes. `finalize` must then run before the
+        // payment's `releaseTimestamp`; if it does not, the Refund Protocol rejects the refund and `expire` voids the ruling.
         if (direction == Direction.Refund && releaseTimestamp <= block.timestamp + window) revert LockupTooShort();
 
         r.staker = msg.sender;

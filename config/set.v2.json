@@ -1,0 +1,20 @@
+{
+  "_comment": "The Predge v2 set (contracts/v2). Same rules as set.json: contract i is created at deployer nonce i, so a fresh v2 deployer + this order gives the same addresses on every chain. Never reorder; append only. $owner is the Safe, $operator the hot ops key, $deployer holds NO role (it only pays gas). Chain-specific values (minBond, arbiterMinBond) come from config/v2.chains.json and do not change the addresses.",
+  "version": "2026-10-20-v2",
+  "params": {
+    "disputeWindow": "86400",
+    "challengeWindow": "86400",
+    "evaluationWindow": "259200",
+    "bondBps": "10000",
+    "arbiterBondBps": "1000",
+    "identityRegistry": "0x0000000000000000000000000000000000000000"
+  },
+  "plan": [
+    { "name": "PredgeAgentValidatorV2", "file": "v2/PredgeAgentValidatorV2", "args": ["$owner", "$operator", "$identityRegistry"], "role": "ERC-8004 validation registry, request-before-response, domain-separated request hashes" },
+    { "name": "AgentJobV2", "file": "v2/AgentJobV2", "args": ["$evaluationWindow"], "role": "ERC-8183-style job escrow with expiry and pull payments; no owner" },
+    { "name": "PredgeValidatorBondV2", "file": "v2/PredgeValidatorBondV2", "args": ["$owner", "$operator", "$AgentJobV2", "$disputeWindow", "$minBond", "$bondBps"], "role": "commit-reveal validator bond; the evaluator of AgentJobV2" },
+    { "name": "PredgeSettlementV2", "file": "v2/PredgeSettlementV2", "args": ["$owner"], "role": "pay-per-route receipts in the native token" },
+    { "name": "MockRefundProtocolV2", "file": "v2/mocks/MockRefundProtocolV2", "args": ["$PredgeRefundArbiterV2"], "role": "DEMO ONLY stand-in Refund Protocol (moves no money); out of audit scope" },
+    { "name": "PredgeRefundArbiterV2", "file": "v2/PredgeRefundArbiterV2", "args": ["$owner", "$operator", "$MockRefundProtocolV2", "$challengeWindow", "$arbiterMinBond", "$arbiterBondBps"], "role": "optimistic bonded refund arbiter; Safe is the court of last resort" }
+  ]
+}

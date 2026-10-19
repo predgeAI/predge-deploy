@@ -181,9 +181,9 @@ contract PredgeAgentValidatorV2 is Operated {
     {
         uint256 n = requestHashes.length;
         if (n > MAX_SUMMARY) revert TooManyHashes();
-        uint256 sum;
+        uint256 sum = 0;
         for (uint256 i = 0; i < n; i++) {
-            bool seen;
+            bool seen = false;
             for (uint256 k = 0; k < i; k++) {
                 if (requestHashes[k] == requestHashes[i]) {
                     seen = true;

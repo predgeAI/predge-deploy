@@ -10,6 +10,24 @@ node deploy.mjs --chain base --fork     # full deploy + smoke + end-to-end on a 
 CONFIRM_MAINNET=base node deploy.mjs --chain base --broadcast   # the real deploy
 ```
 
+## v2 (self-audit fixes, not deployed)
+
+`contracts/v2/` is the redesigned set that fixes the 20.10.2026 self-audit findings (H-01..H-03, M-01..M-05, L-01..L-07). **Nothing here is deployed.**
+The live 16-chain set above is v1 and is untouched. Design, finding-by-finding mapping and owner actions: `SELF-AUDIT-2026-10-20/v2-design.md` (Downloads).
+
+```
+FOUNDRY_CONFIG=foundry-v2.toml forge test                 # unit + fuzz + invariant + PoC tests (v1 attacks run against v1 and v2)
+FOUNDRY_CONFIG=foundry-v2.toml forge coverage --no-match-coverage "(test/|foundry-lib|contracts/[A-Za-z]+\.sol)"
+node --test test/                                          # plan, v1 bytecode match (network), v2 plan
+node deploy.mjs --chain base --set v2 --fork              # anvil fork of Base: deploy + honest path + every v1 attack sequence (must revert)
+node scripts/fork-all.mjs --set v2 --no-e2e               # gas / cost on every chain
+node scripts/mutate-v2.mjs                                 # mutation smoke run
+node scripts/v2-params.mjs 5                               # regenerate per-chain bond floors (about $5 each) from live prices
+```
+
+Real v2 runs (`--set v2` without `--fork`) refuse to start until the owner fills `config/v2.config.json` (new deployer address, the Safe, the ops key)
+and, to broadcast, pass `--key-file <the NEW v2 deployer json>`. v2 never reads `~/.predge-deployer`. `--fork` uses throwaway accounts only.
+
 ## The set
 
 Order is the deployer's nonce. Contract *i* is created at nonce *i*.
