@@ -174,6 +174,56 @@ contract PredgeRefundArbiterV2Test is ArbiterBase {
         assertEq(arb.totalBonded(), bondNeeded);
         assertEq(arb.rulingCount(), 1);
         assertEq(arb.harmedParty(pid), payee);
+        PredgeRefundArbiterV2.Ruling memory r = arb.rulings(pid);
+        assertEq(r.evidenceFrom, payer);
+        assertEq(r.evidenceHash, EV_PAYER);
+        assertEq(r.staker, op);
+        assertEq(r.payer, payer);
+        assertEq(r.payee, payee);
+        assertEq(r.bond, bondNeeded);
+        assertEq(r.window, WINDOW);
+        assertEq(r.ruledAt, block.timestamp);
+        assertEq(r.expiresAt, block.timestamp + WINDOW + arb.RESOLUTION_TIMEOUT());
+        assertEq(uint8(r.direction), uint8(REFUND));
+    }
+
+    function test_recordsAreComplete_afterEachTerminalPath() public {
+        // dispute + overturn
+        uint256 p1 = _pay(1 ether);
+        _file(p1);
+        _rule(p1, payer, EV_PAYER, REFUND, 1 ether);
+        vm.prank(payee);
+        arb.dispute(p1, EV_COUNTER);
+        assertEq(arb.rulings(p1).counterEvidence, EV_COUNTER);
+        vm.prank(safe);
+        arb.resolve(p1, RELEASE);
+        assertEq(uint8(arb.rulings(p1).status), uint8(PredgeRefundArbiterV2.Status.Overturned));
+        assertEq(arb.rulings(p1).bond, 0);
+        // finalize
+        uint256 p2 = _pay(1 ether);
+        _file(p2);
+        _rule(p2, payer, EV_PAYER, RELEASE, 1 ether);
+        // expire
+        uint256 p3 = _pay(1 ether);
+        _file(p3);
+        _rule(p3, payee, EV_PAYEE, RELEASE, 1 ether);
+        vm.warp(block.timestamp + WINDOW);
+        arb.finalize(p2);
+        assertEq(arb.rulings(p2).bond, 0);
+        assertEq(uint8(arb.rulings(p2).status), uint8(PredgeRefundArbiterV2.Status.Finalized));
+        vm.warp(block.timestamp + arb.RESOLUTION_TIMEOUT());
+        arb.expire(p3);
+        assertEq(arb.rulings(p3).bond, 0);
+        assertEq(uint8(arb.rulings(p3).status), uint8(PredgeRefundArbiterV2.Status.Voided));
+        // a ruling that is upheld after a dispute also zeroes the bond
+        uint256 p4 = _pay(1 ether);
+        _file(p4);
+        _rule(p4, payer, EV_PAYER, REFUND, 1 ether);
+        vm.prank(payee);
+        arb.dispute(p4, EV_COUNTER);
+        vm.prank(safe);
+        arb.resolve(p4, REFUND);
+        assertEq(arb.rulings(p4).bond, 0);
     }
 
     function test_rule_reverts() public {
