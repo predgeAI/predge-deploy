@@ -3,9 +3,9 @@
   "chainId": 8453,
   "mode": "anvil-fork",
   "forkedFrom": "https://base-rpc.publicnode.com",
-  "forkBlock": 52830862,
-  "at": "2026-10-19T23:04:32.799Z",
-  "seconds": 6,
+  "forkBlock": 52831532,
+  "at": "2026-10-19T23:26:52.507Z",
+  "seconds": 43,
   "deployer": "0x33275DDdb0cB5Bc120740e048B030F107F144Ac8",
   "startNonce": 0,
   "contracts": {
@@ -19,12 +19,12 @@
         "0x0000000000000000000000000000000000000000"
       ],
       "constructorArgs": "0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c80000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc0000000000000000000000000000000000000000000000000000000000000000",
-      "sourceSha256": "185b34b837ea7e0689bf599043cc79dba5b183dc0a660bb09879eb8da2cabd70",
-      "txHash": "0x9a75f35dcb04e032057cbaf460cfd1d5c6d23708069f3a42b79b17ecf8a842b7",
-      "block": 52830860,
+      "sourceSha256": "39ce8493d21512143f7c0fa37419a3cd14e1808bceb3af3e9680dfedb107ecd0",
+      "txHash": "0xaa509fc65ae9c27fc045b4e2fb2e3085d17ec05474062aef22b9efb06424c8d6",
+      "block": 52831511,
       "gasUsed": "1162822",
-      "effectiveGasPrice": "1004986421",
-      "l1FeeWei": "14802332849"
+      "effectiveGasPrice": "1004992422",
+      "l1FeeWei": "13938652792"
     },
     "AgentJobV2": {
       "name": "AgentJobV2",
@@ -35,11 +35,11 @@
       ],
       "constructorArgs": "0x000000000000000000000000000000000000000000000000000000000003f480",
       "sourceSha256": "16050fa97d42c0982eac3bf4de36a4478c68165c7fbdfeac8e5b89960f6a8972",
-      "txHash": "0x212ae4b97c67f5d68a71d371949be5003998f80a042a17830e7f8338b1280cff",
-      "block": 52830861,
+      "txHash": "0xe86ebd4354ca528f5a17544240f73dfe254386b487b8e7f13f5173fc6c9d9f57",
+      "block": 52831512,
       "gasUsed": "904910",
-      "effectiveGasPrice": "1004966824",
-      "l1FeeWei": "11198469167"
+      "effectiveGasPrice": "1004972801",
+      "l1FeeWei": "10545065775"
     },
     "PredgeValidatorBondV2": {
       "name": "PredgeValidatorBondV2",
@@ -54,12 +54,12 @@
         "10000"
       ],
       "constructorArgs": "0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c80000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc00000000000000000000000093f70a097ed45889f69759e5f62cde0b9319e616000000000000000000000000000000000000000000000000000000000001518000000000000000000000000000000000000000000000000000071afd498d00000000000000000000000000000000000000000000000000000000000000002710",
-      "sourceSha256": "46bede16b7872b00005812a4f6899cfb8f151649a620f740122f81a1bd0fa22d",
-      "txHash": "0xc14838306f2f2a423d04977bfddb3a05773ae8288223a59ec9065ef9da06cb0d",
-      "block": 52830862,
-      "gasUsed": "1711521",
-      "effectiveGasPrice": "1004947227",
-      "l1FeeWei": "19103474046"
+      "sourceSha256": "887d0ae4945ea287ebddc2d9169a8f88074a75f871a49d0f7667b12f6b8f7e7d",
+      "txHash": "0x6c1ba1b64c65f403bd4997574755bae7774a8634b66babbec381e1d95c5f13f1",
+      "block": 52831513,
+      "gasUsed": "1725771",
+      "effectiveGasPrice": "1004953180",
+      "l1FeeWei": "18049496371"
     },
     "PredgeSettlementV2": {
       "name": "PredgeSettlementV2",
@@ -70,11 +70,11 @@
       ],
       "constructorArgs": "0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8",
       "sourceSha256": "fb87e5ef6756eb261c854ccf1f711234a2e657718aecb2e2d116557aa4ab84b7",
-      "txHash": "0x54bf225199544be651c2e05bddf0cbc74eca9153f84941b05f5ee3bcc00cc116",
-      "block": 52830863,
+      "txHash": "0x1b98f8891108aaa98bbaf669d14e63f2fc7de1f05764fd6266c92b460f0379a9",
+      "block": 52831514,
       "gasUsed": "369083",
-      "effectiveGasPrice": "1004927947",
-      "l1FeeWei": "4828232732"
+      "effectiveGasPrice": "1004933881",
+      "l1FeeWei": "4546517116"
     },
     "MockRefundProtocolV2": {
       "name": "MockRefundProtocolV2",
@@ -85,11 +85,11 @@
       ],
       "constructorArgs": "0x0000000000000000000000005c18b53c186d76fcb8c7e4ba4d6b6af79dd38553",
       "sourceSha256": "e4f170d51e3a526a89bd4c0d1090b1441334fe5a610a0b43fef0dca078d3e66d",
-      "txHash": "0x574f4117a38b4211de935207fff2391574febb4e70bc870347f7d8f374237f91",
-      "block": 52830864,
+      "txHash": "0x1b2c43e7114df89893dfc451e306cd9f85481d25bc415f12c2b979d2c0919fcb",
+      "block": 52831515,
       "gasUsed": "408763",
-      "effectiveGasPrice": "1004908345",
-      "l1FeeWei": "5714987833"
+      "effectiveGasPrice": "1004914255",
+      "l1FeeWei": "5381532218"
     },
     "PredgeRefundArbiterV2": {
       "name": "PredgeRefundArbiterV2",
@@ -104,21 +104,21 @@
         "1000"
       ],
       "constructorArgs": "0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c80000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc000000000000000000000000d01f1026c372749873ea32bdb017434a05226837000000000000000000000000000000000000000000000000000000000001518000000000000000000000000000000000000000000000000000071afd498d000000000000000000000000000000000000000000000000000000000000000003e8",
-      "sourceSha256": "0d94db694bf2e39bfaca5398e2fcdef5b11942a656fab3de7f4468f40fd78746",
-      "txHash": "0xb428709a60640a85e9394e19cc3f31131bc6505c30965c32a1e4bdbb939785c3",
-      "block": 52830865,
+      "sourceSha256": "4942e21f42a00e7034c5af74884dea2e0e1d4b7605d770d0b2ca9411df6e2a5e",
+      "txHash": "0x164425c4de0c3c7eee3638567fd94fbf4972ff1fb85bd3a537bd3744f0c65e1b",
+      "block": 52831516,
       "gasUsed": "1918175",
-      "effectiveGasPrice": "1004888833",
-      "l1FeeWei": "21540155800"
+      "effectiveGasPrice": "1004894719",
+      "l1FeeWei": "20283340191"
     }
   },
   "totals": {
-    "gasUsed": "6475274",
+    "gasUsed": "6489524",
     "liveGasPriceWei": "6000000",
-    "l1FeeWei": "77187652427",
+    "l1FeeWei": "72744604463",
     "l1FeeMethod": "op-stack oracle getL1Fee",
-    "costWei": "38928831652427",
-    "cost": "0.000038928831652427",
+    "costWei": "39009888604463",
+    "cost": "0.000039009888604463",
     "native": "ETH"
   },
   "smoke": [
@@ -151,8 +151,230 @@
     "arbiter params",
     "registry.requestHashFor is domain separated"
   ],
-  "e2e": null,
-  "attacksBlocked": null,
+  "e2e": [
+    {
+      "step": "registry.validationRequest #1",
+      "gasUsed": 123238
+    },
+    {
+      "step": "job.createJob #1",
+      "gasUsed": 203490
+    },
+    {
+      "step": "bond.stakeAndCommit",
+      "gasUsed": 190513
+    },
+    {
+      "step": "job.submit (bytes, sha256 on-chain)",
+      "gasUsed": 55445
+    },
+    {
+      "step": "bond.recordScore(100) completes the job",
+      "gasUsed": 159228
+    },
+    {
+      "step": "registry.validationResponse",
+      "gasUsed": 132144
+    },
+    {
+      "step": "job.withdraw (provider pulls payout)",
+      "gasUsed": 32248
+    },
+    {
+      "step": "settlement.payForRoute",
+      "gasUsed": 25567
+    },
+    {
+      "step": "settlement.withdraw (owner)",
+      "gasUsed": 32279
+    },
+    {
+      "step": "registry.validationRequest #2",
+      "gasUsed": 123238
+    },
+    {
+      "step": "job.createJob #2",
+      "gasUsed": 186390
+    },
+    {
+      "step": "bond.stakeAndCommit",
+      "gasUsed": 173413
+    },
+    {
+      "step": "registry.validationRequest #3",
+      "gasUsed": 123238
+    },
+    {
+      "step": "job.createJob #3",
+      "gasUsed": 169290
+    },
+    {
+      "step": "job.submit (j3, wrong output)",
+      "gasUsed": 54547
+    },
+    {
+      "step": "registry.validationRequest #4",
+      "gasUsed": 123238
+    },
+    {
+      "step": "job.createJob #4",
+      "gasUsed": 169290
+    },
+    {
+      "step": "bond.stakeAndCommit",
+      "gasUsed": 173413
+    },
+    {
+      "step": "job.submit (j4, provider submits the public commitment)",
+      "gasUsed": 54547
+    },
+    {
+      "step": "bond.recordScore(0) honest fail",
+      "gasUsed": 163942
+    },
+    {
+      "step": "registry.validationRequest #5",
+      "gasUsed": 123238
+    },
+    {
+      "step": "job.createJob #5",
+      "gasUsed": 169290
+    },
+    {
+      "step": "bond.stakeAndCommit",
+      "gasUsed": 173413
+    },
+    {
+      "step": "job.submit (j5, wrong output)",
+      "gasUsed": 54547
+    },
+    {
+      "step": "bond.recordScore(100) FALSE pass",
+      "gasUsed": 146928
+    },
+    {
+      "step": "bond.challenge by a stranger",
+      "gasUsed": 131748
+    },
+    {
+      "step": "bond.withdraw (client)",
+      "gasUsed": 32262
+    },
+    {
+      "step": "job.claimRefund (expired, never submitted)",
+      "gasUsed": 47142
+    },
+    {
+      "step": "bond.release (no verdict was given)",
+      "gasUsed": 104039
+    },
+    {
+      "step": "bond.reclaim (j1, anyone, after window)",
+      "gasUsed": 47188
+    },
+    {
+      "step": "bond.withdraw (staker)",
+      "gasUsed": 32262
+    },
+    {
+      "step": "mock.recordPayment",
+      "gasUsed": 138491
+    },
+    {
+      "step": "arbiter.fileEvidence (payer)",
+      "gasUsed": 60606
+    },
+    {
+      "step": "arbiter.rule(Refund)",
+      "gasUsed": 250669
+    },
+    {
+      "step": "arbiter.dispute (harmed payee)",
+      "gasUsed": 59538
+    },
+    {
+      "step": "arbiter.resolve(Release) overturns",
+      "gasUsed": 86656
+    },
+    {
+      "step": "arbiter.withdraw (payee gets the operator bond)",
+      "gasUsed": 32316
+    },
+    {
+      "step": "mock.recordPayment",
+      "gasUsed": 121391
+    },
+    {
+      "step": "arbiter.fileEvidence (payer, p2)",
+      "gasUsed": 60606
+    },
+    {
+      "step": "arbiter.rule(Refund, p2)",
+      "gasUsed": 233569
+    },
+    {
+      "step": "arbiter.finalize (undisputed, after window)",
+      "gasUsed": 130353
+    },
+    {
+      "step": "arbiter.withdraw (operator bond back)",
+      "gasUsed": 32316
+    }
+  ],
+  "attacksBlocked": [
+    {
+      "attack": "challenge of an honest verdict",
+      "blockedBy": "VerdictHonest"
+    },
+    {
+      "attack": "H-01 recordScore before the provider submits",
+      "blockedBy": "NotSubmitted"
+    },
+    {
+      "attack": "H-01 reclaim without a verdict",
+      "blockedBy": "NotScored"
+    },
+    {
+      "attack": "H-02 commit after submission",
+      "blockedBy": "NotOpen"
+    },
+    {
+      "attack": "H-02 honest fail is not slashable",
+      "blockedBy": "VerdictHonest"
+    },
+    {
+      "attack": "M-02 slash pays the harmed client, challenger earns 0",
+      "blockedBy": "routing"
+    },
+    {
+      "attack": "late submit after expiry",
+      "blockedBy": "PastDeadline"
+    },
+    {
+      "attack": "H-03 stranger files evidence for someone else's payment",
+      "blockedBy": "NotAParty"
+    },
+    {
+      "attack": "H-03 operator cites a non-party",
+      "blockedBy": "NotAParty"
+    },
+    {
+      "attack": "H-03 refund does not execute inside rule()",
+      "blockedBy": "optimistic window"
+    },
+    {
+      "attack": "H-03 finalize inside the window",
+      "blockedBy": "WindowOpen"
+    },
+    {
+      "attack": "non-owner setOperator",
+      "blockedBy": "NotOwner"
+    },
+    {
+      "attack": "non-owner transferOwnership",
+      "blockedBy": "NotOwner"
+    }
+  ],
   "setVersion": "2026-10-20-v2",
   "erc8004": {
     "IdentityRegistry": {
