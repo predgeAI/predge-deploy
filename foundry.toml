@@ -1,0 +1,35 @@
+# Foundry test suite for the canonical Predge contract set.
+# Compiler settings mirror lib/compile.mjs exactly (solc 0.8.26, optimizer 200, cancun).
+# The deployable bytecode is still produced and checked by lib/compile.mjs + test/bytecode-match.test.mjs;
+# this profile only compiles the same sources for testing and never writes into contracts/.
+[profile.default]
+src = "contracts"
+test = "test/foundry"
+out = "out-foundry"
+cache_path = "cache-foundry"
+libs = ["foundry-lib"]
+remappings = ["forge-std/=foundry-lib/forge-std/src/"]
+solc_version = "0.8.26"
+optimizer = true
+optimizer_runs = 200
+evm_version = "cancun"
+
+[profile.default.fuzz]
+runs = 1000
+failure_persist_dir = "cache-foundry/fuzz"
+
+[profile.default.invariant]
+runs = 256
+depth = 64
+fail_on_revert = false
+failure_persist_dir = "cache-foundry/invariant"
+
+[profile.ci.fuzz]
+runs = 5000
+failure_persist_dir = "cache-foundry/fuzz"
+
+[profile.ci.invariant]
+runs = 512
+depth = 100
+fail_on_revert = false
+failure_persist_dir = "cache-foundry/invariant"

@@ -120,6 +120,26 @@ Verification tries these in order:
 
 Anything still unverified is written into `deployments/X.json` as a TODO. The standard-JSON input for manual verification goes to `deployments/verify/`.
 
+## Tests
+
+```bash
+git submodule update --init          # forge-std
+npm test                             # plan + live bytecode match (+ forge parity if built)
+forge build && forge test --no-match-test test_BUG_   # unit, fuzz, invariant
+forge coverage --no-match-test test_BUG_ --no-match-coverage "test/" --report summary
+```
+
+`test/foundry/` holds unit tests for every external function and revert path of all six contracts,
+fuzz tests, and handler-based invariant suites (escrow/bond conservation, no double payout, no
+reclaim inside the window, write-once verdicts and filings, role checks). Line, statement, branch and
+function coverage is 100%. `foundry.toml` uses the same compiler settings as `lib/compile.mjs`, and
+`test/forge-parity.test.mjs` checks that forge's runtime bytecode equals the deployed runtime
+(metadata hash excluded), so the suite tests exactly what is live.
+
+Tests named `test_BUG_*` fail on purpose: each one pins an open self-audit finding and stays red
+until the contract is fixed. Tests named `test_finding_*` pass and document current behaviour that is
+a design or operational risk.
+
 ## ERC-8004 registries
 
 The official ERC-8004 v2.0.0 registries sit at the same addresses wherever they exist. `getVersion()` returns `2.0.0`.
