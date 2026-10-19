@@ -10,8 +10,9 @@ import {IAgentJobV2} from "./interfaces/IAgentJobV2.sol";
 ///         contract as its evaluator, so the verdict recorded here is the thing that moves the
 ///         escrow, and the same transaction puts the operator's bond at risk.
 ///
-///         The acceptance test is deterministic: the provider's deliverable hash must equal the
-///         `expected` hash the operator committed to. That makes a false verdict provable
+///         The acceptance test is deterministic: the 32-byte deliverable hash stored in the job (sha256 of the
+///         output when the provider submitted the bytes, otherwise the hash the provider claimed) is compared by
+///         RAW EQUALITY with the `expected` 32-byte value the operator committed to. Nothing is hashed again here. That makes a false verdict provable
 ///         on-chain with no judge, by comparing two hashes written by two different parties.
 ///
 ///         Flow:
@@ -26,7 +27,8 @@ import {IAgentJobV2} from "./interfaces/IAgentJobV2.sol";
 ///              `complete` (score 100) or `reject` (score 0) on the job, so the verdict and the
 ///              money move together. The dispute window starts at `scoredAt`, which is always at
 ///              or after the job's `submittedAt` because scoring requires a submission.
-///           4. `challenge(requestHash)` (anyone) while the window is open. Slashes iff the
+///           4. `challenge(requestHash)` (anyone) strictly BEFORE `scoredAt + window`; from that instant
+///              `reclaim` is possible and `challenge` reverts (no overlap, and no open-ended challenge). Slashes iff the
 ///              verdict contradicts the deliverable: 100 but deliverable != expected, or 0 but
 ///              deliverable == expected. The whole bond is CREDITED TO THE HARMED PARTY (the
 ///              job's client on a false pass, its provider on a false fail), never to the caller,
@@ -188,9 +190,13 @@ contract PredgeValidatorBondV2 is Operated, PullCredit {
         if (s.status == Status.None) revert NotCommitted();
         if (s.status != Status.Committed) revert BadStatus();
         if (keccak256(abi.encode(expected, salt)) != s.commitment) revert BadReveal();
+        // Re-checked here, not only at stake time: after an operator rotation the NEW operator must not be able
+        // to score a job it is the provider of, while inheriting the old operator's stake.
+        IAgentJobV2.Job memory j = job.getJob(s.jobId);
+        if (j.provider == msg.sender) revert ProviderIsOperator();
         // Scoring needs a submission, so `scoredAt >= submittedAt` and the dispute window can never
         // start before the deliverable it is judged against exists.
-        if (job.getJob(s.jobId).state != IAgentJobV2.State.Submitted) revert NotSubmitted();
+        if (j.state != IAgentJobV2.State.Submitted) revert NotSubmitted();
 
         s.expected = expected;
         s.score = score;

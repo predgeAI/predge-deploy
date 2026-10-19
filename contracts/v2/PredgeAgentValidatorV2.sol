@@ -165,7 +165,9 @@ contract PredgeAgentValidatorV2 is Operated {
         return _v[requestHash].hasResponse;
     }
 
-    /// @notice Seconds the request stayed committed before its verdict; 0 while pending.
+    /// @notice Seconds the request stayed committed before its verdict. 0 while pending, and also 0 if the
+    ///         verdict landed in the same block as the request (chain timestamps have block granularity), so
+    ///         a non-zero value proves the lead, but zero does not prove its absence.
     function commitLeadTime(bytes32 requestHash) external view returns (uint64) {
         Validation storage v = _v[requestHash];
         if (!v.hasResponse) return 0;
