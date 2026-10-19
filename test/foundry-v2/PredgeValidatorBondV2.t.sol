@@ -112,6 +112,8 @@ contract PredgeValidatorBondV2Test is Base {
         assertEq(c, _commitment(EXPECTED, SALT));
         assertEq(e, bytes32(0), "expected is hidden until the reveal");
         assertEq(bond.totalBonded(), 2 ether);
+        (,,, uint64 stakedAt,,,,,,) = bond.stakes(spec);
+        assertEq(stakedAt, block.timestamp);
     }
 
     function test_stake_reverts() public {
@@ -254,6 +256,8 @@ contract PredgeValidatorBondV2Test is Base {
         assertEq(stranger.balance, callerBefore);
         assertEq(bond.totalBonded(), 0);
         assertEq(bond.slashCount(), 1);
+        (,,,,,,, uint256 left,,) = bond.stakes(spec);
+        assertEq(left, 0, "slashed stake holds no bond");
         assertFalse(bond.wouldSlash(spec));
         vm.prank(client);
         bond.withdraw();
@@ -308,6 +312,8 @@ contract PredgeValidatorBondV2Test is Base {
         assertEq(bond.credit(op), 3 ether);
         assertEq(bond.credit(newOp), 0);
         assertEq(bond.totalBonded(), 0);
+        (,,,,,,, uint256 left,,) = bond.stakes(spec);
+        assertEq(left, 0, "reclaimed stake holds no bond");
         vm.expectRevert(PredgeValidatorBondV2.NotScored.selector);
         bond.reclaim(spec);
     }

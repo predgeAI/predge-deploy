@@ -49,6 +49,7 @@ abstract contract Base is Test {
     PredgeValidatorBondV2 internal bond;
 
     function _deployJobAndBond() internal {
+        vm.warp(1_760_000_000); // realistic timestamp: block.timestamp == 1 hides arithmetic mutants
         job = new AgentJobV2(EVAL_WINDOW);
         bond = new PredgeValidatorBondV2(safe, op, address(job), WINDOW, MIN_BOND, BPS);
         vm.deal(op, 1_000 ether);

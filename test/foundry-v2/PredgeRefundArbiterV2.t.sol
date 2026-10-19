@@ -26,6 +26,7 @@ abstract contract ArbiterBase is Test {
     bytes32 internal constant EV_COUNTER = keccak256("counter evidence");
 
     function _deployArbiter() internal {
+        vm.warp(1_760_000_000);
         // The mock needs the arbiter address and vice versa: predict the arbiter (next CREATE after the mock).
         uint256 n = vm.getNonce(address(this));
         address predicted = vm.computeCreateAddress(address(this), n + 1);

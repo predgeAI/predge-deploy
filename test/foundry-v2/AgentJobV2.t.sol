@@ -19,6 +19,7 @@ contract AgentJobV2Test is Base {
     event Withdrawn(address indexed account, address indexed to, uint256 amount);
 
     function setUp() public {
+        vm.warp(1_760_000_000);
         job = new AgentJobV2(EVAL_WINDOW);
         vm.deal(client, 100 ether);
     }
