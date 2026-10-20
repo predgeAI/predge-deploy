@@ -10,10 +10,9 @@ node deploy.mjs --chain base --fork     # full deploy + smoke + end-to-end on a 
 CONFIRM_MAINNET=base node deploy.mjs --chain base --broadcast   # the real deploy
 ```
 
-## v2 (self-audit fixes, not deployed)
+## v2 (self-audit fixes, live on Arc and Base)
 
-`contracts/v2/` is the redesigned set that fixes the 20.10.2026 self-audit findings (H-01..H-03, M-01..M-05, L-01..L-07). **Nothing here is deployed.**
-The live 16-chain set above is v1 and is untouched. Design, finding-by-finding mapping and owner actions: `SELF-AUDIT-2026-10-20/v2-design.md` (Downloads).
+`contracts/v2/` is the redesigned set that fixes the 20.10.2026 self-audit findings (H-01..H-03, M-01..M-05, L-01..L-07). v2 is deployed on Arc and Base only (see [Deployments](#deployments)). The 16-chain set is v1, legacy, and is untouched. Design, finding-by-finding mapping and owner actions: `SELF-AUDIT-2026-10-20/v2-design.md` (Downloads).
 
 ```
 FOUNDRY_CONFIG=foundry-v2.toml forge test                 # unit + fuzz + invariant + PoC tests (v1 attacks run against v1 and v2)
@@ -77,7 +76,7 @@ The tool enforces this:
 
 **Never use the deployer key for anything else.** Not even a plain transfer out until every chain has the whole set.
 
-Canonical addresses for deployer `0x5d016C1B4d7A42eB7c982da1Ae7fFdB958CFCAe9`:
+Canonical v1 addresses for deployer `0x5d016C1B4d7A42eB7c982da1Ae7fFdB958CFCAe9`:
 
 | Contract | Address (every chain) |
 |---|---|
@@ -90,7 +89,29 @@ Canonical addresses for deployer `0x5d016C1B4d7A42eB7c982da1Ae7fFdB958CFCAe9`:
 
 ## Deployments
 
-Live on **16 mainnets** since 18 Oct 2026, all six contracts at the canonical addresses above. Checked the same day with `eth_getCode` on every chain, and every contract is an exact match on [Sourcify](https://sourcify.dev). Full receipts (block, gas, constructor args, source hash) are in `deployments/<chain>.json`.
+### v2 (current): Arc (5042) and Base (8453)
+
+Deployed 20-21 Oct 2026. The same six addresses on both chains. All six are verified on Sourcify (exact match). Receipts: [`deployments/v2/arc.json`](deployments/v2/arc.json), [`deployments/v2/base.json`](deployments/v2/base.json).
+
+| Contract | Address (Arc and Base) | Sourcify | Explorer |
+|---|---|---|---|
+| PredgeAgentValidatorV2 | `0xACC29BF9Ae35e51d36792C3B20D0Ac65f86Dd495` | [Sourcify](https://sourcify.dev/#/lookup/0xACC29BF9Ae35e51d36792C3B20D0Ac65f86Dd495) | [Arc](https://explorer.arc.io/address/0xACC29BF9Ae35e51d36792C3B20D0Ac65f86Dd495), [Base](https://basescan.org/address/0xACC29BF9Ae35e51d36792C3B20D0Ac65f86Dd495) |
+| AgentJobV2 | `0x550b360840C6614aD70E91CC6673FF3AB2dFd98C` | [Sourcify](https://sourcify.dev/#/lookup/0x550b360840C6614aD70E91CC6673FF3AB2dFd98C) | [Arc](https://explorer.arc.io/address/0x550b360840C6614aD70E91CC6673FF3AB2dFd98C), [Base](https://basescan.org/address/0x550b360840C6614aD70E91CC6673FF3AB2dFd98C) |
+| PredgeValidatorBondV2 | `0xa4BB68E55398c4EDD958DD6B32460D2018F78881` | [Sourcify](https://sourcify.dev/#/lookup/0xa4BB68E55398c4EDD958DD6B32460D2018F78881) | [Arc](https://explorer.arc.io/address/0xa4BB68E55398c4EDD958DD6B32460D2018F78881), [Base](https://basescan.org/address/0xa4BB68E55398c4EDD958DD6B32460D2018F78881) |
+| PredgeSettlementV2 | `0x60991fE6a7afDcC79bDc43b754acE5c16158edb3` | [Sourcify](https://sourcify.dev/#/lookup/0x60991fE6a7afDcC79bDc43b754acE5c16158edb3) | [Arc](https://explorer.arc.io/address/0x60991fE6a7afDcC79bDc43b754acE5c16158edb3), [Base](https://basescan.org/address/0x60991fE6a7afDcC79bDc43b754acE5c16158edb3) |
+| MockRefundProtocolV2 (demo refund protocol) | `0x2768dBC17728403BAE6D8838e4AeC63bE21a9dA7` | [Sourcify](https://sourcify.dev/#/lookup/0x2768dBC17728403BAE6D8838e4AeC63bE21a9dA7) | [Arc](https://explorer.arc.io/address/0x2768dBC17728403BAE6D8838e4AeC63bE21a9dA7), [Base](https://basescan.org/address/0x2768dBC17728403BAE6D8838e4AeC63bE21a9dA7) |
+| PredgeRefundArbiterV2 | `0x72FAEb8eE70816Dbf66722657cc4Bea314EB5FE3` | [Sourcify](https://sourcify.dev/#/lookup/0x72FAEb8eE70816Dbf66722657cc4Bea314EB5FE3) | [Arc](https://explorer.arc.io/address/0x72FAEb8eE70816Dbf66722657cc4Bea314EB5FE3), [Base](https://basescan.org/address/0x72FAEb8eE70816Dbf66722657cc4Bea314EB5FE3) |
+
+- **Owner:** `0x9084f5000E07C7133D6dA5eE4f271AB6D1821144`, a **temporary single EOA**. A transfer to a Safe 2-of-3 multisig via `Ownable2Step` (`transferOwnership`, then `acceptOwnership`) is planned, target this week. Until then, treat the owner as a single point of control.
+- **Operator** (hot ops key, rotatable by the owner): `0x8ffFB76c4329DDC8ee4a859DDF55AB48ba25e292`.
+- **Bond floor:** minimal, about $5 (5 USDC on Arc, 0.002 ETH on Base). No percentage of job value (bps = 0). It is a floor, not coverage of job value.
+- **Status:** an external Olympix scan of v2 (commit `edd1c46`) was requested through Circle's Arc programme. Results are pending. The on-chain bonds are not claimed as a guarantee. The signed verdict API (`api.predge.io`) is unchanged and remains the product.
+
+### v1 (legacy): 16 mainnets
+
+**Legacy, known issues, holds no funds.** Kept deployed as a reference only. The v2 set above fixes the self-review findings in it.
+
+The v1 set went live on **16 mainnets** on 18 Oct 2026, all six contracts at the canonical addresses above. Checked the same day with `eth_getCode` on every chain, and every contract is an exact match on [Sourcify](https://sourcify.dev). Full receipts (block, gas, constructor args, source hash) are in `deployments/<chain>.json`.
 
 Creation transactions, in nonce order:
 
