@@ -3,9 +3,9 @@
   "chainId": 5042,
   "mode": "anvil-fork",
   "forkedFrom": "https://rpc.mainnet.arc.io",
-  "forkBlock": 26950440,
-  "at": "2026-10-20T13:30:07.593Z",
-  "seconds": 50,
+  "forkBlock": 27007868,
+  "at": "2026-10-20T21:37:32.818Z",
+  "seconds": 47,
   "deployer": "0x33275DDdb0cB5Bc120740e048B030F107F144Ac8",
   "startNonce": 0,
   "contracts": {
@@ -21,9 +21,9 @@
       "constructorArgs": "0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c80000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc0000000000000000000000000000000000000000000000000000000000000000",
       "sourceSha256": "39ce8493d21512143f7c0fa37419a3cd14e1808bceb3af3e9680dfedb107ecd0",
       "txHash": "0x7dff382649311298b1297083d15d5a9728c9ed21056b5c22478e2b9decc306ad",
-      "block": 26950337,
+      "block": 27007772,
       "gasUsed": "1162822",
-      "effectiveGasPrice": "18500000000",
+      "effectiveGasPrice": "18539309000",
       "l1FeeWei": "0"
     },
     "AgentJobV2": {
@@ -35,10 +35,10 @@
       ],
       "constructorArgs": "0x000000000000000000000000000000000000000000000000000000000003f480",
       "sourceSha256": "16050fa97d42c0982eac3bf4de36a4478c68165c7fbdfeac8e5b89960f6a8972",
-      "txHash": "0xe6b842bc63f39e3cf1110598a217ae85f2ee530d7ba727345073b691f573cb97",
-      "block": 26950338,
+      "txHash": "0x4445cd5bcfcb19d369e681cbef99a02b29c79f8a0a711fe9d5c9628bc2ea2b6f",
+      "block": 27007773,
       "gasUsed": "904910",
-      "effectiveGasPrice": "16482078209",
+      "effectiveGasPrice": "16516854495",
       "l1FeeWei": "0"
     },
     "PredgeValidatorBondV2": {
@@ -55,10 +55,10 @@
       ],
       "constructorArgs": "0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c80000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc00000000000000000000000093f70a097ed45889f69759e5f62cde0b9319e61600000000000000000000000000000000000000000000000000000000000151800000000000000000000000000000000000000000000000004563918244f400000000000000000000000000000000000000000000000000000000000000000000",
       "sourceSha256": "887d0ae4945ea287ebddc2d9169a8f88074a75f871a49d0f7667b12f6b8f7e7d",
-      "txHash": "0x2388aaba14fbb9691a0486ab5a8302eebca0b9f89169b4383b52587248ac918e",
-      "block": 26950339,
+      "txHash": "0x6bb77a282877e03c7514896b104b8b587e97eb9e595c783522d9a2b9d4f5accf",
+      "block": 27007774,
       "gasUsed": "1705859",
-      "effectiveGasPrice": "14663567495",
+      "effectiveGasPrice": "14694258990",
       "l1FeeWei": "0"
     },
     "PredgeSettlementV2": {
@@ -70,10 +70,10 @@
       ],
       "constructorArgs": "0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8",
       "sourceSha256": "fb87e5ef6756eb261c854ccf1f711234a2e657718aecb2e2d116557aa4ab84b7",
-      "txHash": "0x1d41a25185c353ba12a6d54346a55993712155b383d5a00bf6052829bb433a19",
-      "block": 26950340,
+      "txHash": "0x423ad3db6d7084cb675d6aa5272f674b131158ea7d7cd38c75f1a6680592a523",
+      "block": 27007775,
       "gasUsed": "369083",
-      "effectiveGasPrice": "13149855888",
+      "effectiveGasPrice": "13177147241",
       "l1FeeWei": "0"
     },
     "MockRefundProtocolV2": {
@@ -85,10 +85,10 @@
       ],
       "constructorArgs": "0x0000000000000000000000005c18b53c186d76fcb8c7e4ba4d6b6af79dd38553",
       "sourceSha256": "e4f170d51e3a526a89bd4c0d1090b1441334fe5a610a0b43fef0dca078d3e66d",
-      "txHash": "0xe5e456f8495d2c95e4a54274852021ce031ec5a25ebc8cead2d8c92139909b84",
-      "block": 26950341,
+      "txHash": "0x4eec0b4ca00998536dc2a38a8ff945a3e72d24bb3fa5515b47e109aa39a31e30",
+      "block": 27007776,
       "gasUsed": "408763",
-      "effectiveGasPrice": "11668493113",
+      "effectiveGasPrice": "11692456987",
       "l1FeeWei": "0"
     },
     "PredgeRefundArbiterV2": {
@@ -105,20 +105,20 @@
       ],
       "constructorArgs": "0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c80000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc000000000000000000000000d01f1026c372749873ea32bdb017434a0522683700000000000000000000000000000000000000000000000000000000000151800000000000000000000000000000000000000000000000004563918244f400000000000000000000000000000000000000000000000000000000000000000000",
       "sourceSha256": "4942e21f42a00e7034c5af74884dea2e0e1d4b7605d770d0b2ca9411df6e2a5e",
-      "txHash": "0x70c9020797932d23bfd5c1f27430937569884f8b3e3346fb52057490fe0ca1e0",
-      "block": 26950342,
+      "txHash": "0xd9a8464349c27c4fb1dbb880dd1ad1716c084059c90a1ba311d06548cf617fac",
+      "block": 27007777,
       "gasUsed": "1898263",
-      "effectiveGasPrice": "10371272185",
+      "effectiveGasPrice": "10392322204",
       "l1FeeWei": "0"
     }
   },
   "totals": {
     "gasUsed": "6449700",
-    "liveGasPriceWei": "20001000000",
+    "liveGasPriceWei": "23900000000",
     "l1FeeWei": "0",
     "l1FeeMethod": "none (execution gas only)",
-    "costWei": "129000449700000000",
-    "cost": "0.1290004497",
+    "costWei": "154147830000000000",
+    "cost": "0.15414783",
     "native": "USDC"
   },
   "smoke": [
@@ -154,7 +154,7 @@
   "e2e": [
     {
       "step": "registry.validationRequest #1",
-      "gasUsed": 123238
+      "gasUsed": 123226
     },
     {
       "step": "job.createJob #1",
@@ -202,7 +202,7 @@
     },
     {
       "step": "registry.validationRequest #3",
-      "gasUsed": 123238
+      "gasUsed": 123226
     },
     {
       "step": "job.createJob #3",

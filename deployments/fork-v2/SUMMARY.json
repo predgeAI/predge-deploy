@@ -10,9 +10,9 @@
   },
   "base": {
     "ok": true,
-    "seconds": 52,
+    "seconds": 51,
     "gasUsed": "6449676",
-    "cost": "0.000038928426407206",
+    "cost": "0.000038898268888678",
     "native": "ETH",
     "e2eTxs": 42,
     "smokeChecks": 28
@@ -127,9 +127,9 @@
   },
   "arc": {
     "ok": true,
-    "seconds": 58,
+    "seconds": 54,
     "gasUsed": "6449700",
-    "cost": "0.1290004497",
+    "cost": "0.15414783",
     "native": "USDC",
     "e2eTxs": 42,
     "smokeChecks": 28

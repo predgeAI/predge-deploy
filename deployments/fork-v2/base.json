@@ -3,8 +3,8 @@
   "chainId": 8453,
   "mode": "anvil-fork",
   "forkedFrom": "https://base-rpc.publicnode.com",
-  "forkBlock": 52856856,
-  "at": "2026-10-20T13:30:59.699Z",
+  "forkBlock": 52871478,
+  "at": "2026-10-20T21:38:23.427Z",
   "seconds": 45,
   "deployer": "0x33275DDdb0cB5Bc120740e048B030F107F144Ac8",
   "startNonce": 0,
@@ -20,11 +20,11 @@
       ],
       "constructorArgs": "0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c80000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc0000000000000000000000000000000000000000000000000000000000000000",
       "sourceSha256": "39ce8493d21512143f7c0fa37419a3cd14e1808bceb3af3e9680dfedb107ecd0",
-      "txHash": "0xcb42bbb06516724f0b75baada4ccfbe0aae44528b16c0a6e0a6e8311c0e51531",
-      "block": 52856833,
+      "txHash": "0xaa509fc65ae9c27fc045b4e2fb2e3085d17ec05474062aef22b9efb06424c8d6",
+      "block": 52871456,
       "gasUsed": "1162822",
-      "effectiveGasPrice": "1005089475",
-      "l1FeeWei": "44147957934"
+      "effectiveGasPrice": "1004990607",
+      "l1FeeWei": "38368600787"
     },
     "AgentJobV2": {
       "name": "AgentJobV2",
@@ -35,11 +35,11 @@
       ],
       "constructorArgs": "0x000000000000000000000000000000000000000000000000000000000003f480",
       "sourceSha256": "16050fa97d42c0982eac3bf4de36a4478c68165c7fbdfeac8e5b89960f6a8972",
-      "txHash": "0xf4a9170a4b6e8c951f982fff5a2bdee7dc26de52a6134a80f3cfc828cbb6583d",
-      "block": 52856834,
+      "txHash": "0x80214af61cb9b45ae18ced0571bfb6b7fbc4b5114735511f84f6d815a3b988c7",
+      "block": 52871457,
       "gasUsed": "904910",
-      "effectiveGasPrice": "1005069473",
-      "l1FeeWei": "33399434451"
+      "effectiveGasPrice": "1004970993",
+      "l1FeeWei": "29027153846"
     },
     "PredgeValidatorBondV2": {
       "name": "PredgeValidatorBondV2",
@@ -55,11 +55,11 @@
       ],
       "constructorArgs": "0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c80000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc00000000000000000000000093f70a097ed45889f69759e5f62cde0b9319e616000000000000000000000000000000000000000000000000000000000001518000000000000000000000000000000000000000000000000000071afd498d00000000000000000000000000000000000000000000000000000000000000000000",
       "sourceSha256": "887d0ae4945ea287ebddc2d9169a8f88074a75f871a49d0f7667b12f6b8f7e7d",
-      "txHash": "0x403780b63bf970b3e7af4218740be9fe52b16b4eccb84b7794a49d6bf6e52f66",
-      "block": 52856835,
+      "txHash": "0x42f2832ba3298c566ad55ea9b0f1aa6468d120fef32a57f6d333a0644753d2d6",
+      "block": 52871458,
       "gasUsed": "1705847",
-      "effectiveGasPrice": "1005049471",
-      "l1FeeWei": "57156949027"
+      "effectiveGasPrice": "1004951379",
+      "l1FeeWei": "49674600186"
     },
     "PredgeSettlementV2": {
       "name": "PredgeSettlementV2",
@@ -70,11 +70,11 @@
       ],
       "constructorArgs": "0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8",
       "sourceSha256": "fb87e5ef6756eb261c854ccf1f711234a2e657718aecb2e2d116557aa4ab84b7",
-      "txHash": "0x60c09a889b6a791c5470d3fea4b48ae11bd5e9d320e7ef44df0f500850cf142d",
-      "block": 52856836,
+      "txHash": "0xcfebf9d01a42635fb54df1749ba6e0369b229b35025e147c1f0e55f3c2dd1142",
+      "block": 52871459,
       "gasUsed": "369083",
-      "effectiveGasPrice": "1005029790",
-      "l1FeeWei": "14400204192"
+      "effectiveGasPrice": "1004932081",
+      "l1FeeWei": "12515090431"
     },
     "MockRefundProtocolV2": {
       "name": "MockRefundProtocolV2",
@@ -85,11 +85,11 @@
       ],
       "constructorArgs": "0x0000000000000000000000005c18b53c186d76fcb8c7e4ba4d6b6af79dd38553",
       "sourceSha256": "e4f170d51e3a526a89bd4c0d1090b1441334fe5a610a0b43fef0dca078d3e66d",
-      "txHash": "0xb6ebc4c337135a7810ba6a5e4b6d6908cf4e1561122b093ff8b916c76d1ba463",
-      "block": 52856837,
+      "txHash": "0xba45e466198a5894b060e7ae449662f405b338739b0a5fc5d72d7be185d46815",
+      "block": 52871460,
       "gasUsed": "408763",
-      "effectiveGasPrice": "1005009783",
-      "l1FeeWei": "17044951295"
+      "effectiveGasPrice": "1004912462",
+      "l1FeeWei": "14813616808"
     },
     "PredgeRefundArbiterV2": {
       "name": "PredgeRefundArbiterV2",
@@ -105,20 +105,20 @@
       ],
       "constructorArgs": "0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c80000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc000000000000000000000000d01f1026c372749873ea32bdb017434a05226837000000000000000000000000000000000000000000000000000000000001518000000000000000000000000000000000000000000000000000071afd498d00000000000000000000000000000000000000000000000000000000000000000000",
       "sourceSha256": "4942e21f42a00e7034c5af74884dea2e0e1d4b7605d770d0b2ca9411df6e2a5e",
-      "txHash": "0xc2202851607dd728caf96d5eeb0d9b1098ecf0c9e4c87e93d1b634dfe8d36dce",
-      "block": 52856838,
+      "txHash": "0x925ce7527d58a5d8c7177fe99eabbf29c496ab9c08c40b5739b9abc5f0ce3aee",
+      "block": 52871461,
       "gasUsed": "1898251",
-      "effectiveGasPrice": "1004989867",
-      "l1FeeWei": "64220910307"
+      "effectiveGasPrice": "1004892933",
+      "l1FeeWei": "55813826620"
     }
   },
   "totals": {
     "gasUsed": "6449676",
     "liveGasPriceWei": "6000000",
-    "l1FeeWei": "230370407206",
+    "l1FeeWei": "200212888678",
     "l1FeeMethod": "op-stack oracle getL1Fee",
-    "costWei": "38928426407206",
-    "cost": "0.000038928426407206",
+    "costWei": "38898268888678",
+    "cost": "0.000038898268888678",
     "native": "ETH"
   },
   "smoke": [
@@ -158,11 +158,11 @@
     },
     {
       "step": "job.createJob #1",
-      "gasUsed": 203490
+      "gasUsed": 203478
     },
     {
       "step": "bond.stakeAndCommit",
-      "gasUsed": 190513
+      "gasUsed": 190501
     },
     {
       "step": "job.submit (bytes, sha256 on-chain)",
@@ -170,11 +170,11 @@
     },
     {
       "step": "bond.recordScore(100) completes the job",
-      "gasUsed": 159228
+      "gasUsed": 159216
     },
     {
       "step": "registry.validationResponse",
-      "gasUsed": 132144
+      "gasUsed": 132132
     },
     {
       "step": "job.withdraw (provider pulls payout)",
@@ -202,7 +202,7 @@
     },
     {
       "step": "registry.validationRequest #3",
-      "gasUsed": 123238
+      "gasUsed": 123226
     },
     {
       "step": "job.createJob #3",
@@ -270,7 +270,7 @@
     },
     {
       "step": "bond.reclaim (j1, anyone, after window)",
-      "gasUsed": 47188
+      "gasUsed": 47176
     },
     {
       "step": "bond.withdraw (staker)",
