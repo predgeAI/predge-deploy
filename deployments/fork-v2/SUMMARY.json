@@ -10,11 +10,11 @@
   },
   "base": {
     "ok": true,
-    "seconds": 11,
-    "gasUsed": "6475274",
-    "cost": "0.000038928831652427",
+    "seconds": 52,
+    "gasUsed": "6449676",
+    "cost": "0.000038928426407206",
     "native": "ETH",
-    "e2eTxs": 0,
+    "e2eTxs": 42,
     "smokeChecks": 28
   },
   "bnb": {
@@ -127,11 +127,11 @@
   },
   "arc": {
     "ok": true,
-    "seconds": 11,
-    "gasUsed": "6475298",
-    "cost": "0.1327436096475298",
+    "seconds": 58,
+    "gasUsed": "6449700",
+    "cost": "0.1290004497",
     "native": "USDC",
-    "e2eTxs": 0,
+    "e2eTxs": 42,
     "smokeChecks": 28
   },
   "monad": {

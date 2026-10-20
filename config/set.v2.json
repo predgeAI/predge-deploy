@@ -1,12 +1,12 @@
 {
-  "_comment": "The Predge v2 set (contracts/v2). Same rules as set.json: contract i is created at deployer nonce i, so a fresh v2 deployer + this order gives the same addresses on every chain. Never reorder; append only. $owner is the Safe, $operator the hot ops key, $deployer holds NO role (it only pays gas). Chain-specific values (minBond, arbiterMinBond) come from config/v2.chains.json and do not change the addresses.",
+  "_comment": "The Predge v2 set (contracts/v2). Same rules as set.json: contract i is created at deployer nonce i, so a fresh v2 deployer + this order gives the same addresses on every chain. Never reorder; append only. $owner is the Safe, $operator the hot ops key, $deployer holds NO role (it only pays gas). Chain-specific values (minBond, arbiterMinBond) come from config/v2.chains.json and do not change the addresses. Owner decision 20.10.2026: bonds MINIMAL, bondBps = arbiterBondBps = 0, so every bond is exactly the per-chain floor (~$5); the bps mechanism stays in the contracts and the Safe can raise it later with setParams (a paid bonded-verdict tier).",
   "version": "2026-10-20-v2",
   "params": {
     "disputeWindow": "86400",
     "challengeWindow": "86400",
     "evaluationWindow": "259200",
-    "bondBps": "10000",
-    "arbiterBondBps": "1000",
+    "bondBps": "0",
+    "arbiterBondBps": "0",
     "identityRegistry": "0x0000000000000000000000000000000000000000"
   },
   "plan": [
