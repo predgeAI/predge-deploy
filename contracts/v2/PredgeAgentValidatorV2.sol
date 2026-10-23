@@ -26,18 +26,20 @@ interface IIdentityOwner {
 ///         request.
 ///
 ///         Domain separation: the caller supplies an acceptance-test DIGEST and the registry
-///         derives `requestHash = keccak256(abi.encode(block.chainid, address(this), digest))`.
+///         derives `requestHash = keccak256(abi.encode(block.chainid, address(this), agentId, digest))`.
 ///         The same digest therefore yields a different request on every chain and registry, so a
-///         request or verdict cannot be replayed across deployments. This is the one deviation from
-///         the ERC-8004 reference signature: the fourth argument is the digest, and the derived
-///         hash is returned and emitted in the canonical event position. Use `requestHashFor` to
-///         compute it off-chain, and use that value as the `AgentJobV2.specHash`.
+///         request or verdict cannot be replayed across deployments, and a request is keyed to its
+///         agent, so one agent cannot pre-claim another agent's digest (Olympix 5.3.3). This is the
+///         one deviation from the ERC-8004 reference signature: the fourth argument is the digest,
+///         and the derived hash is returned and emitted in the canonical event position. Use
+///         `requestHashFor` to compute it off-chain. The registry is not linked to the bond: a bonded
+///         job's specHash is `PredgeValidatorBondV2.specHashFor`, not this hash.
 ///
 /// @dev    Roles: `owner` (Safe) rotates the operator; `operator` (hot key) answers requests.
 ///         Rotating the operator never rewrites a past verdict.
 contract PredgeAgentValidatorV2 is Operated {
     struct Validation {
-        address validator; // the operator that was current when the request was made
+        address validator; // the operator at request time; replaced by the operator that writes the response
         uint256 agentId;
         bytes32 responseHash;
         uint64 requestedAt;
@@ -91,9 +93,9 @@ contract PredgeAgentValidatorV2 is Operated {
         identityRegistry = identityRegistry_;
     }
 
-    /// @notice The request hash this registry derives for an acceptance-test digest.
-    function requestHashFor(bytes32 digest) public view returns (bytes32) {
-        return keccak256(abi.encode(block.chainid, address(this), digest));
+    /// @notice The request hash this registry derives for an agent and an acceptance-test digest.
+    function requestHashFor(uint256 agentId, bytes32 digest) public view returns (bytes32) {
+        return keccak256(abi.encode(block.chainid, address(this), agentId, digest));
     }
 
     /// @notice Record a validation request before the outcome is knowable.
@@ -109,7 +111,7 @@ contract PredgeAgentValidatorV2 is Operated {
         if (digest == bytes32(0)) revert ZeroHash();
         if (msg.sender != operator && !_isAgentOwner(agentId)) revert NotAuthorized();
         if (validatorAddress != operator) revert WrongValidator();
-        requestHash = requestHashFor(digest);
+        requestHash = requestHashFor(agentId, digest);
         Validation storage v = _v[requestHash];
         if (v.requestedAt != 0) revert AlreadyRequested();
 
@@ -123,7 +125,9 @@ contract PredgeAgentValidatorV2 is Operated {
         emit RequestRecorded(requestHash, digest, msg.sender);
     }
 
-    /// @notice Record the verdict, once, for a request that exists. Operator only.
+    /// @notice Record the verdict, once, for a request that exists. Operator only. The responding
+    ///         operator is recorded as the validator (Olympix 5.3.10), so after a rotation the canonical
+    ///         event and `getValidationStatus` name the key that actually answered.
     /// @param response 0-100 (Predge: 100 delivered, 0 failed, 50 void)
     function validationResponse(
         bytes32 requestHash,
@@ -138,6 +142,7 @@ contract PredgeAgentValidatorV2 is Operated {
         if (v.requestedAt == 0) revert NotRequested();
         if (v.hasResponse) revert AlreadyResponded();
 
+        v.validator = msg.sender;
         v.response = response;
         v.responseHash = responseHash;
         v.respondedAt = uint64(block.timestamp);

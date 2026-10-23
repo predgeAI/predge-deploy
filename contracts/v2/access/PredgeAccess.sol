@@ -55,7 +55,11 @@ abstract contract Owned2Step {
 ///         ownership or configuration.
 /// @dev    Rotation is not retroactive by design: the contracts that pay out snapshot the staker
 ///         address on each stake or ruling, so rotating this key never lets a new key take an old
-///         key's funds, and never strands them either.
+///         key's bond, and never strands the bond either. It can strand an in-flight VERDICT
+///         (Olympix 5.3.8): a Committed stake in `PredgeValidatorBondV2` can only be scored by the new
+///         key if it is given the old commitment's `(expected, salt)`. If it is not, the job times out,
+///         the client is refunded and the bond is forfeited to the provider. Rotate with no stake in
+///         flight, or hand the preimages over, unless the old key is compromised.
 abstract contract Operated is Owned2Step {
     /// @notice The hot operations key. Rotatable by the owner.
     address public operator;

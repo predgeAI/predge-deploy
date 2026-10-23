@@ -47,16 +47,49 @@ contract PredgeAgentValidatorV2Test is Test {
 
     function test_requestHash_isDomainSeparated() public {
         bytes32 d = keccak256("d");
-        assertEq(reg.requestHashFor(d), keccak256(abi.encode(block.chainid, address(reg), d)));
-        assertTrue(reg.requestHashFor(d) != regId.requestHashFor(d), "differs per registry");
-        bytes32 onThisChain = reg.requestHashFor(d);
+        assertEq(reg.requestHashFor(7, d), keccak256(abi.encode(block.chainid, address(reg), uint256(7), d)));
+        assertTrue(reg.requestHashFor(7, d) != regId.requestHashFor(7, d), "differs per registry");
+        assertTrue(reg.requestHashFor(7, d) != reg.requestHashFor(8, d), "differs per agent");
+        bytes32 onThisChain = reg.requestHashFor(7, d);
         vm.chainId(999);
-        assertTrue(reg.requestHashFor(d) != onThisChain, "differs per chain");
+        assertTrue(reg.requestHashFor(7, d) != onThisChain, "differs per chain");
+    }
+
+    /// @dev Olympix 5.3.3: an agent-NFT holder cannot pre-claim another agent's digest; the verdict lands on the right agent.
+    function test_request_digestCannotBeSquattedAcrossAgents() public {
+        bytes32 d = keccak256("victim digest");
+        vm.prank(agentOwner); // owns agent 7, front-runs the digest under its own agent
+        bytes32 squat = regId.validationRequest(op, 7, "squat", d);
+        vm.prank(op); // the legitimate request for agent 1 still goes through, under its own key
+        bytes32 legit = regId.validationRequest(op, 1, "legit", d);
+        assertTrue(squat != legit);
+        vm.prank(op);
+        regId.validationResponse(legit, 100, "", keccak256("v"), "");
+        bytes32[] memory hs = new bytes32[](2);
+        hs[0] = legit; hs[1] = squat;
+        (uint64 n1,) = regId.getSummary(1, hs);
+        (uint64 n7,) = regId.getSummary(7, hs);
+        assertEq(n1, 1, "verdict counted for the requesting agent");
+        assertEq(n7, 0, "nothing credited to the squatter");
+    }
+
+    /// @dev Olympix 5.3.10: a pending request answered after a rotation records the key that answered.
+    function test_response_afterRotationNamesTheResponder() public {
+        bytes32 h = _req(reg, 1, keccak256("pending"));
+        address newOp = makeAddr("newOp");
+        vm.prank(safe);
+        reg.setOperator(newOp);
+        vm.expectEmit(true, true, true, true);
+        emit ValidationResponse(newOp, 1, h, 100, "", keccak256("a"), "");
+        vm.prank(newOp);
+        reg.validationResponse(h, 100, "", keccak256("a"), "");
+        (address v,,,,,) = reg.getValidationStatus(h);
+        assertEq(v, newOp);
     }
 
     function test_request_response_flow() public {
         bytes32 d = keccak256("d");
-        bytes32 h = reg.requestHashFor(d);
+        bytes32 h = reg.requestHashFor(7, d);
         vm.expectEmit(true, true, true, true);
         emit ValidationRequest(op, 7, "ipfs://req", h);
         vm.expectEmit(true, true, false, true);
@@ -99,7 +132,7 @@ contract PredgeAgentValidatorV2Test is Test {
     function test_request_agentOwnerViaIdentityRegistry() public {
         vm.prank(agentOwner);
         bytes32 h = regId.validationRequest(op, 7, "x", keccak256("d"));
-        assertEq(h, regId.requestHashFor(keccak256("d")));
+        assertEq(h, regId.requestHashFor(7, keccak256("d")));
         vm.prank(agentOwner); // owner of agent 7 cannot request for agent 8 (unknown token -> ownerOf reverts)
         vm.expectRevert(PredgeAgentValidatorV2.NotAuthorized.selector);
         regId.validationRequest(op, 8, "x", keccak256("e"));

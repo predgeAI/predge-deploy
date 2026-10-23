@@ -15,12 +15,13 @@ import {MockRefundProtocol as MockRPV1} from "../../contracts/MockRefundProtocol
 ///         v1 attack sequence run against the v1 contracts (it SUCCEEDS there, which proves the PoC
 ///         is a real exploit) and the same sequence against v2 (it reverts or is harmless).
 contract PocsBondTest is Base {
-    bytes32 constant E = keccak256("expected");
+    bytes32 internal E; // sha256(GOOD): the client's expected output hash
     bytes32 constant SALT = keccak256("salt");
     bytes32 constant X = keccak256("not the expected thing");
 
     function setUp() public {
         _deployJobAndBond();
+        E = _good();
     }
 
     // ------------------------------------------------------------------ H-01
@@ -48,7 +49,7 @@ contract PocsBondTest is Base {
     /// @dev v2: the same sequence cannot even start. Scoring needs a submission, so nothing can be
     ///      scored or reclaimed before the deliverable exists, and the window starts at the score.
     function test_v2_H01_verdictBeforeSubmissionReverts() public {
-        (uint256 id, bytes32 spec) = _newJob(1, 1 ether);
+        (uint256 id, bytes32 spec) = _newJob(1 ether, E, SALT);
         _stake(spec, E, SALT, id, 1 ether);
         vm.prank(op);
         vm.expectRevert(PredgeValidatorBondV2.NotSubmitted.selector);
@@ -65,7 +66,7 @@ contract PocsBondTest is Base {
 
     /// @dev v2: a submission that lands after the score attempt is judged inside a full window.
     function test_v2_H01_windowStartsAtOrAfterSubmission() public {
-        (uint256 id, bytes32 spec) = _newJob(1, 1 ether);
+        (uint256 id, bytes32 spec) = _newJob(1 ether, E, SALT);
         _stake(spec, E, SALT, id, 1 ether);
         vm.warp(block.timestamp + 2 days);
         _submit(id, X);
@@ -103,7 +104,7 @@ contract PocsBondTest is Base {
 
     /// @dev v2: the committed value is a hash, so there is nothing to copy.
     function test_v2_H02_expectedIsHiddenSoItCannotBeCopied() public {
-        (uint256 id, bytes32 spec) = _newJob(1, 1 ether);
+        (uint256 id, bytes32 spec) = _newJob(1 ether, E, SALT);
         _stake(spec, E, SALT, id, 1 ether);
         (,,,,,,,, bytes32 commitment, bytes32 expected) = bond.stakes(spec);
         assertEq(expected, bytes32(0));
@@ -118,16 +119,21 @@ contract PocsBondTest is Base {
 
     /// @dev v2: the operator cannot choose `expected` after seeing the deliverable.
     function test_v2_H02_cannotCommitAfterSubmission() public {
-        (uint256 id, bytes32 spec) = _newJob(1, 1 ether);
+        (uint256 id, bytes32 spec) = _newJob(1 ether, E, SALT);
         _submit(id, X);
-        vm.prank(op);
-        vm.expectRevert(PredgeValidatorBondV2.NotOpen.selector);
+        vm.startPrank(op);
+        // committing to the deliverable it has just seen is impossible twice over: the client fixed `expected`...
+        vm.expectRevert(PredgeValidatorBondV2.CommitmentNotBound.selector);
         bond.stakeAndCommit{value: 1 ether}(spec, keccak256(abi.encode(X, SALT)), id);
+        // ...and even the client's own commitment can no longer be staked once a deliverable exists
+        vm.expectRevert(PredgeValidatorBondV2.NotOpen.selector);
+        bond.stakeAndCommit{value: 1 ether}(spec, keccak256(abi.encode(E, SALT)), id);
+        vm.stopPrank();
     }
 
     /// @dev v2: a reveal that does not match the commitment is rejected, so `expected` cannot be swapped.
     function test_v2_H02_cannotSwapExpectedAtReveal() public {
-        (uint256 id, bytes32 spec) = _newJob(1, 1 ether);
+        (uint256 id, bytes32 spec) = _newJob(1 ether, E, SALT);
         _stake(spec, E, SALT, id, 1 ether);
         _submit(id, X);
         vm.prank(op);
@@ -139,7 +145,7 @@ contract PocsBondTest is Base {
 
     /// @dev M-02: the bond is paid to the harmed party; a self-challenge by the operator gains nothing.
     function test_v2_M02_selfChallengeIsNotProfitable() public {
-        (uint256 id, bytes32 spec) = _newJob(1, 5 ether);
+        (uint256 id, bytes32 spec) = _newJob(5 ether, E, SALT);
         _stake(spec, E, SALT, id, 5 ether);
         _submit(id, X);
         _score(spec, 100, E, SALT); // false pass, provider gets 5
@@ -153,9 +159,9 @@ contract PocsBondTest is Base {
 
     /// @dev M-04: the verdict IS the settlement; there is no way to record a verdict that does not move the job.
     function test_v2_M04_verdictMovesTheMoney() public {
-        (uint256 id, bytes32 spec) = _newJob(1, 2 ether);
+        (uint256 id, bytes32 spec) = _newJob(2 ether, E, SALT);
         _stake(spec, E, SALT, id, 2 ether);
-        _submit(id, E);
+        _deliver(id, GOOD);
         _score(spec, 100, E, SALT);
         assertEq(uint8(job.getJob(id).state), uint8(IAgentJobV2.State.Completed));
         // No other party can settle this job: the bond contract is the only evaluator.
@@ -167,7 +173,7 @@ contract PocsBondTest is Base {
     /// @dev A colluding operator and provider cannot profit from a false pass at the default 100% bond ratio.
     function testFuzz_collusionNeverProfitsAtFullBond(uint96 escrow) public {
         escrow = uint96(bound(escrow, 1, 100 ether));
-        (uint256 id, bytes32 spec) = _newJob(9, escrow);
+        (uint256 id, bytes32 spec) = _newJob(escrow, E, SALT);
         uint256 b = bond.requiredBond(escrow);
         _stake(spec, E, SALT, id, b);
         _submit(id, X);

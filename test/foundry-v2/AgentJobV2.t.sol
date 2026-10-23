@@ -67,6 +67,16 @@ contract AgentJobV2Test is Base {
         vm.stopPrank();
     }
 
+    /// @dev Olympix 5.3.4: neither the client nor the provider can be the evaluator.
+    function test_createJob_evaluatorNotClientOrProvider() public {
+        vm.startPrank(client);
+        vm.expectRevert(AgentJobV2.EvaluatorNotIndependent.selector);
+        job.createJob{value: 1}(provider, client, SPEC, uint64(block.timestamp + 1));
+        vm.expectRevert(AgentJobV2.EvaluatorNotIndependent.selector);
+        job.createJob{value: 1}(provider, provider, SPEC, uint64(block.timestamp + 1));
+        vm.stopPrank();
+    }
+
     function test_submit_hashOnly() public {
         uint256 id = _create(1 ether);
         vm.expectEmit(true, true, false, true);

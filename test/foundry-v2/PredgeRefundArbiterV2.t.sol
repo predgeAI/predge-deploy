@@ -113,13 +113,42 @@ contract PredgeRefundArbiterV2Test is ArbiterBase {
         assertEq(arb.requiredBond(1), 5);
     }
 
+    event LockupForwarded(address indexed recipient, uint256 lockupSeconds);
+
     function test_setLockupSeconds_isOwnerOnlyPassThrough() public {
+        uint256 ok = WINDOW + arb.RESOLUTION_TIMEOUT() + 1;
         vm.prank(op);
         vm.expectRevert(Owned2Step.NotOwner.selector);
-        arb.setLockupSeconds(payee, 5);
+        arb.setLockupSeconds(payee, ok);
+        vm.expectEmit(true, false, false, true);
+        emit LockupForwarded(payee, ok);
         vm.prank(safe);
-        arb.setLockupSeconds(payee, 5);
-        assertEq(rp.lockupSeconds(payee), 5);
+        arb.setLockupSeconds(payee, ok);
+        assertEq(rp.lockupSeconds(payee), ok);
+    }
+
+    /// @dev Olympix 5.3.12: the forwarded lockup is bounded below by window + resolution timeout and above by MAX_LOCKUP.
+    function test_setLockupSeconds_bounded() public {
+        uint256 floor_ = uint256(WINDOW) + 14 days; // literal: also pins RESOLUTION_TIMEOUT
+        vm.startPrank(safe);
+        vm.expectRevert(PredgeRefundArbiterV2.BadParams.selector);
+        arb.setLockupSeconds(payee, 0);
+        vm.expectRevert(PredgeRefundArbiterV2.BadParams.selector);
+        arb.setLockupSeconds(payee, floor_);
+        arb.setLockupSeconds(payee, floor_ + 1);
+        arb.setLockupSeconds(payee, 365 days);
+        assertEq(arb.MAX_LOCKUP(), 365 days);
+        vm.expectRevert(PredgeRefundArbiterV2.BadParams.selector);
+        arb.setLockupSeconds(payee, 365 days + 1);
+        vm.expectRevert(PredgeRefundArbiterV2.BadParams.selector);
+        arb.setLockupSeconds(payee, type(uint256).max);
+        // the floor follows the current challenge window
+        arb.setParams(2 days, MIN_BOND, BPS);
+        vm.expectRevert(PredgeRefundArbiterV2.BadParams.selector);
+        arb.setLockupSeconds(payee, floor_ + 1);
+        arb.setLockupSeconds(payee, floor_ + 1 days + 1);
+        vm.stopPrank();
+        assertEq(rp.lockupSeconds(payee), floor_ + 1 days + 1);
     }
 
     // ---- evidence ----
@@ -267,13 +296,25 @@ contract PredgeRefundArbiterV2Test is ArbiterBase {
         arb.rule{value: 1 ether}(pid2, payer, EV_PAYER, REFUND);
     }
 
-    function test_rule_refundNeedsLockupBeyondWindow() public {
-        uint256 pid = rp.recordPayment(payer, payee, 1 ether, block.timestamp + WINDOW);
+    /// @dev Olympix 5.2.1: the whole ruling (window + full resolution period) must end before release, for
+    ///      BOTH directions (a Release can be overturned into a Refund). Boundary is exclusive.
+    function test_rule_needsLockupBeyondWindowAndResolution() public {
+        uint256 edge = block.timestamp + WINDOW + 14 days; // literal 14 days pins RESOLUTION_TIMEOUT
+        uint256 pid = rp.recordPayment(payer, payee, 1 ether, edge);
         _file(pid);
-        vm.prank(op);
+        vm.startPrank(op);
         vm.expectRevert(PredgeRefundArbiterV2.LockupTooShort.selector);
         arb.rule{value: 1 ether}(pid, payer, EV_PAYER, REFUND);
-        _rule(pid, payer, EV_PAYER, RELEASE, 1 ether); // a Release moves nothing, so the lockup does not matter
+        vm.expectRevert(PredgeRefundArbiterV2.LockupTooShort.selector);
+        arb.rule{value: 1 ether}(pid, payee, EV_PAYEE, RELEASE);
+        vm.stopPrank();
+        uint256 pid2 = rp.recordPayment(payer, payee, 1 ether, edge + 1);
+        _file(pid2);
+        _rule(pid2, payer, EV_PAYER, REFUND, 1 ether);
+        uint256 pid3 = rp.recordPayment(payer, payee, 1 ether, edge + 1);
+        _file(pid3);
+        _rule(pid3, payee, EV_PAYEE, RELEASE, 1 ether);
+        assertEq(arb.RESOLUTION_TIMEOUT(), 14 days);
     }
 
     function test_bondScalesWithPayment() public {

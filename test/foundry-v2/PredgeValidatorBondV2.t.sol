@@ -8,7 +8,7 @@ import {PullCredit} from "../../contracts/v2/access/PullCredit.sol";
 import {Owned2Step, Operated} from "../../contracts/v2/access/PredgeAccess.sol";
 
 contract PredgeValidatorBondV2Test is Base {
-    bytes32 internal constant EXPECTED = keccak256("expected output hash");
+    bytes32 internal EXPECTED; // sha256(GOOD), set in setUp (sha256 is not a compile-time constant)
     bytes32 internal constant SALT = keccak256("salt");
     bytes32 internal constant OTHER = keccak256("something else");
 
@@ -17,10 +17,12 @@ contract PredgeValidatorBondV2Test is Base {
     event Slashed(bytes32 indexed requestHash, address indexed challenger, address indexed harmed, uint256 bond, uint8 recordedScore, bytes32 delivered);
     event Reclaimed(bytes32 indexed requestHash, address indexed staker, uint256 bond);
     event Released(bytes32 indexed requestHash, address indexed staker, uint256 bond);
+    event Forfeited(bytes32 indexed requestHash, address indexed provider, uint256 bond);
     event ParamsUpdated(uint64 disputeWindow, uint256 minBond, uint16 bondBps);
 
     function setUp() public {
         _deployJobAndBond();
+        EXPECTED = _good();
     }
 
     // ---- construction / params (M-01, L-01) ----
@@ -73,11 +75,11 @@ contract PredgeValidatorBondV2Test is Base {
     }
 
     function test_paramChangeIsNotRetroactive() public {
-        (uint256 id, bytes32 spec) = _newJob(1, 10 ether);
+        (uint256 id, bytes32 spec) = _newJob(10 ether, EXPECTED, SALT);
         _stake(spec, EXPECTED, SALT, id, 10 ether);
         vm.prank(safe);
         bond.setParams(30 days, MIN_BOND, BPS); // owner stretches the window afterwards
-        _submit(id, EXPECTED);
+        _deliver(id, GOOD);
         _score(spec, 100, EXPECTED, SALT);
         (,,,, , uint64 snap,,,,) = bond.stakes(spec);
         assertEq(snap, WINDOW, "stake keeps the window it was made with");
@@ -100,7 +102,7 @@ contract PredgeValidatorBondV2Test is Base {
     // ---- stakeAndCommit ----
 
     function test_stake_ok() public {
-        (uint256 id, bytes32 spec) = _newJob(1, 2 ether);
+        (uint256 id, bytes32 spec) = _newJob(2 ether, EXPECTED, SALT);
         vm.expectEmit(true, true, true, true);
         emit Committed(spec, id, op, _commitment(EXPECTED, SALT), 2 ether, WINDOW);
         _stake(spec, EXPECTED, SALT, id, 2 ether);
@@ -117,7 +119,7 @@ contract PredgeValidatorBondV2Test is Base {
     }
 
     function test_stake_reverts() public {
-        (uint256 id, bytes32 spec) = _newJob(1, 2 ether);
+        (uint256 id, bytes32 spec) = _newJob(2 ether, EXPECTED, SALT);
         bytes32 c = _commitment(EXPECTED, SALT);
         vm.prank(stranger);
         vm.expectRevert(Operated.NotOperator.selector);
@@ -132,8 +134,15 @@ contract PredgeValidatorBondV2Test is Base {
         bond.stakeAndCommit{value: 2 ether - 1}(spec, c, id);
         vm.expectRevert(PredgeValidatorBondV2.NotOpen.selector);
         bond.stakeAndCommit{value: 2 ether}(spec, c, 999); // unknown job
-        vm.expectRevert(PredgeValidatorBondV2.JobNotBound.selector);
+        // Olympix 5.1.1: the operator cannot commit to a value the client did not fix in the specHash
+        vm.expectRevert(PredgeValidatorBondV2.CommitmentNotBound.selector);
+        bond.stakeAndCommit{value: 2 ether}(spec, _commitment(OTHER, SALT), id);
+        vm.expectRevert(PredgeValidatorBondV2.CommitmentNotBound.selector);
         bond.stakeAndCommit{value: 2 ether}(keccak256("other spec"), c, id);
+        // a correctly derived hash for ANOTHER commitment is still not this job's spec
+        bytes32 otherSpec = _bspec(OTHER, SALT);
+        vm.expectRevert(PredgeValidatorBondV2.JobNotBound.selector);
+        bond.stakeAndCommit{value: 2 ether}(otherSpec, _commitment(OTHER, SALT), id);
         bond.stakeAndCommit{value: 2 ether}(spec, c, id);
         vm.expectRevert(PredgeValidatorBondV2.AlreadyCommitted.selector);
         bond.stakeAndCommit{value: 2 ether}(spec, c, id);
@@ -141,7 +150,7 @@ contract PredgeValidatorBondV2Test is Base {
     }
 
     function test_stake_wrongEvaluatorNotBound() public {
-        bytes32 spec = _spec(5);
+        bytes32 spec = _bspec(EXPECTED, SALT);
         vm.prank(client);
         uint256 id = job.createJob{value: 1 ether}(provider, stranger, spec, uint64(block.timestamp + 1 days));
         vm.prank(op);
@@ -150,7 +159,7 @@ contract PredgeValidatorBondV2Test is Base {
     }
 
     function test_stake_operatorCannotBeProvider() public {
-        bytes32 spec = _spec(5);
+        bytes32 spec = _bspec(EXPECTED, SALT);
         vm.prank(client);
         uint256 id = job.createJob{value: 1 ether}(op, address(bond), spec, uint64(block.timestamp + 1 days));
         vm.prank(op);
@@ -158,26 +167,52 @@ contract PredgeValidatorBondV2Test is Base {
         bond.stakeAndCommit{value: 1 ether}(spec, _commitment(EXPECTED, SALT), id);
     }
 
+    /// @dev Olympix 5.2.3: the operator cannot be the client of a job it stakes on or scores.
+    function test_stake_operatorCannotBeClient() public {
+        bytes32 spec = _bspec(EXPECTED, SALT);
+        vm.prank(op);
+        uint256 id = job.createJob{value: 1 ether}(provider, address(bond), spec, uint64(block.timestamp + 1 days));
+        vm.prank(op);
+        vm.expectRevert(PredgeValidatorBondV2.ClientIsOperator.selector);
+        bond.stakeAndCommit{value: 1 ether}(spec, _commitment(EXPECTED, SALT), id);
+    }
+
+    function test_score_rotatedOperatorCannotBeClient() public {
+        address newOp = makeAddr("newOp");
+        vm.deal(newOp, 10 ether);
+        bytes32 spec = _bspec(EXPECTED, SALT);
+        vm.prank(newOp);
+        uint256 id = job.createJob{value: 1 ether}(provider, address(bond), spec, uint64(block.timestamp + 1 days));
+        _stake(spec, EXPECTED, SALT, id, 1 ether); // old operator stakes: fine, it is not the client
+        _deliver(id, GOOD);
+        vm.prank(safe);
+        bond.setOperator(newOp); // the owner rotates to the job's client
+        vm.prank(newOp);
+        vm.expectRevert(PredgeValidatorBondV2.ClientIsOperator.selector);
+        bond.recordScore(spec, 0, EXPECTED, SALT, 0);
+    }
+
     function test_stake_notOpenOnceSubmittedOrLapsed() public {
-        (uint256 id, bytes32 spec) = _newJob(1, 1 ether);
+        (uint256 id, bytes32 spec) = _newJob(1 ether, EXPECTED, SALT);
         _submit(id, OTHER);
         vm.prank(op);
         vm.expectRevert(PredgeValidatorBondV2.NotOpen.selector);
-        bond.stakeAndCommit{value: 1 ether}(spec, _commitment(OTHER, SALT), id);
+        bond.stakeAndCommit{value: 1 ether}(spec, _commitment(EXPECTED, SALT), id);
 
-        (uint256 id2, bytes32 spec2) = _newJob(2, 1 ether);
+        bytes32 salt2 = keccak256("salt2");
+        (uint256 id2, bytes32 spec2) = _newJob(1 ether, EXPECTED, salt2);
         vm.warp(block.timestamp + 7 days);
         vm.prank(op);
         vm.expectRevert(PredgeValidatorBondV2.NotOpen.selector);
-        bond.stakeAndCommit{value: 1 ether}(spec2, _commitment(OTHER, SALT), id2);
+        bond.stakeAndCommit{value: 1 ether}(spec2, _commitment(EXPECTED, salt2), id2);
     }
 
     // ---- recordScore ----
 
     function test_score_pass_movesTheMoney() public {
-        (uint256 id, bytes32 spec) = _newJob(1, 4 ether);
+        (uint256 id, bytes32 spec) = _newJob(4 ether, EXPECTED, SALT);
         _stake(spec, EXPECTED, SALT, id, 4 ether);
-        _submit(id, EXPECTED);
+        _deliver(id, GOOD);
         vm.expectEmit(true, true, false, true);
         emit Scored(spec, id, 100, EXPECTED, uint64(block.timestamp), uint64(block.timestamp) + WINDOW);
         _score(spec, 100, EXPECTED, SALT);
@@ -191,7 +226,7 @@ contract PredgeValidatorBondV2Test is Base {
     }
 
     function test_score_fail_refundsClient() public {
-        (uint256 id, bytes32 spec) = _newJob(1, 4 ether);
+        (uint256 id, bytes32 spec) = _newJob(4 ether, EXPECTED, SALT);
         _stake(spec, EXPECTED, SALT, id, 4 ether);
         _submit(id, OTHER);
         _score(spec, 0, EXPECTED, SALT);
@@ -200,7 +235,7 @@ contract PredgeValidatorBondV2Test is Base {
     }
 
     function test_score_reverts() public {
-        (uint256 id, bytes32 spec) = _newJob(1, 1 ether);
+        (uint256 id, bytes32 spec) = _newJob(1 ether, EXPECTED, SALT);
         vm.startPrank(op);
         vm.expectRevert(PredgeValidatorBondV2.BadScore.selector);
         bond.recordScore(spec, 50, EXPECTED, SALT, 0);
@@ -214,7 +249,7 @@ contract PredgeValidatorBondV2Test is Base {
         vm.expectRevert(PredgeValidatorBondV2.NotSubmitted.selector);
         bond.recordScore(spec, 100, EXPECTED, SALT, 0);
         vm.stopPrank();
-        _submit(id, EXPECTED);
+        _deliver(id, GOOD);
         vm.prank(stranger);
         vm.expectRevert(Operated.NotOperator.selector);
         bond.recordScore(spec, 100, EXPECTED, SALT, 0);
@@ -225,9 +260,9 @@ contract PredgeValidatorBondV2Test is Base {
     }
 
     function test_score_afterEvaluationWindowRevertsAtTheJob() public {
-        (uint256 id, bytes32 spec) = _newJob(1, 1 ether);
+        (uint256 id, bytes32 spec) = _newJob(1 ether, EXPECTED, SALT);
         _stake(spec, EXPECTED, SALT, id, 1 ether);
-        _submit(id, EXPECTED);
+        _deliver(id, GOOD);
         vm.warp(block.timestamp + EVAL_WINDOW);
         vm.prank(op);
         vm.expectRevert(); // job.complete -> PastDeadline: a verdict after the deadline is impossible
@@ -236,11 +271,14 @@ contract PredgeValidatorBondV2Test is Base {
 
     // ---- challenge ----
 
+    /// @dev `delivered == EXPECTED` means the provider delivers the real bytes; anything else is a claimed hash.
     function _scored(uint256 n, bytes32 delivered, uint8 score, uint256 escrow) internal returns (uint256 id, bytes32 spec) {
-        (id, spec) = _newJob(n, escrow);
-        _stake(spec, EXPECTED, SALT, id, bond.requiredBond(escrow));
-        _submit(id, delivered);
-        _score(spec, score, EXPECTED, SALT);
+        bytes32 salt = keccak256(abi.encode(SALT, n));
+        (id, spec) = _newJob(escrow, EXPECTED, salt);
+        _stake(spec, EXPECTED, salt, id, bond.requiredBond(escrow));
+        if (delivered == EXPECTED) _deliver(id, GOOD);
+        else _submit(id, delivered);
+        _score(spec, score, EXPECTED, salt);
     }
 
     function test_challenge_falsePass_paysClientNotCaller() public {
@@ -319,7 +357,7 @@ contract PredgeValidatorBondV2Test is Base {
     }
 
     function test_release_whenJobExpiredWithoutVerdict() public {
-        (uint256 id, bytes32 spec) = _newJob(1, 2 ether);
+        (uint256 id, bytes32 spec) = _newJob(2 ether, EXPECTED, SALT);
         _stake(spec, EXPECTED, SALT, id, 2 ether);
         vm.expectRevert(PredgeValidatorBondV2.JobNotExpired.selector);
         bond.release(spec);
@@ -336,14 +374,24 @@ contract PredgeValidatorBondV2Test is Base {
     }
 
     function test_release_afterSilentEvaluationWindow() public {
-        (uint256 id, bytes32 spec) = _newJob(1, 2 ether);
+        (uint256 id, bytes32 spec) = _newJob(2 ether, EXPECTED, SALT);
         _stake(spec, EXPECTED, SALT, id, 2 ether);
-        _submit(id, EXPECTED);
+        _deliver(id, GOOD);
         vm.warp(block.timestamp + EVAL_WINDOW);
         job.claimRefund(id);
+        vm.expectEmit(true, true, false, true);
+        emit Forfeited(spec, provider, 2 ether);
         bond.release(spec);
-        assertEq(bond.credit(op), 2 ether);
-        assertEq(job.credit(client), 2 ether);
+        // Olympix 5.2.2: silence on delivered work forfeits the bond to the provider
+        assertEq(bond.credit(op), 0);
+        assertEq(bond.credit(provider), 2 ether);
+        assertEq(bond.totalBonded(), 0);
+        (, PredgeValidatorBondV2.Status st,,,,,, uint256 left,,) = bond.stakes(spec);
+        assertEq(uint8(st), uint8(PredgeValidatorBondV2.Status.Forfeited));
+        assertEq(left, 0);
+        assertEq(job.credit(client), 2 ether, "documented timeout policy: the escrow still goes to the client");
+        vm.expectRevert(PredgeValidatorBondV2.BadStatus.selector);
+        bond.release(spec);
     }
 
     function test_release_reverts() public {
@@ -359,7 +407,7 @@ contract PredgeValidatorBondV2Test is Base {
     function test_payoutToRevertingStakerDoesNotBlock() public {
         // The harmed party cannot receive value: the slash still lands as credit and can be redirected.
         NoReceive bad = new NoReceive();
-        bytes32 spec = _spec(9);
+        bytes32 spec = _bspec(EXPECTED, SALT);
         vm.deal(address(bad), 1 ether);
         vm.prank(address(bad));
         uint256 id = job.createJob{value: 1 ether}(provider, address(bond), spec, uint64(block.timestamp + 1 days));
@@ -377,14 +425,16 @@ contract PredgeValidatorBondV2Test is Base {
 
     // ---- fuzz ----
 
-    /// @dev Whatever the provider submits, the verdict is slashable iff it contradicts the hidden preimage.
-    function testFuzz_slashableIffContradicted(bytes32 expected, bytes32 delivered, bytes32 salt, bool claimPass) public {
-        vm.assume(expected != bytes32(0) && delivered != bytes32(0));
-        (uint256 id, bytes32 spec) = _newJob(77, 1 ether);
-        _stake(spec, expected, salt, id, 1 ether);
-        _submit(id, delivered);
-        _score(spec, claimPass ? 100 : 0, expected, salt);
-        bool truth = delivered == expected;
+    /// @dev Whatever the provider submits, the verdict is slashable iff it contradicts the truth, where
+    ///      "delivered" means bytes hashed on-chain whose hash equals the client's expected value.
+    function testFuzz_slashableIffContradicted(bytes32 salt, bool viaBytes, bool matching, bool claimPass, bytes32 junk) public {
+        vm.assume(junk != bytes32(0) && junk != EXPECTED);
+        (uint256 id, bytes32 spec) = _newJob(1 ether, EXPECTED, salt);
+        _stake(spec, EXPECTED, salt, id, 1 ether);
+        if (viaBytes) _deliver(id, matching ? GOOD : abi.encode(junk));
+        else _submit(id, matching ? EXPECTED : junk); // a claimed hash, even the right one, is not a delivery
+        _score(spec, claimPass ? 100 : 0, EXPECTED, salt);
+        bool truth = viaBytes && matching;
         bool lied = claimPass != truth;
         assertEq(bond.wouldSlash(spec), lied);
         if (lied) {
@@ -399,10 +449,11 @@ contract PredgeValidatorBondV2Test is Base {
     /// @dev Self-challenge is never profitable: whoever calls challenge, the operator's net is <= 0 on a lie.
     function testFuzz_operatorNeverProfitsFromChallenging(uint96 escrow, bool claimPass) public {
         escrow = uint96(bound(escrow, 1, 100 ether));
-        (uint256 id, bytes32 spec) = _newJob(88, escrow);
+        (uint256 id, bytes32 spec) = _newJob(escrow, EXPECTED, SALT);
         uint256 b = bond.requiredBond(escrow);
         _stake(spec, EXPECTED, SALT, id, b);
-        _submit(id, claimPass ? OTHER : EXPECTED); // the verdict below is the opposite of the truth
+        if (claimPass) _submit(id, OTHER); // the verdict below is the opposite of the truth
+        else _deliver(id, GOOD);
         _score(spec, claimPass ? 100 : 0, EXPECTED, SALT);
         vm.prank(op);
         bond.challenge(spec);

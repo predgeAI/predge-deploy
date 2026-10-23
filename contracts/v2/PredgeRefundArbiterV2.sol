@@ -49,11 +49,14 @@ interface IRefundProtocolV2 {
 ///
 ///         Trust, stated plainly: for disputed rulings the owner Safe is the court of last
 ///         resort. An operator that rules wrongly is only punished if the harmed party notices and
-///         disputes inside the window, and the owner then agrees. The window must close before the
-///         Refund Protocol's lockup ends, which `rule` enforces for a Refund. `finalize` should be
-///         called promptly (the operator, who wants its bond back, and the payer, who wants the refund,
-///         both have a reason to): once `expiresAt` has passed anyone can `expire` the ruling instead,
-///         which executes nothing and returns the bond.
+///         disputes inside the window, and the owner then agrees. The whole life of a ruling must fit
+///         before the Refund Protocol's lockup ends (Olympix 5.2.1): `rule` requires, for EITHER
+///         direction, `releaseTimestamp > now + window + RESOLUTION_TIMEOUT`, so a dispute filed at the
+///         last second still leaves the owner its full resolution period, and a refund chosen by
+///         `finalize` or `resolve` can still execute. `finalize` should be called promptly (the operator,
+///         who wants its bond back, and the payer, who wants the refund, both have a reason to): once
+///         `expiresAt` has passed anyone can `expire` the ruling instead, which executes nothing and
+///         returns the bond.
 ///
 /// @dev    Native value only, in the chain's native wei. The contract holds `totalBonded +
 ///         totalCredit` and never user payments. Parameters are bounded and not retroactive: the
@@ -93,6 +96,8 @@ contract PredgeRefundArbiterV2 is Operated, PullCredit {
     uint64 public constant MAX_WINDOW = 30 days;
     uint64 public constant RESOLUTION_TIMEOUT = 14 days;
     uint16 public constant MAX_BPS = 10_000;
+    /// @notice Upper bound for a recipient lockup forwarded by `setLockupSeconds`.
+    uint256 public constant MAX_LOCKUP = 365 days;
 
     IRefundProtocolV2 public immutable refundProtocol;
 
@@ -123,6 +128,7 @@ contract PredgeRefundArbiterV2 is Operated, PullCredit {
     event Overturned(uint256 indexed paymentID, address indexed harmed, Direction finalDirection, uint256 bond);
     event Voided(uint256 indexed paymentID, address indexed staker, uint256 bond);
     event ParamsUpdated(uint64 challengeWindow, uint256 minBond, uint16 bondBps);
+    event LockupForwarded(address indexed recipient, uint256 lockupSeconds);
 
     error ZeroHash();
     error BadParams();
@@ -162,8 +168,14 @@ contract PredgeRefundArbiterV2 is Operated, PullCredit {
         _setParams(challengeWindow_, minBond_, bondBps_);
     }
 
-    /// @notice Pass a recipient lockup change through to the Refund Protocol (owner only).
+    /// @notice Pass a recipient lockup change through to the Refund Protocol (owner only). Bounded
+    ///         (Olympix 5.3.12): longer than `challengeWindow + RESOLUTION_TIMEOUT`, so a ruling on a
+    ///         payment made under it can complete before release, and at most `MAX_LOCKUP`.
     function setLockupSeconds(address recipient, uint256 recipientLockupSeconds) external onlyOwner {
+        if (recipientLockupSeconds <= uint256(challengeWindow) + RESOLUTION_TIMEOUT || recipientLockupSeconds > MAX_LOCKUP) {
+            revert BadParams();
+        }
+        emit LockupForwarded(recipient, recipientLockupSeconds);
         refundProtocol.setLockupSeconds(recipient, recipientLockupSeconds);
     }
 
@@ -206,9 +218,10 @@ contract PredgeRefundArbiterV2 is Operated, PullCredit {
         uint256 required = requiredBond(amount);
         if (msg.value < required) revert BondTooSmall(required);
         uint64 window = challengeWindow;
-        // A refund must still be possible when the window closes. `finalize` must then run before the
-        // payment's `releaseTimestamp`; if it does not, the Refund Protocol rejects the refund and `expire` voids the ruling.
-        if (direction == Direction.Refund && releaseTimestamp <= block.timestamp + window) revert LockupTooShort();
+        // The whole ruling (window, then a dispute's full resolution period) must end before the payment is
+        // released, for BOTH directions: a Refund executes at finalize/resolve, and a Release can be overturned
+        // into a Refund by the owner. Otherwise a free last-second dispute could run the clock out.
+        if (releaseTimestamp <= block.timestamp + window + RESOLUTION_TIMEOUT) revert LockupTooShort();
 
         r.staker = msg.sender;
         r.status = Status.Ruled;
