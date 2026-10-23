@@ -4,7 +4,7 @@
   "deployer": "0xbB7A0c24677339045434273FFC2266B99E1e1301",
   "operator": "0x8ffFB76c4329DDC8ee4a859DDF55AB48ba25e292",
   "owner": "0x9084f5000E07C7133D6dA5eE4f271AB6D1821144",
-  "setVersion": "2026-10-20-v2",
+  "setVersion": "2026-10-23-v2.1",
   "compiler": {
     "solc": "v0.8.26+commit.8a97fa7a",
     "settings": {
@@ -15,24 +15,24 @@
       "evmVersion": "cancun"
     }
   },
-  "deployedAt": "2026-10-20T21:42:10.287Z",
+  "deployedAt": "2026-10-23T21:39:59.380Z",
   "explorer": "https://explorer.arc.io",
   "contracts": {
     "PredgeAgentValidatorV2": {
       "name": "PredgeAgentValidatorV2",
-      "address": "0xACC29BF9Ae35e51d36792C3B20D0Ac65f86Dd495",
-      "nonce": 0,
+      "address": "0xE4CFdE5dbD9afD518b9c59136939607505bF643D",
+      "nonce": 6,
       "args": [
         "0x9084f5000E07C7133D6dA5eE4f271AB6D1821144",
         "0x8ffFB76c4329DDC8ee4a859DDF55AB48ba25e292",
         "0x0000000000000000000000000000000000000000"
       ],
       "constructorArgs": "0x0000000000000000000000009084f5000e07c7133d6da5ee4f271ab6d18211440000000000000000000000008fffb76c4329ddc8ee4a859ddf55ab48ba25e2920000000000000000000000000000000000000000000000000000000000000000",
-      "sourceSha256": "39ce8493d21512143f7c0fa37419a3cd14e1808bceb3af3e9680dfedb107ecd0",
-      "txHash": "0x85281d12e1c9a3db70261f2b2fb8d5b82ec5a88dca4389359934d22df52e790a",
-      "block": 27008331,
-      "gasUsed": "1162822",
-      "effectiveGasPrice": "20001749006",
+      "sourceSha256": "188c8c4f4d75ca748cad006a4b30a825d2bc9e9725e42085685000e3ee0232dd",
+      "txHash": "0x5e255a03b2dfc5b9067ff243645740401269003f56e3b34dbc84afb52695cd99",
+      "block": 27518801,
+      "gasUsed": "1167799",
+      "effectiveGasPrice": "22281312500",
       "verified": {
         "ok": true,
         "via": "sourcify",
@@ -41,17 +41,17 @@
     },
     "AgentJobV2": {
       "name": "AgentJobV2",
-      "address": "0x550b360840C6614aD70E91CC6673FF3AB2dFd98C",
-      "nonce": 1,
+      "address": "0x5C673c6aBF3c60C3F6Ce3f1509f5d99C08F8B13F",
+      "nonce": 7,
       "args": [
         "259200"
       ],
       "constructorArgs": "0x000000000000000000000000000000000000000000000000000000000003f480",
-      "sourceSha256": "16050fa97d42c0982eac3bf4de36a4478c68165c7fbdfeac8e5b89960f6a8972",
-      "txHash": "0x860eb93b9a1652275f02f4da2cd07aaf34abe2e4a67640b8742ac7355f5813ef",
-      "block": 27008334,
-      "gasUsed": "904910",
-      "effectiveGasPrice": "20001749006",
+      "sourceSha256": "c83bd1c9ce4e8643b39246586619b7a12e203653b3f03386de03ab58b58c4a9a",
+      "txHash": "0x6a8877fc737f422363f7bbcf51a086b0401fe009e2d7cb5f092f040f672b4b9a",
+      "block": 27518804,
+      "gasUsed": "920066",
+      "effectiveGasPrice": "22281312500",
       "verified": {
         "ok": true,
         "via": "sourcify",
@@ -60,22 +60,21 @@
     },
     "PredgeValidatorBondV2": {
       "name": "PredgeValidatorBondV2",
-      "address": "0xa4BB68E55398c4EDD958DD6B32460D2018F78881",
-      "nonce": 2,
+      "address": "0x97E960Fe3D7759af8f51A95319859E60Df554329",
+      "nonce": 8,
       "args": [
         "0x9084f5000E07C7133D6dA5eE4f271AB6D1821144",
         "0x8ffFB76c4329DDC8ee4a859DDF55AB48ba25e292",
-        "0x550b360840C6614aD70E91CC6673FF3AB2dFd98C",
-        "86400",
+        "0x5C673c6aBF3c60C3F6Ce3f1509f5d99C08F8B13F",
         "5000000000000000000",
         "0"
       ],
-      "constructorArgs": "0x0000000000000000000000009084f5000e07c7133d6da5ee4f271ab6d18211440000000000000000000000008fffb76c4329ddc8ee4a859ddf55ab48ba25e292000000000000000000000000550b360840c6614ad70e91cc6673ff3ab2dfd98c00000000000000000000000000000000000000000000000000000000000151800000000000000000000000000000000000000000000000004563918244f400000000000000000000000000000000000000000000000000000000000000000000",
-      "sourceSha256": "887d0ae4945ea287ebddc2d9169a8f88074a75f871a49d0f7667b12f6b8f7e7d",
-      "txHash": "0x1c56cd30a31eeab6b9b344b9c9aa47c493eb0d25dcf17ec91a48f97b99327b69",
-      "block": 27008337,
-      "gasUsed": "1705859",
-      "effectiveGasPrice": "20001749006",
+      "constructorArgs": "0x0000000000000000000000009084f5000e07c7133d6da5ee4f271ab6d18211440000000000000000000000008fffb76c4329ddc8ee4a859ddf55ab48ba25e2920000000000000000000000005c673c6abf3c60c3f6ce3f1509f5d99c08f8b13f0000000000000000000000000000000000000000000000004563918244f400000000000000000000000000000000000000000000000000000000000000000000",
+      "sourceSha256": "0b84858a48a63548f0b889ca451587c6e57c81cf3b239e6521188f58aa8c694d",
+      "txHash": "0x89623fb5dabfb8bd9b804d04c32d275cc6864aaaed592c081b8a5a0412a07cb9",
+      "block": 27518808,
+      "gasUsed": "1453368",
+      "effectiveGasPrice": "22281312500",
       "verified": {
         "ok": true,
         "via": "sourcify",
@@ -84,17 +83,17 @@
     },
     "PredgeSettlementV2": {
       "name": "PredgeSettlementV2",
-      "address": "0x60991fE6a7afDcC79bDc43b754acE5c16158edb3",
-      "nonce": 3,
+      "address": "0x6fac55c5187A9cdb519F77163C7e3fD9E87F6f24",
+      "nonce": 9,
       "args": [
         "0x9084f5000E07C7133D6dA5eE4f271AB6D1821144"
       ],
       "constructorArgs": "0x0000000000000000000000009084f5000e07c7133d6da5ee4f271ab6d1821144",
       "sourceSha256": "fb87e5ef6756eb261c854ccf1f711234a2e657718aecb2e2d116557aa4ab84b7",
-      "txHash": "0x7f3da7502d81decfb37c3e7498aa8bc4fc42acaca95e6e2f060e19d6b42f8640",
-      "block": 27008341,
-      "gasUsed": "369071",
-      "effectiveGasPrice": "20001749006",
+      "txHash": "0x0f8e45d1156d6480396c23c3d707fcd9be54896b7699be032ac6e44f8fc4db26",
+      "block": 27518810,
+      "gasUsed": "369059",
+      "effectiveGasPrice": "22623509375",
       "verified": {
         "ok": true,
         "via": "sourcify",
@@ -103,17 +102,17 @@
     },
     "MockRefundProtocolV2": {
       "name": "MockRefundProtocolV2",
-      "address": "0x2768dBC17728403BAE6D8838e4AeC63bE21a9dA7",
-      "nonce": 4,
+      "address": "0x50041FdAb10f8f56E24FA9CA806f082CcAeb05E9",
+      "nonce": 10,
       "args": [
-        "0x72FAEb8eE70816Dbf66722657cc4Bea314EB5FE3"
+        "0xf404F908cb1ba47C01AB8526B725aAA940557eA9"
       ],
-      "constructorArgs": "0x00000000000000000000000072faeb8ee70816dbf66722657cc4bea314eb5fe3",
+      "constructorArgs": "0x000000000000000000000000f404f908cb1ba47c01ab8526b725aaa940557ea9",
       "sourceSha256": "e4f170d51e3a526a89bd4c0d1090b1441334fe5a610a0b43fef0dca078d3e66d",
-      "txHash": "0xe28fe22cac1322b91746dd7341b21eb5394c096e309cb52853010d3e92d4afbb",
-      "block": 27008343,
+      "txHash": "0x6dbd184dbc3ad8692ba13928e6f411dfadf752d9925bde25cdc931ea67885c3e",
+      "block": 27518813,
       "gasUsed": "408763",
-      "effectiveGasPrice": "20001749006",
+      "effectiveGasPrice": "22623509375",
       "verified": {
         "ok": true,
         "via": "sourcify",
@@ -122,22 +121,22 @@
     },
     "PredgeRefundArbiterV2": {
       "name": "PredgeRefundArbiterV2",
-      "address": "0x72FAEb8eE70816Dbf66722657cc4Bea314EB5FE3",
-      "nonce": 5,
+      "address": "0xf404F908cb1ba47C01AB8526B725aAA940557eA9",
+      "nonce": 11,
       "args": [
         "0x9084f5000E07C7133D6dA5eE4f271AB6D1821144",
         "0x8ffFB76c4329DDC8ee4a859DDF55AB48ba25e292",
-        "0x2768dBC17728403BAE6D8838e4AeC63bE21a9dA7",
+        "0x50041FdAb10f8f56E24FA9CA806f082CcAeb05E9",
         "86400",
         "5000000000000000000",
         "0"
       ],
-      "constructorArgs": "0x0000000000000000000000009084f5000e07c7133d6da5ee4f271ab6d18211440000000000000000000000008fffb76c4329ddc8ee4a859ddf55ab48ba25e2920000000000000000000000002768dbc17728403bae6d8838e4aec63be21a9da700000000000000000000000000000000000000000000000000000000000151800000000000000000000000000000000000000000000000004563918244f400000000000000000000000000000000000000000000000000000000000000000000",
-      "sourceSha256": "4942e21f42a00e7034c5af74884dea2e0e1d4b7605d770d0b2ca9411df6e2a5e",
-      "txHash": "0x111d5cb1b0045dee19d114d44de12565c5336104735d62bb55f28a8bef12ab14",
-      "block": 27008347,
-      "gasUsed": "1898263",
-      "effectiveGasPrice": "20001749006",
+      "constructorArgs": "0x0000000000000000000000009084f5000e07c7133d6da5ee4f271ab6d18211440000000000000000000000008fffb76c4329ddc8ee4a859ddf55ab48ba25e29200000000000000000000000050041fdab10f8f56e24fa9ca806f082ccaeb05e900000000000000000000000000000000000000000000000000000000000151800000000000000000000000000000000000000000000000004563918244f400000000000000000000000000000000000000000000000000000000000000000000",
+      "sourceSha256": "b5dc07973805879660216a2047ce1471f6a05abeb49c07466efc77e0c5f56bcf",
+      "txHash": "0xe7889a21d05c3967c2193f1e54cb43d722607e7eeba77ec873a9b1833e486c8f",
+      "block": 27518817,
+      "gasUsed": "1930219",
+      "effectiveGasPrice": "22623509375",
       "verified": {
         "ok": true,
         "via": "sourcify",
@@ -163,32 +162,32 @@
     {
       "check": "PredgeAgentValidatorV2 runtime == compiled",
       "ok": true,
-      "detail": "0xACC29BF9Ae35e51d36792C3B20D0Ac65f86Dd495"
+      "detail": "0xE4CFdE5dbD9afD518b9c59136939607505bF643D"
     },
     {
       "check": "AgentJobV2 runtime == compiled",
       "ok": true,
-      "detail": "0x550b360840C6614aD70E91CC6673FF3AB2dFd98C"
+      "detail": "0x5C673c6aBF3c60C3F6Ce3f1509f5d99C08F8B13F"
     },
     {
       "check": "PredgeValidatorBondV2 runtime == compiled",
       "ok": true,
-      "detail": "0xa4BB68E55398c4EDD958DD6B32460D2018F78881"
+      "detail": "0x97E960Fe3D7759af8f51A95319859E60Df554329"
     },
     {
       "check": "PredgeSettlementV2 runtime == compiled",
       "ok": true,
-      "detail": "0x60991fE6a7afDcC79bDc43b754acE5c16158edb3"
+      "detail": "0x6fac55c5187A9cdb519F77163C7e3fD9E87F6f24"
     },
     {
       "check": "MockRefundProtocolV2 runtime == compiled",
       "ok": true,
-      "detail": "0x2768dBC17728403BAE6D8838e4AeC63bE21a9dA7"
+      "detail": "0x50041FdAb10f8f56E24FA9CA806f082CcAeb05E9"
     },
     {
       "check": "PredgeRefundArbiterV2 runtime == compiled",
       "ok": true,
-      "detail": "0x72FAEb8eE70816Dbf66722657cc4Bea314EB5FE3"
+      "detail": "0xf404F908cb1ba47C01AB8526B725aAA940557eA9"
     },
     {
       "check": "registry.owner == owner (not the deployer)",
@@ -268,7 +267,7 @@
     {
       "check": "bond.job == AgentJobV2",
       "ok": true,
-      "detail": "0x550b360840C6614aD70E91CC6673FF3AB2dFd98C"
+      "detail": "0x5C673c6aBF3c60C3F6Ce3f1509f5d99C08F8B13F"
     },
     {
       "check": "bond params",
@@ -276,19 +275,24 @@
       "detail": ""
     },
     {
-      "check": "bond.wouldSlash(unknown) == false",
+      "check": "bond.verdictFor(no job) == 0",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "bond has no challenge() (v2.1: false verdicts are refused, not slashed)",
       "ok": true,
       "detail": ""
     },
     {
       "check": "arbiter.refundProtocol == mock",
       "ok": true,
-      "detail": "0x2768dBC17728403BAE6D8838e4AeC63bE21a9dA7"
+      "detail": "0x50041FdAb10f8f56E24FA9CA806f082CcAeb05E9"
     },
     {
       "check": "mock.arbiter == arbiter",
       "ok": true,
-      "detail": "0x72FAEb8eE70816Dbf66722657cc4Bea314EB5FE3"
+      "detail": "0xf404F908cb1ba47C01AB8526B725aAA940557eA9"
     },
     {
       "check": "arbiter params",
@@ -299,7 +303,24 @@
       "check": "registry.requestHashFor is domain separated",
       "ok": true,
       "detail": ""
+    },
+    {
+      "check": "bond.specHashFor is domain separated",
+      "ok": true,
+      "detail": ""
     }
   ],
-  "legacy": "predge-arc/deployments/arc-mainnet (deployer 0xEc7A…6223): full set incl. bond v2.1 + arbiter v2"
+  "legacy": "predge-arc/deployments/arc-mainnet (deployer 0xEc7A…6223): full set incl. bond v2.1 + arbiter v2",
+  "supersedes": {
+    "setVersion": "2026-10-20-v2",
+    "record": "arc.v2-0.json",
+    "addresses": {
+      "PredgeAgentValidatorV2": "0xACC29BF9Ae35e51d36792C3B20D0Ac65f86Dd495",
+      "AgentJobV2": "0x550b360840C6614aD70E91CC6673FF3AB2dFd98C",
+      "PredgeValidatorBondV2": "0xa4BB68E55398c4EDD958DD6B32460D2018F78881",
+      "PredgeSettlementV2": "0x60991fE6a7afDcC79bDc43b754acE5c16158edb3",
+      "MockRefundProtocolV2": "0x2768dBC17728403BAE6D8838e4AeC63bE21a9dA7",
+      "PredgeRefundArbiterV2": "0x72FAEb8eE70816Dbf66722657cc4Bea314EB5FE3"
+    }
+  }
 }

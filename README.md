@@ -100,23 +100,35 @@ Canonical v1 addresses for deployer `0x5d016C1B4d7A42eB7c982da1Ae7fFdB958CFCAe9`
 
 ## Deployments
 
-### v2 (current): Arc (5042) and Base (8453)
+### v2 (current, v2.1): Arc (5042) and Base (8453)
 
-Deployed 20-21 Oct 2026. The same six addresses on both chains. All six are verified on Sourcify (exact match). Receipts: [`deployments/v2/arc.json`](deployments/v2/arc.json), [`deployments/v2/base.json`](deployments/v2/base.json).
+Deployed 2026-10-23 from set `2026-10-23-v2.1` (deployer nonces 6..11). The same six addresses on both chains. All six are verified on Sourcify. Receipts: [`deployments/v2/arc.json`](deployments/v2/arc.json), [`deployments/v2/base.json`](deployments/v2/base.json).
 
 | Contract | Address (Arc and Base) | Sourcify | Explorer |
 |---|---|---|---|
-| PredgeAgentValidatorV2 | `0xACC29BF9Ae35e51d36792C3B20D0Ac65f86Dd495` | [Sourcify](https://sourcify.dev/#/lookup/0xACC29BF9Ae35e51d36792C3B20D0Ac65f86Dd495) | [Arc](https://explorer.arc.io/address/0xACC29BF9Ae35e51d36792C3B20D0Ac65f86Dd495), [Base](https://basescan.org/address/0xACC29BF9Ae35e51d36792C3B20D0Ac65f86Dd495) |
-| AgentJobV2 | `0x550b360840C6614aD70E91CC6673FF3AB2dFd98C` | [Sourcify](https://sourcify.dev/#/lookup/0x550b360840C6614aD70E91CC6673FF3AB2dFd98C) | [Arc](https://explorer.arc.io/address/0x550b360840C6614aD70E91CC6673FF3AB2dFd98C), [Base](https://basescan.org/address/0x550b360840C6614aD70E91CC6673FF3AB2dFd98C) |
-| PredgeValidatorBondV2 | `0xa4BB68E55398c4EDD958DD6B32460D2018F78881` | [Sourcify](https://sourcify.dev/#/lookup/0xa4BB68E55398c4EDD958DD6B32460D2018F78881) | [Arc](https://explorer.arc.io/address/0xa4BB68E55398c4EDD958DD6B32460D2018F78881), [Base](https://basescan.org/address/0xa4BB68E55398c4EDD958DD6B32460D2018F78881) |
-| PredgeSettlementV2 | `0x60991fE6a7afDcC79bDc43b754acE5c16158edb3` | [Sourcify](https://sourcify.dev/#/lookup/0x60991fE6a7afDcC79bDc43b754acE5c16158edb3) | [Arc](https://explorer.arc.io/address/0x60991fE6a7afDcC79bDc43b754acE5c16158edb3), [Base](https://basescan.org/address/0x60991fE6a7afDcC79bDc43b754acE5c16158edb3) |
-| MockRefundProtocolV2 (demo refund protocol) | `0x2768dBC17728403BAE6D8838e4AeC63bE21a9dA7` | [Sourcify](https://sourcify.dev/#/lookup/0x2768dBC17728403BAE6D8838e4AeC63bE21a9dA7) | [Arc](https://explorer.arc.io/address/0x2768dBC17728403BAE6D8838e4AeC63bE21a9dA7), [Base](https://basescan.org/address/0x2768dBC17728403BAE6D8838e4AeC63bE21a9dA7) |
-| PredgeRefundArbiterV2 | `0x72FAEb8eE70816Dbf66722657cc4Bea314EB5FE3` | [Sourcify](https://sourcify.dev/#/lookup/0x72FAEb8eE70816Dbf66722657cc4Bea314EB5FE3) | [Arc](https://explorer.arc.io/address/0x72FAEb8eE70816Dbf66722657cc4Bea314EB5FE3), [Base](https://basescan.org/address/0x72FAEb8eE70816Dbf66722657cc4Bea314EB5FE3) |
+| PredgeAgentValidatorV2 | `0xE4CFdE5dbD9afD518b9c59136939607505bF643D` | [Sourcify](https://sourcify.dev/#/lookup/0xE4CFdE5dbD9afD518b9c59136939607505bF643D) | [Arc](https://explorer.arc.io/address/0xE4CFdE5dbD9afD518b9c59136939607505bF643D), [Base](https://basescan.org/address/0xE4CFdE5dbD9afD518b9c59136939607505bF643D) |
+| AgentJobV2 | `0x5C673c6aBF3c60C3F6Ce3f1509f5d99C08F8B13F` | [Sourcify](https://sourcify.dev/#/lookup/0x5C673c6aBF3c60C3F6Ce3f1509f5d99C08F8B13F) | [Arc](https://explorer.arc.io/address/0x5C673c6aBF3c60C3F6Ce3f1509f5d99C08F8B13F), [Base](https://basescan.org/address/0x5C673c6aBF3c60C3F6Ce3f1509f5d99C08F8B13F) |
+| PredgeValidatorBondV2 | `0x97E960Fe3D7759af8f51A95319859E60Df554329` | [Sourcify](https://sourcify.dev/#/lookup/0x97E960Fe3D7759af8f51A95319859E60Df554329) | [Arc](https://explorer.arc.io/address/0x97E960Fe3D7759af8f51A95319859E60Df554329), [Base](https://basescan.org/address/0x97E960Fe3D7759af8f51A95319859E60Df554329) |
+| PredgeSettlementV2 | `0x6fac55c5187A9cdb519F77163C7e3fD9E87F6f24` | [Sourcify](https://sourcify.dev/#/lookup/0x6fac55c5187A9cdb519F77163C7e3fD9E87F6f24) | [Arc](https://explorer.arc.io/address/0x6fac55c5187A9cdb519F77163C7e3fD9E87F6f24), [Base](https://basescan.org/address/0x6fac55c5187A9cdb519F77163C7e3fD9E87F6f24) |
+| MockRefundProtocolV2 (demo refund protocol) | `0x50041FdAb10f8f56E24FA9CA806f082CcAeb05E9` | [Sourcify](https://sourcify.dev/#/lookup/0x50041FdAb10f8f56E24FA9CA806f082CcAeb05E9) | [Arc](https://explorer.arc.io/address/0x50041FdAb10f8f56E24FA9CA806f082CcAeb05E9), [Base](https://basescan.org/address/0x50041FdAb10f8f56E24FA9CA806f082CcAeb05E9) |
+| PredgeRefundArbiterV2 | `0xf404F908cb1ba47C01AB8526B725aAA940557eA9` | [Sourcify](https://sourcify.dev/#/lookup/0xf404F908cb1ba47C01AB8526B725aAA940557eA9) | [Arc](https://explorer.arc.io/address/0xf404F908cb1ba47C01AB8526B725aAA940557eA9), [Base](https://basescan.org/address/0xf404F908cb1ba47C01AB8526B725aAA940557eA9) |
 
-- **Owner:** `0x9084f5000E07C7133D6dA5eE4f271AB6D1821144`, a **temporary single EOA**. A transfer to a Safe 2-of-3 multisig via `Ownable2Step` (`transferOwnership`, then `acceptOwnership`) is planned, target this week. Until then, treat the owner as a single point of control.
-- **Operator** (hot ops key, rotatable by the owner): `0x8ffFB76c4329DDC8ee4a859DDF55AB48ba25e292`.
-- **Bond floor:** minimal, about $5 (5 USDC on Arc, 0.002 ETH on Base). No percentage of job value (bps = 0). It is a floor, not coverage of job value.
-- **Status:** Olympix (BugPoCer, via Circle's Arc programme) scanned v2 at commit `c47ed42` on 23 Oct 2026: 2 High, 3 Medium, 12 Low. The fixes and the option (a) verdict check are v2.1 (see above) and are **not deployed yet**: the Arc and Base instances above are the scanned code and are affected by the confirmed findings (the contracts are not upgradeable, so a fix means a redeployment). v2.1 will land at nonces 6..11 of the same deployer; `scripts/v2-post-deploy.mjs` then marks the addresses above deprecated. The on-chain bonds are not claimed as a guarantee. The signed verdict API (`api.predge.io`) is unchanged and remains the product.
+- **Owner:** `0x9084f5000E07C7133D6dA5eE4f271AB6D1821144` (TEMPORARY owner = Amir EOA 0x9084…1144 by owner decision; transferOwnership→acceptOwnership to the Safe once created.). **Operator** (hot ops key, rotatable by the owner): `0x8ffFB76c4329DDC8ee4a859DDF55AB48ba25e292`.
+- **Bond floor:** minimal (bps = 0), per-chain floor from `config/v2.chains.json`. Since v2.1 the validator bond backs liveness only: `recordScore` refuses any verdict that contradicts the on-chain evidence (pass needs the output bytes hashed on-chain and equal to the client-committed `expected`; fail needs the opposite), so a false verdict cannot be recorded at any bond size and there is no challenge window.
+- **Status:** v2.1 contains the fixes for the Olympix BugPoCer scan of `c47ed42` (23 Oct 2026) and the option (a) verdict check. The signed verdict API (`api.predge.io`) is unchanged and remains the product.
+
+### v2.0 (DEPRECATED, 20-21 Oct 2026): do not use
+
+The first v2 set (`2026-10-20-v2`, commit `c47ed42`) is still on chain at the addresses below, because the contracts are not upgradeable. It is affected by the confirmed Olympix findings and held no funds when it was superseded. Nothing in Predge points at it. Records: [`deployments/v2/arc.v2-0.json`](deployments/v2/arc.v2-0.json), [`deployments/v2/base.v2-0.json`](deployments/v2/base.v2-0.json).
+
+| Contract | Deprecated address (Arc and Base) |
+|---|---|
+| PredgeAgentValidatorV2 | ~~`0xACC29BF9Ae35e51d36792C3B20D0Ac65f86Dd495`~~ |
+| AgentJobV2 | ~~`0x550b360840C6614aD70E91CC6673FF3AB2dFd98C`~~ |
+| PredgeValidatorBondV2 | ~~`0xa4BB68E55398c4EDD958DD6B32460D2018F78881`~~ |
+| PredgeSettlementV2 | ~~`0x60991fE6a7afDcC79bDc43b754acE5c16158edb3`~~ |
+| MockRefundProtocolV2 | ~~`0x2768dBC17728403BAE6D8838e4AeC63bE21a9dA7`~~ |
+| PredgeRefundArbiterV2 | ~~`0x72FAEb8eE70816Dbf66722657cc4Bea314EB5FE3`~~ |
 
 ### v1 (legacy): 16 mainnets
 
