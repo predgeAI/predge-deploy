@@ -1,0 +1,26 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "v2/mocks/MockRefundProtocolV2.sol": {
+      "content": "// SPDX-License-Identifier: MIT\npragma solidity 0.8.26;\n\n/// @notice DEMO / TEST ONLY stand-in for a Refund Protocol. It holds NO funds and moves NO\n///         money: `refundByArbiter` only flips a flag and emits an event, so a \"refund\" here\n///         proves the arbiter made the call and nothing more. It exposes the payment parties the\n///         v2 arbiter binds evidence to. Anyone can create a payment record; that is intended for\n///         demos and is the reason this contract must never be treated as a payment rail.\ncontract MockRefundProtocolV2 {\n    struct Payment {\n        address payer;\n        address payee;\n        uint256 amount;\n        uint256 releaseTimestamp;\n        bool refunded;\n    }\n\n    address public immutable arbiter;\n    uint256 public paymentCount;\n    uint256 public refundCount;\n    mapping(uint256 => Payment) public payments;\n    mapping(address => uint256) public lockupSeconds;\n\n    event PaymentRecorded(uint256 indexed paymentID, address indexed payer, address indexed payee, uint256 amount, uint256 releaseTimestamp);\n    event RefundByArbiter(uint256 indexed paymentID, address indexed caller);\n    event LockupSet(address indexed recipient, uint256 lockupSeconds);\n\n    error CallerNotArbiter();\n    error UnknownPayment();\n    error AlreadyRefunded();\n    error AlreadyReleased();\n    error ZeroAddress();\n\n    constructor(address arbiter_) {\n        if (arbiter_ == address(0)) revert ZeroAddress();\n        arbiter = arbiter_;\n    }\n\n    /// @notice Record a payment's parties (no value moves). Demo only.\n    function recordPayment(address payer, address payee, uint256 amount, uint256 releaseTimestamp)\n        external\n        returns (uint256 paymentID)\n    {\n        if (payer == address(0) || payee == address(0)) revert ZeroAddress();\n        paymentID = ++paymentCount;\n        payments[paymentID] = Payment(payer, payee, amount, releaseTimestamp, false);\n        emit PaymentRecorded(paymentID, payer, payee, amount, releaseTimestamp);\n    }\n\n    function paymentInfo(uint256 paymentID)\n        external\n        view\n        returns (address payer, address payee, uint256 amount, uint256 releaseTimestamp)\n    {\n        Payment storage p = payments[paymentID];\n        return (p.payer, p.payee, p.amount, p.releaseTimestamp);\n    }\n\n    function refundByArbiter(uint256 paymentID) external {\n        if (msg.sender != arbiter) revert CallerNotArbiter();\n        Payment storage p = payments[paymentID];\n        if (p.payee == address(0)) revert UnknownPayment();\n        if (p.refunded) revert AlreadyRefunded();\n        if (block.timestamp >= p.releaseTimestamp) revert AlreadyReleased();\n        p.refunded = true;\n        refundCount += 1;\n        emit RefundByArbiter(paymentID, msg.sender);\n    }\n\n    function setLockupSeconds(address recipient, uint256 recipientLockupSeconds) external {\n        if (msg.sender != arbiter) revert CallerNotArbiter();\n        lockupSeconds[recipient] = recipientLockupSeconds;\n        emit LockupSet(recipient, recipientLockupSeconds);\n    }\n}\n"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "evmVersion": "cancun",
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode.object",
+          "evm.deployedBytecode.object",
+          "evm.deployedBytecode.immutableReferences",
+          "metadata"
+        ]
+      }
+    }
+  }
+}

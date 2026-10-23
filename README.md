@@ -10,6 +10,34 @@ node deploy.mjs --chain base --fork     # full deploy + smoke + end-to-end on a 
 CONFIRM_MAINNET=base node deploy.mjs --chain base --broadcast   # the real deploy
 ```
 
+## v2 (self-audit fixes, live on Arc and Base)
+
+`contracts/v2/` is the redesigned set that fixes the 20.10.2026 self-audit findings (H-01..H-03, M-01..M-05, L-01..L-07). v2 is deployed on Arc and Base only (see [Deployments](#deployments)). The 16-chain set is v1, legacy, and is untouched. Design, finding-by-finding mapping and owner actions: `SELF-AUDIT-2026-10-20/v2-design.md` (Downloads).
+
+**v2.1 (23.10.2026, set `2026-10-23-v2.1`)** adds the fixes for the Olympix BugPoCer scan of `c47ed42` and the owner's option (a)
+for the validator bond: `PredgeValidatorBondV2.recordScore` refuses any verdict that contradicts the on-chain evidence and reverts
+`VerdictContradictsEvidence`. A pass (100) needs the provider to have submitted the output bytes (hashed on-chain by the job) with a
+hash equal to the `expected` the client committed in the job's specHash; a fail (0) needs the opposite. A false verdict therefore
+cannot be recorded at any bond size, including `bondBps = 0`. `challenge`, `wouldSlash`, `reclaim` and the dispute window are gone
+(nothing is left to challenge); the bond is credited back to the staker with the verdict and only backs liveness: an operator that
+stays silent on a submitted job forfeits it to the provider (`release`). `verdictFor(jobId, expected)` returns the only score
+`recordScore` will accept. Constructor: `(owner, operator, job, minBond, bondBps)`; `setParams(minBond, bondBps)`.
+The same deployer creates v2.1 at nonces 6..11 (`nonceBase` in `config/set.v2.json`), again the same addresses on Arc and Base.
+
+```
+FOUNDRY_CONFIG=foundry-v2.toml forge test                 # unit + fuzz + invariant + PoC tests (v1 attacks run against v1 and v2)
+FOUNDRY_CONFIG=foundry-v2.toml forge coverage --no-match-coverage "(test/|foundry-lib|contracts/[A-Za-z]+\.sol)"
+node --test test/                                          # plan, v1 bytecode match (network), v2 plan
+node deploy.mjs --chain base --set v2 --fork              # anvil fork of Base: deploy + honest path + every v1 attack sequence (must revert)
+node scripts/fork-all.mjs --set v2 --no-e2e               # gas / cost on every chain
+node scripts/mutate-v2.mjs                                 # mutation smoke run
+node scripts/v2-params.mjs 5                               # regenerate per-chain bond floors (about $5 each) from live prices
+node scripts/v2-post-deploy.mjs --chains arc,base         # after a v2.1 broadcast: archive v2.0 records (*.v2-0.json), verify leftovers, README
+```
+
+Real v2 runs (`--set v2` without `--fork`) refuse to start until the owner fills `config/v2.config.json` (new deployer address, the Safe, the ops key)
+and, to broadcast, pass `--key-file <the NEW v2 deployer json>`. v2 never reads `~/.predge-deployer`. `--fork` uses throwaway accounts only.
+
 ## The set
 
 Order is the deployer's nonce. Contract *i* is created at nonce *i*.
@@ -59,7 +87,7 @@ The tool enforces this:
 
 **Never use the deployer key for anything else.** Not even a plain transfer out until every chain has the whole set.
 
-Canonical addresses for deployer `0x5d016C1B4d7A42eB7c982da1Ae7fFdB958CFCAe9`:
+Canonical v1 addresses for deployer `0x5d016C1B4d7A42eB7c982da1Ae7fFdB958CFCAe9`:
 
 | Contract | Address (every chain) |
 |---|---|
@@ -72,7 +100,41 @@ Canonical addresses for deployer `0x5d016C1B4d7A42eB7c982da1Ae7fFdB958CFCAe9`:
 
 ## Deployments
 
-Live on **16 mainnets** since 18 Oct 2026, all six contracts at the canonical addresses above. Checked the same day with `eth_getCode` on every chain, and every contract is an exact match on [Sourcify](https://sourcify.dev). Full receipts (block, gas, constructor args, source hash) are in `deployments/<chain>.json`.
+### v2 (current, v2.1): Arc (5042) and Base (8453)
+
+Deployed 2026-10-23 from set `2026-10-23-v2.1` (deployer nonces 6..11). The same six addresses on both chains. All six are verified on Sourcify. Receipts: [`deployments/v2/arc.json`](deployments/v2/arc.json), [`deployments/v2/base.json`](deployments/v2/base.json).
+
+| Contract | Address (Arc and Base) | Sourcify | Explorer |
+|---|---|---|---|
+| PredgeAgentValidatorV2 | `0xE4CFdE5dbD9afD518b9c59136939607505bF643D` | [Sourcify](https://sourcify.dev/#/lookup/0xE4CFdE5dbD9afD518b9c59136939607505bF643D) | [Arc](https://explorer.arc.io/address/0xE4CFdE5dbD9afD518b9c59136939607505bF643D), [Base](https://basescan.org/address/0xE4CFdE5dbD9afD518b9c59136939607505bF643D) |
+| AgentJobV2 | `0x5C673c6aBF3c60C3F6Ce3f1509f5d99C08F8B13F` | [Sourcify](https://sourcify.dev/#/lookup/0x5C673c6aBF3c60C3F6Ce3f1509f5d99C08F8B13F) | [Arc](https://explorer.arc.io/address/0x5C673c6aBF3c60C3F6Ce3f1509f5d99C08F8B13F), [Base](https://basescan.org/address/0x5C673c6aBF3c60C3F6Ce3f1509f5d99C08F8B13F) |
+| PredgeValidatorBondV2 | `0x97E960Fe3D7759af8f51A95319859E60Df554329` | [Sourcify](https://sourcify.dev/#/lookup/0x97E960Fe3D7759af8f51A95319859E60Df554329) | [Arc](https://explorer.arc.io/address/0x97E960Fe3D7759af8f51A95319859E60Df554329), [Base](https://basescan.org/address/0x97E960Fe3D7759af8f51A95319859E60Df554329) |
+| PredgeSettlementV2 | `0x6fac55c5187A9cdb519F77163C7e3fD9E87F6f24` | [Sourcify](https://sourcify.dev/#/lookup/0x6fac55c5187A9cdb519F77163C7e3fD9E87F6f24) | [Arc](https://explorer.arc.io/address/0x6fac55c5187A9cdb519F77163C7e3fD9E87F6f24), [Base](https://basescan.org/address/0x6fac55c5187A9cdb519F77163C7e3fD9E87F6f24) |
+| MockRefundProtocolV2 (demo refund protocol) | `0x50041FdAb10f8f56E24FA9CA806f082CcAeb05E9` | [Sourcify](https://sourcify.dev/#/lookup/0x50041FdAb10f8f56E24FA9CA806f082CcAeb05E9) | [Arc](https://explorer.arc.io/address/0x50041FdAb10f8f56E24FA9CA806f082CcAeb05E9), [Base](https://basescan.org/address/0x50041FdAb10f8f56E24FA9CA806f082CcAeb05E9) |
+| PredgeRefundArbiterV2 | `0xf404F908cb1ba47C01AB8526B725aAA940557eA9` | [Sourcify](https://sourcify.dev/#/lookup/0xf404F908cb1ba47C01AB8526B725aAA940557eA9) | [Arc](https://explorer.arc.io/address/0xf404F908cb1ba47C01AB8526B725aAA940557eA9), [Base](https://basescan.org/address/0xf404F908cb1ba47C01AB8526B725aAA940557eA9) |
+
+- **Owner:** `0x9084f5000E07C7133D6dA5eE4f271AB6D1821144` (TEMPORARY owner = Amir EOA 0x9084…1144 by owner decision; transferOwnership→acceptOwnership to the Safe once created.). **Operator** (hot ops key, rotatable by the owner): `0x8ffFB76c4329DDC8ee4a859DDF55AB48ba25e292`.
+- **Bond floor:** minimal (bps = 0), per-chain floor from `config/v2.chains.json`. Since v2.1 the validator bond backs liveness only: `recordScore` refuses any verdict that contradicts the on-chain evidence (pass needs the output bytes hashed on-chain and equal to the client-committed `expected`; fail needs the opposite), so a false verdict cannot be recorded at any bond size and there is no challenge window.
+- **Status:** v2.1 contains the fixes for the Olympix BugPoCer scan of `c47ed42` (23 Oct 2026) and the option (a) verdict check. The signed verdict API (`api.predge.io`) is unchanged and remains the product.
+
+### v2.0 (DEPRECATED, 20-21 Oct 2026): do not use
+
+The first v2 set (`2026-10-20-v2`, commit `c47ed42`) is still on chain at the addresses below, because the contracts are not upgradeable. It is affected by the confirmed Olympix findings and held no funds when it was superseded. Nothing in Predge points at it. Records: [`deployments/v2/arc.v2-0.json`](deployments/v2/arc.v2-0.json), [`deployments/v2/base.v2-0.json`](deployments/v2/base.v2-0.json).
+
+| Contract | Deprecated address (Arc and Base) |
+|---|---|
+| PredgeAgentValidatorV2 | ~~`0xACC29BF9Ae35e51d36792C3B20D0Ac65f86Dd495`~~ |
+| AgentJobV2 | ~~`0x550b360840C6614aD70E91CC6673FF3AB2dFd98C`~~ |
+| PredgeValidatorBondV2 | ~~`0xa4BB68E55398c4EDD958DD6B32460D2018F78881`~~ |
+| PredgeSettlementV2 | ~~`0x60991fE6a7afDcC79bDc43b754acE5c16158edb3`~~ |
+| MockRefundProtocolV2 | ~~`0x2768dBC17728403BAE6D8838e4AeC63bE21a9dA7`~~ |
+| PredgeRefundArbiterV2 | ~~`0x72FAEb8eE70816Dbf66722657cc4Bea314EB5FE3`~~ |
+
+### v1 (legacy): 16 mainnets
+
+**Legacy, known issues, holds no funds.** Kept deployed as a reference only. The v2 set above fixes the self-review findings in it.
+
+The v1 set went live on **16 mainnets** on 18 Oct 2026, all six contracts at the canonical addresses above. Checked the same day with `eth_getCode` on every chain, and every contract is an exact match on [Sourcify](https://sourcify.dev). Full receipts (block, gas, constructor args, source hash) are in `deployments/<chain>.json`.
 
 Creation transactions, in nonce order:
 

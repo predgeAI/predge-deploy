@@ -1,0 +1,292 @@
+{
+  "chain": "base",
+  "chainId": 8453,
+  "deployer": "0xbB7A0c24677339045434273FFC2266B99E1e1301",
+  "operator": "0x8ffFB76c4329DDC8ee4a859DDF55AB48ba25e292",
+  "owner": "0x9084f5000E07C7133D6dA5eE4f271AB6D1821144",
+  "setVersion": "2026-10-20-v2",
+  "compiler": {
+    "solc": "v0.8.26+commit.8a97fa7a",
+    "settings": {
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "evmVersion": "cancun"
+    }
+  },
+  "deployedAt": "2026-10-20T21:52:38.533Z",
+  "explorer": "https://basescan.org",
+  "contracts": {
+    "PredgeAgentValidatorV2": {
+      "name": "PredgeAgentValidatorV2",
+      "address": "0xACC29BF9Ae35e51d36792C3B20D0Ac65f86Dd495",
+      "nonce": 0,
+      "args": [
+        "0x9084f5000E07C7133D6dA5eE4f271AB6D1821144",
+        "0x8ffFB76c4329DDC8ee4a859DDF55AB48ba25e292",
+        "0x0000000000000000000000000000000000000000"
+      ],
+      "constructorArgs": "0x0000000000000000000000009084f5000e07c7133d6da5ee4f271ab6d18211440000000000000000000000008fffb76c4329ddc8ee4a859ddf55ab48ba25e2920000000000000000000000000000000000000000000000000000000000000000",
+      "sourceSha256": "39ce8493d21512143f7c0fa37419a3cd14e1808bceb3af3e9680dfedb107ecd0",
+      "skipped": true,
+      "verified": {
+        "ok": true,
+        "via": "sourcify",
+        "note": "already verified"
+      }
+    },
+    "AgentJobV2": {
+      "name": "AgentJobV2",
+      "address": "0x550b360840C6614aD70E91CC6673FF3AB2dFd98C",
+      "nonce": 1,
+      "args": [
+        "259200"
+      ],
+      "constructorArgs": "0x000000000000000000000000000000000000000000000000000000000003f480",
+      "sourceSha256": "16050fa97d42c0982eac3bf4de36a4478c68165c7fbdfeac8e5b89960f6a8972",
+      "skipped": true,
+      "verified": {
+        "ok": true,
+        "via": "sourcify",
+        "note": "already verified"
+      }
+    },
+    "PredgeValidatorBondV2": {
+      "name": "PredgeValidatorBondV2",
+      "address": "0xa4BB68E55398c4EDD958DD6B32460D2018F78881",
+      "nonce": 2,
+      "args": [
+        "0x9084f5000E07C7133D6dA5eE4f271AB6D1821144",
+        "0x8ffFB76c4329DDC8ee4a859DDF55AB48ba25e292",
+        "0x550b360840C6614aD70E91CC6673FF3AB2dFd98C",
+        "86400",
+        "2000000000000000",
+        "0"
+      ],
+      "constructorArgs": "0x0000000000000000000000009084f5000e07c7133d6da5ee4f271ab6d18211440000000000000000000000008fffb76c4329ddc8ee4a859ddf55ab48ba25e292000000000000000000000000550b360840c6614ad70e91cc6673ff3ab2dfd98c000000000000000000000000000000000000000000000000000000000001518000000000000000000000000000000000000000000000000000071afd498d00000000000000000000000000000000000000000000000000000000000000000000",
+      "sourceSha256": "887d0ae4945ea287ebddc2d9169a8f88074a75f871a49d0f7667b12f6b8f7e7d",
+      "skipped": true,
+      "verified": {
+        "ok": true,
+        "via": "sourcify",
+        "note": "already verified"
+      }
+    },
+    "PredgeSettlementV2": {
+      "name": "PredgeSettlementV2",
+      "address": "0x60991fE6a7afDcC79bDc43b754acE5c16158edb3",
+      "nonce": 3,
+      "args": [
+        "0x9084f5000E07C7133D6dA5eE4f271AB6D1821144"
+      ],
+      "constructorArgs": "0x0000000000000000000000009084f5000e07c7133d6da5ee4f271ab6d1821144",
+      "sourceSha256": "fb87e5ef6756eb261c854ccf1f711234a2e657718aecb2e2d116557aa4ab84b7",
+      "skipped": true,
+      "verified": {
+        "ok": true,
+        "via": "sourcify",
+        "note": "already verified"
+      }
+    },
+    "MockRefundProtocolV2": {
+      "name": "MockRefundProtocolV2",
+      "address": "0x2768dBC17728403BAE6D8838e4AeC63bE21a9dA7",
+      "nonce": 4,
+      "args": [
+        "0x72FAEb8eE70816Dbf66722657cc4Bea314EB5FE3"
+      ],
+      "constructorArgs": "0x00000000000000000000000072faeb8ee70816dbf66722657cc4bea314eb5fe3",
+      "sourceSha256": "e4f170d51e3a526a89bd4c0d1090b1441334fe5a610a0b43fef0dca078d3e66d",
+      "skipped": true,
+      "verified": {
+        "ok": true,
+        "via": "sourcify",
+        "note": "already verified"
+      }
+    },
+    "PredgeRefundArbiterV2": {
+      "name": "PredgeRefundArbiterV2",
+      "address": "0x72FAEb8eE70816Dbf66722657cc4Bea314EB5FE3",
+      "nonce": 5,
+      "args": [
+        "0x9084f5000E07C7133D6dA5eE4f271AB6D1821144",
+        "0x8ffFB76c4329DDC8ee4a859DDF55AB48ba25e292",
+        "0x2768dBC17728403BAE6D8838e4AeC63bE21a9dA7",
+        "86400",
+        "2000000000000000",
+        "0"
+      ],
+      "constructorArgs": "0x0000000000000000000000009084f5000e07c7133d6da5ee4f271ab6d18211440000000000000000000000008fffb76c4329ddc8ee4a859ddf55ab48ba25e2920000000000000000000000002768dbc17728403bae6d8838e4aec63be21a9da7000000000000000000000000000000000000000000000000000000000001518000000000000000000000000000000000000000000000000000071afd498d00000000000000000000000000000000000000000000000000000000000000000000",
+      "sourceSha256": "4942e21f42a00e7034c5af74884dea2e0e1d4b7605d770d0b2ca9411df6e2a5e",
+      "skipped": true,
+      "verified": {
+        "ok": true,
+        "via": "sourcify",
+        "note": "already verified"
+      }
+    }
+  },
+  "erc8004": {
+    "IdentityRegistry": {
+      "address": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
+      "version": "2.0.0"
+    },
+    "ReputationRegistry": {
+      "address": "0x8004BAa17C55a88189AE136b182e5fdA19dE9b63",
+      "version": "2.0.0"
+    },
+    "ValidationRegistry": {
+      "address": "0x8004Cc8439f36fd5F9F049D9fF86523Df6dAAB58",
+      "version": "2.0.0"
+    }
+  },
+  "smoke": [
+    {
+      "check": "PredgeAgentValidatorV2 runtime == compiled",
+      "ok": true,
+      "detail": "0xACC29BF9Ae35e51d36792C3B20D0Ac65f86Dd495"
+    },
+    {
+      "check": "AgentJobV2 runtime == compiled",
+      "ok": true,
+      "detail": "0x550b360840C6614aD70E91CC6673FF3AB2dFd98C"
+    },
+    {
+      "check": "PredgeValidatorBondV2 runtime == compiled",
+      "ok": true,
+      "detail": "0xa4BB68E55398c4EDD958DD6B32460D2018F78881"
+    },
+    {
+      "check": "PredgeSettlementV2 runtime == compiled",
+      "ok": true,
+      "detail": "0x60991fE6a7afDcC79bDc43b754acE5c16158edb3"
+    },
+    {
+      "check": "MockRefundProtocolV2 runtime == compiled",
+      "ok": true,
+      "detail": "0x2768dBC17728403BAE6D8838e4AeC63bE21a9dA7"
+    },
+    {
+      "check": "PredgeRefundArbiterV2 runtime == compiled",
+      "ok": true,
+      "detail": "0x72FAEb8eE70816Dbf66722657cc4Bea314EB5FE3"
+    },
+    {
+      "check": "registry.owner == owner (not the deployer)",
+      "ok": true,
+      "detail": "0x9084f5000E07C7133D6dA5eE4f271AB6D1821144"
+    },
+    {
+      "check": "registry.pendingOwner == 0",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "bond.owner == owner (not the deployer)",
+      "ok": true,
+      "detail": "0x9084f5000E07C7133D6dA5eE4f271AB6D1821144"
+    },
+    {
+      "check": "bond.pendingOwner == 0",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "settlement.owner == owner (not the deployer)",
+      "ok": true,
+      "detail": "0x9084f5000E07C7133D6dA5eE4f271AB6D1821144"
+    },
+    {
+      "check": "settlement.pendingOwner == 0",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "arbiter.owner == owner (not the deployer)",
+      "ok": true,
+      "detail": "0x9084f5000E07C7133D6dA5eE4f271AB6D1821144"
+    },
+    {
+      "check": "arbiter.pendingOwner == 0",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "registry.operator == operator",
+      "ok": true,
+      "detail": "0x8ffFB76c4329DDC8ee4a859DDF55AB48ba25e292"
+    },
+    {
+      "check": "bond.operator == operator",
+      "ok": true,
+      "detail": "0x8ffFB76c4329DDC8ee4a859DDF55AB48ba25e292"
+    },
+    {
+      "check": "arbiter.operator == operator",
+      "ok": true,
+      "detail": "0x8ffFB76c4329DDC8ee4a859DDF55AB48ba25e292"
+    },
+    {
+      "check": "no contract has a renounceOwnership",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "registry.identityRegistry",
+      "ok": true,
+      "detail": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "check": "job.evaluationWindow",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "job.jobCount == 0",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "bond.job == AgentJobV2",
+      "ok": true,
+      "detail": "0x550b360840C6614aD70E91CC6673FF3AB2dFd98C"
+    },
+    {
+      "check": "bond params",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "bond.wouldSlash(unknown) == false",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "arbiter.refundProtocol == mock",
+      "ok": true,
+      "detail": "0x2768dBC17728403BAE6D8838e4AeC63bE21a9dA7"
+    },
+    {
+      "check": "mock.arbiter == arbiter",
+      "ok": true,
+      "detail": "0x72FAEb8eE70816Dbf66722657cc4Bea314EB5FE3"
+    },
+    {
+      "check": "arbiter params",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "registry.requestHashFor is domain separated",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "legacy": null,
+  "deprecated": {
+    "by": "2026-10-23-v2.1",
+    "record": "base.json",
+    "reason": "Olympix BugPoCer scan of c47ed42 (23.10.2026): confirmed findings, fixed in v2.1. Not upgradeable, so the v2.0 instances stay on chain; do not use them."
+  }
+}
