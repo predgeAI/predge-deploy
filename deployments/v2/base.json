@@ -4,7 +4,7 @@
   "deployer": "0xbB7A0c24677339045434273FFC2266B99E1e1301",
   "operator": "0x8ffFB76c4329DDC8ee4a859DDF55AB48ba25e292",
   "owner": "0x9084f5000E07C7133D6dA5eE4f271AB6D1821144",
-  "setVersion": "2026-10-20-v2",
+  "setVersion": "2026-10-23-v2.1",
   "compiler": {
     "solc": "v0.8.26+commit.8a97fa7a",
     "settings": {
@@ -15,20 +15,20 @@
       "evmVersion": "cancun"
     }
   },
-  "deployedAt": "2026-10-20T21:52:38.533Z",
+  "deployedAt": "2026-10-23T21:44:53.724Z",
   "explorer": "https://basescan.org",
   "contracts": {
     "PredgeAgentValidatorV2": {
       "name": "PredgeAgentValidatorV2",
-      "address": "0xACC29BF9Ae35e51d36792C3B20D0Ac65f86Dd495",
-      "nonce": 0,
+      "address": "0xE4CFdE5dbD9afD518b9c59136939607505bF643D",
+      "nonce": 6,
       "args": [
         "0x9084f5000E07C7133D6dA5eE4f271AB6D1821144",
         "0x8ffFB76c4329DDC8ee4a859DDF55AB48ba25e292",
         "0x0000000000000000000000000000000000000000"
       ],
       "constructorArgs": "0x0000000000000000000000009084f5000e07c7133d6da5ee4f271ab6d18211440000000000000000000000008fffb76c4329ddc8ee4a859ddf55ab48ba25e2920000000000000000000000000000000000000000000000000000000000000000",
-      "sourceSha256": "39ce8493d21512143f7c0fa37419a3cd14e1808bceb3af3e9680dfedb107ecd0",
+      "sourceSha256": "188c8c4f4d75ca748cad006a4b30a825d2bc9e9725e42085685000e3ee0232dd",
       "skipped": true,
       "verified": {
         "ok": true,
@@ -38,13 +38,13 @@
     },
     "AgentJobV2": {
       "name": "AgentJobV2",
-      "address": "0x550b360840C6614aD70E91CC6673FF3AB2dFd98C",
-      "nonce": 1,
+      "address": "0x5C673c6aBF3c60C3F6Ce3f1509f5d99C08F8B13F",
+      "nonce": 7,
       "args": [
         "259200"
       ],
       "constructorArgs": "0x000000000000000000000000000000000000000000000000000000000003f480",
-      "sourceSha256": "16050fa97d42c0982eac3bf4de36a4478c68165c7fbdfeac8e5b89960f6a8972",
+      "sourceSha256": "c83bd1c9ce4e8643b39246586619b7a12e203653b3f03386de03ab58b58c4a9a",
       "skipped": true,
       "verified": {
         "ok": true,
@@ -54,18 +54,17 @@
     },
     "PredgeValidatorBondV2": {
       "name": "PredgeValidatorBondV2",
-      "address": "0xa4BB68E55398c4EDD958DD6B32460D2018F78881",
-      "nonce": 2,
+      "address": "0x97E960Fe3D7759af8f51A95319859E60Df554329",
+      "nonce": 8,
       "args": [
         "0x9084f5000E07C7133D6dA5eE4f271AB6D1821144",
         "0x8ffFB76c4329DDC8ee4a859DDF55AB48ba25e292",
-        "0x550b360840C6614aD70E91CC6673FF3AB2dFd98C",
-        "86400",
+        "0x5C673c6aBF3c60C3F6Ce3f1509f5d99C08F8B13F",
         "2000000000000000",
         "0"
       ],
-      "constructorArgs": "0x0000000000000000000000009084f5000e07c7133d6da5ee4f271ab6d18211440000000000000000000000008fffb76c4329ddc8ee4a859ddf55ab48ba25e292000000000000000000000000550b360840c6614ad70e91cc6673ff3ab2dfd98c000000000000000000000000000000000000000000000000000000000001518000000000000000000000000000000000000000000000000000071afd498d00000000000000000000000000000000000000000000000000000000000000000000",
-      "sourceSha256": "887d0ae4945ea287ebddc2d9169a8f88074a75f871a49d0f7667b12f6b8f7e7d",
+      "constructorArgs": "0x0000000000000000000000009084f5000e07c7133d6da5ee4f271ab6d18211440000000000000000000000008fffb76c4329ddc8ee4a859ddf55ab48ba25e2920000000000000000000000005c673c6abf3c60c3f6ce3f1509f5d99c08f8b13f00000000000000000000000000000000000000000000000000071afd498d00000000000000000000000000000000000000000000000000000000000000000000",
+      "sourceSha256": "0b84858a48a63548f0b889ca451587c6e57c81cf3b239e6521188f58aa8c694d",
       "skipped": true,
       "verified": {
         "ok": true,
@@ -75,8 +74,8 @@
     },
     "PredgeSettlementV2": {
       "name": "PredgeSettlementV2",
-      "address": "0x60991fE6a7afDcC79bDc43b754acE5c16158edb3",
-      "nonce": 3,
+      "address": "0x6fac55c5187A9cdb519F77163C7e3fD9E87F6f24",
+      "nonce": 9,
       "args": [
         "0x9084f5000E07C7133D6dA5eE4f271AB6D1821144"
       ],
@@ -86,17 +85,17 @@
       "verified": {
         "ok": true,
         "via": "sourcify",
-        "note": "already verified"
+        "match": "exact_match"
       }
     },
     "MockRefundProtocolV2": {
       "name": "MockRefundProtocolV2",
-      "address": "0x2768dBC17728403BAE6D8838e4AeC63bE21a9dA7",
-      "nonce": 4,
+      "address": "0x50041FdAb10f8f56E24FA9CA806f082CcAeb05E9",
+      "nonce": 10,
       "args": [
-        "0x72FAEb8eE70816Dbf66722657cc4Bea314EB5FE3"
+        "0xf404F908cb1ba47C01AB8526B725aAA940557eA9"
       ],
-      "constructorArgs": "0x00000000000000000000000072faeb8ee70816dbf66722657cc4bea314eb5fe3",
+      "constructorArgs": "0x000000000000000000000000f404f908cb1ba47c01ab8526b725aaa940557ea9",
       "sourceSha256": "e4f170d51e3a526a89bd4c0d1090b1441334fe5a610a0b43fef0dca078d3e66d",
       "skipped": true,
       "verified": {
@@ -107,18 +106,18 @@
     },
     "PredgeRefundArbiterV2": {
       "name": "PredgeRefundArbiterV2",
-      "address": "0x72FAEb8eE70816Dbf66722657cc4Bea314EB5FE3",
-      "nonce": 5,
+      "address": "0xf404F908cb1ba47C01AB8526B725aAA940557eA9",
+      "nonce": 11,
       "args": [
         "0x9084f5000E07C7133D6dA5eE4f271AB6D1821144",
         "0x8ffFB76c4329DDC8ee4a859DDF55AB48ba25e292",
-        "0x2768dBC17728403BAE6D8838e4AeC63bE21a9dA7",
+        "0x50041FdAb10f8f56E24FA9CA806f082CcAeb05E9",
         "86400",
         "2000000000000000",
         "0"
       ],
-      "constructorArgs": "0x0000000000000000000000009084f5000e07c7133d6da5ee4f271ab6d18211440000000000000000000000008fffb76c4329ddc8ee4a859ddf55ab48ba25e2920000000000000000000000002768dbc17728403bae6d8838e4aec63be21a9da7000000000000000000000000000000000000000000000000000000000001518000000000000000000000000000000000000000000000000000071afd498d00000000000000000000000000000000000000000000000000000000000000000000",
-      "sourceSha256": "4942e21f42a00e7034c5af74884dea2e0e1d4b7605d770d0b2ca9411df6e2a5e",
+      "constructorArgs": "0x0000000000000000000000009084f5000e07c7133d6da5ee4f271ab6d18211440000000000000000000000008fffb76c4329ddc8ee4a859ddf55ab48ba25e29200000000000000000000000050041fdab10f8f56e24fa9ca806f082ccaeb05e9000000000000000000000000000000000000000000000000000000000001518000000000000000000000000000000000000000000000000000071afd498d00000000000000000000000000000000000000000000000000000000000000000000",
+      "sourceSha256": "b5dc07973805879660216a2047ce1471f6a05abeb49c07466efc77e0c5f56bcf",
       "skipped": true,
       "verified": {
         "ok": true,
@@ -145,32 +144,32 @@
     {
       "check": "PredgeAgentValidatorV2 runtime == compiled",
       "ok": true,
-      "detail": "0xACC29BF9Ae35e51d36792C3B20D0Ac65f86Dd495"
+      "detail": "0xE4CFdE5dbD9afD518b9c59136939607505bF643D"
     },
     {
       "check": "AgentJobV2 runtime == compiled",
       "ok": true,
-      "detail": "0x550b360840C6614aD70E91CC6673FF3AB2dFd98C"
+      "detail": "0x5C673c6aBF3c60C3F6Ce3f1509f5d99C08F8B13F"
     },
     {
       "check": "PredgeValidatorBondV2 runtime == compiled",
       "ok": true,
-      "detail": "0xa4BB68E55398c4EDD958DD6B32460D2018F78881"
+      "detail": "0x97E960Fe3D7759af8f51A95319859E60Df554329"
     },
     {
       "check": "PredgeSettlementV2 runtime == compiled",
       "ok": true,
-      "detail": "0x60991fE6a7afDcC79bDc43b754acE5c16158edb3"
+      "detail": "0x6fac55c5187A9cdb519F77163C7e3fD9E87F6f24"
     },
     {
       "check": "MockRefundProtocolV2 runtime == compiled",
       "ok": true,
-      "detail": "0x2768dBC17728403BAE6D8838e4AeC63bE21a9dA7"
+      "detail": "0x50041FdAb10f8f56E24FA9CA806f082CcAeb05E9"
     },
     {
       "check": "PredgeRefundArbiterV2 runtime == compiled",
       "ok": true,
-      "detail": "0x72FAEb8eE70816Dbf66722657cc4Bea314EB5FE3"
+      "detail": "0xf404F908cb1ba47C01AB8526B725aAA940557eA9"
     },
     {
       "check": "registry.owner == owner (not the deployer)",
@@ -250,7 +249,7 @@
     {
       "check": "bond.job == AgentJobV2",
       "ok": true,
-      "detail": "0x550b360840C6614aD70E91CC6673FF3AB2dFd98C"
+      "detail": "0x5C673c6aBF3c60C3F6Ce3f1509f5d99C08F8B13F"
     },
     {
       "check": "bond params",
@@ -258,19 +257,24 @@
       "detail": ""
     },
     {
-      "check": "bond.wouldSlash(unknown) == false",
+      "check": "bond.verdictFor(no job) == 0",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "bond has no challenge() (v2.1: false verdicts are refused, not slashed)",
       "ok": true,
       "detail": ""
     },
     {
       "check": "arbiter.refundProtocol == mock",
       "ok": true,
-      "detail": "0x2768dBC17728403BAE6D8838e4AeC63bE21a9dA7"
+      "detail": "0x50041FdAb10f8f56E24FA9CA806f082CcAeb05E9"
     },
     {
       "check": "mock.arbiter == arbiter",
       "ok": true,
-      "detail": "0x72FAEb8eE70816Dbf66722657cc4Bea314EB5FE3"
+      "detail": "0xf404F908cb1ba47C01AB8526B725aAA940557eA9"
     },
     {
       "check": "arbiter params",
@@ -281,7 +285,24 @@
       "check": "registry.requestHashFor is domain separated",
       "ok": true,
       "detail": ""
+    },
+    {
+      "check": "bond.specHashFor is domain separated",
+      "ok": true,
+      "detail": ""
     }
   ],
-  "legacy": null
+  "legacy": null,
+  "supersedes": {
+    "setVersion": "2026-10-20-v2",
+    "record": "base.v2-0.json",
+    "addresses": {
+      "PredgeAgentValidatorV2": "0xACC29BF9Ae35e51d36792C3B20D0Ac65f86Dd495",
+      "AgentJobV2": "0x550b360840C6614aD70E91CC6673FF3AB2dFd98C",
+      "PredgeValidatorBondV2": "0xa4BB68E55398c4EDD958DD6B32460D2018F78881",
+      "PredgeSettlementV2": "0x60991fE6a7afDcC79bDc43b754acE5c16158edb3",
+      "MockRefundProtocolV2": "0x2768dBC17728403BAE6D8838e4AeC63bE21a9dA7",
+      "PredgeRefundArbiterV2": "0x72FAEb8eE70816Dbf66722657cc4Bea314EB5FE3"
+    }
+  }
 }
