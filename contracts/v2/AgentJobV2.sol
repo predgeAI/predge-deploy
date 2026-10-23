@@ -5,10 +5,11 @@ import {IAgentJobV2} from "./interfaces/IAgentJobV2.sol";
 import {PullCredit} from "./access/PullCredit.sol";
 
 /// @title  AgentJobV2
-/// @notice A minimal ERC-8183-style agent job with escrowed native value and an INDEPENDENT
-///         evaluator named at creation. In Predge's deployment the evaluator is the
-///         `PredgeValidatorBondV2` contract, so the evaluator's verdict is backed by a bond and
-///         moves the money in the same transaction.
+/// @notice A minimal ERC-8183-style agent job with escrowed native value and an evaluator named at
+///         creation. The evaluator may be neither the client nor the provider (a trivial check: it
+///         cannot detect two addresses controlled by one party). In Predge's deployment the evaluator is the
+///         `PredgeValidatorBondV2` contract, which only accepts a verdict that agrees with the on-chain
+///         deliverable hash and moves the money in the same transaction.
 ///
 ///         Lifecycle:
 ///           createJob  (client escrows value, names provider, evaluator, spec and an expiry)
@@ -70,6 +71,7 @@ contract AgentJobV2 is IAgentJobV2, PullCredit {
     error NotExpired();
     error HashMismatch();
     error ZeroDeliverable();
+    error EvaluatorNotIndependent();
 
     /// @param evaluationWindow_ seconds the evaluator has after a submission; must be non-zero.
     constructor(uint64 evaluationWindow_) {
@@ -81,7 +83,9 @@ contract AgentJobV2 is IAgentJobV2, PullCredit {
     ///         evaluator, the acceptance-test commitment and the expiry.
     /// @param provider  the worker; paid on `complete`
     /// @param evaluator the only address that can complete or reject
-    /// @param specHash  the acceptance test commitment (the Predge `requestHash`)
+    /// @param specHash  the acceptance test commitment. For a job evaluated by `PredgeValidatorBondV2` it
+    ///                  must be `bond.specHashFor(keccak256(abi.encode(expected, salt)))`: the client
+    ///                  fixes the expected result here, hidden behind the salt.
     /// @param expiredAt unix time; the provider must submit strictly before it, after it the
     ///                  client can reclaim the escrow of a job that was never submitted
     function createJob(address provider, address evaluator, bytes32 specHash, uint64 expiredAt)
@@ -90,6 +94,8 @@ contract AgentJobV2 is IAgentJobV2, PullCredit {
         returns (uint256 jobId)
     {
         if (provider == address(0) || evaluator == address(0)) revert ZeroAddress();
+        // Olympix 5.3.4: a client (or provider) that names itself evaluator would judge its own job.
+        if (evaluator == msg.sender || evaluator == provider) revert EvaluatorNotIndependent();
         if (msg.value == 0) revert ZeroEscrow();
         if (expiredAt <= block.timestamp) revert BadExpiry();
         jobId = ++jobCount;

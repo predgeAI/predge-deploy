@@ -22,7 +22,7 @@ interface IAgentJobV2 {
         uint64 submittedAt; // 0 until submitted
         State state;
         bool hashedOnChain; // true if the deliverable hash was computed on-chain from submitted bytes
-        bytes32 specHash; // the committed acceptance test (the Predge requestHash)
+        bytes32 specHash; // the committed acceptance test (bond.specHashFor(commitment) for bonded jobs)
         bytes32 deliverable; // sha256 of the provider's output (zero until submitted)
         bytes32 reason; // the evaluator's attestation commitment (zero until decided)
     }

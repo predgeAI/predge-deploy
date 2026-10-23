@@ -14,6 +14,16 @@ CONFIRM_MAINNET=base node deploy.mjs --chain base --broadcast   # the real deplo
 
 `contracts/v2/` is the redesigned set that fixes the 20.10.2026 self-audit findings (H-01..H-03, M-01..M-05, L-01..L-07). v2 is deployed on Arc and Base only (see [Deployments](#deployments)). The 16-chain set is v1, legacy, and is untouched. Design, finding-by-finding mapping and owner actions: `SELF-AUDIT-2026-10-20/v2-design.md` (Downloads).
 
+**v2.1 (23.10.2026, set `2026-10-23-v2.1`)** adds the fixes for the Olympix BugPoCer scan of `c47ed42` and the owner's option (a)
+for the validator bond: `PredgeValidatorBondV2.recordScore` refuses any verdict that contradicts the on-chain evidence and reverts
+`VerdictContradictsEvidence`. A pass (100) needs the provider to have submitted the output bytes (hashed on-chain by the job) with a
+hash equal to the `expected` the client committed in the job's specHash; a fail (0) needs the opposite. A false verdict therefore
+cannot be recorded at any bond size, including `bondBps = 0`. `challenge`, `wouldSlash`, `reclaim` and the dispute window are gone
+(nothing is left to challenge); the bond is credited back to the staker with the verdict and only backs liveness: an operator that
+stays silent on a submitted job forfeits it to the provider (`release`). `verdictFor(jobId, expected)` returns the only score
+`recordScore` will accept. Constructor: `(owner, operator, job, minBond, bondBps)`; `setParams(minBond, bondBps)`.
+The same deployer creates v2.1 at nonces 6..11 (`nonceBase` in `config/set.v2.json`), again the same addresses on Arc and Base.
+
 ```
 FOUNDRY_CONFIG=foundry-v2.toml forge test                 # unit + fuzz + invariant + PoC tests (v1 attacks run against v1 and v2)
 FOUNDRY_CONFIG=foundry-v2.toml forge coverage --no-match-coverage "(test/|foundry-lib|contracts/[A-Za-z]+\.sol)"
@@ -22,6 +32,7 @@ node deploy.mjs --chain base --set v2 --fork              # anvil fork of Base: 
 node scripts/fork-all.mjs --set v2 --no-e2e               # gas / cost on every chain
 node scripts/mutate-v2.mjs                                 # mutation smoke run
 node scripts/v2-params.mjs 5                               # regenerate per-chain bond floors (about $5 each) from live prices
+node scripts/v2-post-deploy.mjs --chains arc,base         # after a v2.1 broadcast: archive v2.0 records (*.v2-0.json), verify leftovers, README
 ```
 
 Real v2 runs (`--set v2` without `--fork`) refuse to start until the owner fills `config/v2.config.json` (new deployer address, the Safe, the ops key)
@@ -105,7 +116,7 @@ Deployed 20-21 Oct 2026. The same six addresses on both chains. All six are veri
 - **Owner:** `0x9084f5000E07C7133D6dA5eE4f271AB6D1821144`, a **temporary single EOA**. A transfer to a Safe 2-of-3 multisig via `Ownable2Step` (`transferOwnership`, then `acceptOwnership`) is planned, target this week. Until then, treat the owner as a single point of control.
 - **Operator** (hot ops key, rotatable by the owner): `0x8ffFB76c4329DDC8ee4a859DDF55AB48ba25e292`.
 - **Bond floor:** minimal, about $5 (5 USDC on Arc, 0.002 ETH on Base). No percentage of job value (bps = 0). It is a floor, not coverage of job value.
-- **Status:** an external Olympix scan of v2 (commit `edd1c46`) was requested through Circle's Arc programme. Results are pending. The on-chain bonds are not claimed as a guarantee. The signed verdict API (`api.predge.io`) is unchanged and remains the product.
+- **Status:** Olympix (BugPoCer, via Circle's Arc programme) scanned v2 at commit `c47ed42` on 23 Oct 2026: 2 High, 3 Medium, 12 Low. The fixes and the option (a) verdict check are v2.1 (see above) and are **not deployed yet**: the Arc and Base instances above are the scanned code and are affected by the confirmed findings (the contracts are not upgradeable, so a fix means a redeployment). v2.1 will land at nonces 6..11 of the same deployer; `scripts/v2-post-deploy.mjs` then marks the addresses above deprecated. The on-chain bonds are not claimed as a guarantee. The signed verdict API (`api.predge.io`) is unchanged and remains the product.
 
 ### v1 (legacy): 16 mainnets
 

@@ -154,7 +154,9 @@ async function main() {
     }
     const need = (gas * price * 150n) / 100n;
     log(`\nnonce ${nonce}, balance ${formatEther(bal)} ${chain.native}; estimated gas ${gas} @ ${price} wei = ${formatEther(gas * price)} ${chain.native} (fund >= ${formatEther(need)} incl. 50% buffer; L2 data fees: see funding table)`);
-    if (nonce > 0 && (await live.getCode(plan[Math.min(nonce, plan.length) - 1].address)).length <= 2)
+    const base = plan[0].nonce, done = nonce - base;
+    if (done < 0 || done > plan.length) throw new Error(`deployer nonce ${nonce} on ${chain.name} is outside this set's nonces ${base}..${base + plan.length}: nonce desync.`);
+    if (done > 0 && (await live.getCode(plan[done - 1].address)).length <= 2)
       throw new Error(`deployer nonce ${nonce} on ${chain.name} but the contract for nonce ${nonce - 1} is missing: nonce desync.`);
     if (mode === "dry-run") { log("dry run only. Nothing sent."); return; }
     if (bal < (gas * price)) { console.error(`Balance too low. Fund ${deployer.address} with >= ${formatEther(need)} ${chain.native} on ${chain.name}.`); process.exit(4); }
@@ -197,6 +199,7 @@ async function main() {
     const anvil = V2 ? anvilWallets(fork) : null;
     const forkWallet = V2 ? anvil[0] : new Wallet(deployer.privateKey, fork);
     if (V2) for (const w of anvil) { await fork.send("anvil_setCode", [w.address, "0x"]); await fork.send("anvil_setNonce", [w.address, "0x0"]); await fork.send("anvil_setBalance", [w.address, "0x3635C9ADC5DEA00000"]); } // clean EOAs at nonce 0 (the public anvil keys are heavily used on mainnets), 1000 native, fork only
+    if (V2 && plan[0].nonce > 0) await fork.send("anvil_setNonce", [anvil[0].address, "0x" + plan[0].nonce.toString(16)]); // the fork deployer starts where the real one does (set nonceBase)
     const startNonce = await fork.getTransactionCount(deployer.address);
     await fork.send("anvil_setBalance", [deployer.address, "0x56BC75E2D63100000"]); // 100 native, fork only
     const t0 = Date.now();
@@ -208,7 +211,7 @@ async function main() {
       const [, owner, op, client, worker, party] = anvil;
       const r = await e2eV2(fork, plan, { owner, op, client, worker, party }, async (s) => { await fork.send("evm_increaseTime", [s]); await fork.send("evm_mine", []); });
       steps = r.steps; attacks = r.attacks;
-      log(`e2e: ${steps.length} honest-path txs passed; ${attacks.length} attack sequences blocked (H-01, H-02, H-03, M-02, M-03)`);
+      log(`e2e: ${steps.length} honest-path txs passed; ${attacks.length} attack sequences blocked (H-01, H-02, H-03, M-03, Olympix 5.1.1/5.2.2, false pass/fail)`);
     } else if (!flag("--no-e2e")) {
       // Fresh throwaway keys, funded on the fork only (the well-known anvil test accounts carry
       // EIP-7702 delegations on several mainnets, so they are not clean EOAs on a fork).

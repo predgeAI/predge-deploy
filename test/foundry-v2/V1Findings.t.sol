@@ -14,24 +14,27 @@ import {PullCredit} from "../../contracts/v2/access/PullCredit.sol";
 
 /// @notice v2 versions of the v1 test_BUG_ / test_finding_ tests (PR #2): each v1 attack must revert or be harmless.
 contract V1FindingsBondTest is Base {
-    bytes32 constant E = keccak256("expected");
+    bytes32 internal E; // sha256(GOOD)
     bytes32 constant SALT = keccak256("salt");
     bytes32 constant X = keccak256("other");
 
-    function setUp() public { _deployJobAndBond(); }
+    function setUp() public {
+        _deployJobAndBond();
+        E = _good();
+    }
 
     // VB-01 / test_BUG_stake_allowedAfterDeliverableIsPublic, test_finding_postHocCommitMakesFalsePassUnslashable
     function test_fixed_VB01_stakeAfterDeliverableReverts() public {
-        (uint256 id, bytes32 spec) = _newJob(1, 1 ether);
+        (uint256 id, bytes32 spec) = _newJob(1 ether, E, SALT);
         _submit(id, X);
         vm.prank(op);
         vm.expectRevert(PredgeValidatorBondV2.NotOpen.selector);
-        bond.stakeAndCommit{value: 1 ether}(spec, keccak256(abi.encode(X, SALT)), id);
+        bond.stakeAndCommit{value: 1 ether}(spec, keccak256(abi.encode(E, SALT)), id);
     }
 
     // test_finding_scoreBeforeDeliveryThenReclaim
     function test_fixed_scoreBeforeDeliveryThenReclaim() public {
-        (uint256 id, bytes32 spec) = _newJob(1, 1 ether);
+        (uint256 id, bytes32 spec) = _newJob(1 ether, E, SALT);
         _stake(spec, E, SALT, id, 1 ether);
         vm.prank(op);
         vm.expectRevert(PredgeValidatorBondV2.NotSubmitted.selector);
@@ -42,20 +45,21 @@ contract V1FindingsBondTest is Base {
     function test_fixed_noUint96Truncation() public {
         uint256 big = uint256(type(uint96).max) + 1 ether;
         vm.deal(client, big);
+        bytes32 spec = _bspec(E, SALT);
         vm.prank(client);
-        uint256 id = job.createJob{value: big}(provider, address(bond), _spec(1), uint64(block.timestamp + 1 days));
+        uint256 id = job.createJob{value: big}(provider, address(bond), spec, uint64(block.timestamp + 1 days));
         assertEq(job.getJob(id).escrow, big);
         assertEq(address(job).balance, big);
         vm.deal(op, big);
-        _stake(_spec(1), E, SALT, id, big);
-        (,,,,,,, uint256 b,,) = bond.stakes(_spec(1));
+        _stake(spec, E, SALT, id, big);
+        (,,,,,, uint256 b,,) = bond.stakes(spec);
         assertEq(b, big);
         assertEq(bond.totalBonded(), big);
     }
 
     // test_finding_rotationInheritsStakesAndBypassesProviderCheck (VB-04)
     function test_fixed_VB04_rotatedOperatorCannotScoreItsOwnJob() public {
-        bytes32 spec = _spec(1);
+        bytes32 spec = _bspec(E, SALT);
         address newOp = makeAddr("newOp");
         vm.prank(client);
         uint256 id = job.createJob{value: 1 ether}(newOp, address(bond), spec, uint64(block.timestamp + 1 days));
@@ -71,60 +75,46 @@ contract V1FindingsBondTest is Base {
 
     // test_finding_operatorRotationRedirectsBond (L-04): the bond always goes back to the staker.
     function test_fixed_rotationDoesNotRedirectBond() public {
-        (uint256 id, bytes32 spec) = _newJob(1, 1 ether);
+        (uint256 id, bytes32 spec) = _newJob(1 ether, E, SALT);
         _stake(spec, E, SALT, id, 1 ether);
-        _submit(id, E);
-        _score(spec, 100, E, SALT);
+        _deliver(id, GOOD);
         address newOp = makeAddr("newOp");
         vm.prank(safe);
         bond.setOperator(newOp);
-        vm.warp(block.timestamp + WINDOW);
-        vm.prank(newOp);
-        bond.reclaim(spec);
+        vm.prank(newOp); // the new key scores (it was handed the preimage); the OLD staker is credited
+        bond.recordScore(spec, 100, E, SALT, 0);
         assertEq(bond.credit(newOp), 0);
-        assertEq(bond.credit(op), 1 ether);
+        assertEq(bond.credit(op), 1 ether, "the bond came back to the staker with the verdict");
     }
 
-    // test_finding_comparisonIsRawEquality (VB-05): documented and tested: raw equality of the stored 32 bytes.
+    // test_finding_comparisonIsRawEquality (VB-05): raw equality of the stored 32 bytes, and only for a hash
+    // the chain computed. After Olympix 5.1.1 a claimed hash with no bytes never counts as delivered.
     function test_fixed_VB05_rawEqualityOfStoredHash() public {
         bytes memory out = "output";
         bytes32 h = sha256(out);
-        (uint256 id, bytes32 spec) = _newJob(1, 1 ether);
+        (uint256 id, bytes32 spec) = _newJob(1 ether, h, SALT);
         _stake(spec, h, SALT, id, 1 ether);
-        vm.prank(provider);
-        job.submit(id, h, out);
+        _deliver(id, out);
         _score(spec, 100, h, SALT);
-        assertFalse(bond.wouldSlash(spec));
-        // and a claimed hash that is not the sha256 of anything is just compared as-is
-        (uint256 id2, bytes32 spec2) = _newJob(2, 1 ether);
-        _stake(spec2, E, SALT, id2, 1 ether);
+        // a claimed hash equal to `expected`, with no bytes, is NOT a delivery: passing it is refused
+        bytes32 salt2 = keccak256("salt2");
+        (uint256 id2, bytes32 spec2) = _newJob(1 ether, E, salt2);
+        _stake(spec2, E, salt2, id2, 1 ether);
         _submit(id2, E);
-        _score(spec2, 100, E, SALT);
-        assertFalse(bond.wouldSlash(spec2));
-    }
-
-    // Intended v2 challenge semantics, explicit: allowed while now < scoredAt+window, impossible from then on.
-    function test_challengeDeadlineBoundary() public {
-        (uint256 id, bytes32 spec) = _newJob(1, 1 ether);
-        _stake(spec, E, SALT, id, 1 ether);
-        _submit(id, X);
-        _score(spec, 100, E, SALT);
-        vm.warp(block.timestamp + WINDOW - 1);
-        assertTrue(bond.wouldSlash(spec));
-        vm.warp(block.timestamp + 1);
-        assertFalse(bond.wouldSlash(spec));
-        vm.expectRevert(PredgeValidatorBondV2.WindowClosed.selector);
-        bond.challenge(spec);
-        bond.reclaim(spec); // reclaim opens at exactly the instant challenge closes
+        vm.prank(op);
+        vm.expectRevert(PredgeValidatorBondV2.VerdictContradictsEvidence.selector);
+        bond.recordScore(spec2, 100, E, salt2, 0);
     }
 
     // Parameter boundaries are inclusive.
     function test_paramBoundaries() public {
         vm.startPrank(safe);
-        bond.setParams(1 hours, 1, 0);
-        bond.setParams(30 days, 1, 10_000);
+        bond.setParams(1, 0);
+        bond.setParams(1, 10_000);
         vm.expectRevert(PredgeValidatorBondV2.BadParams.selector);
-        bond.setParams(30 days + 1, 1, 0);
+        bond.setParams(1, 10_001);
+        vm.expectRevert(PredgeValidatorBondV2.BadParams.selector);
+        bond.setParams(0, 0);
         vm.stopPrank();
     }
 
@@ -213,7 +203,7 @@ contract V1FindingsMiscTest is Base {
         vm.expectRevert(PredgeAgentValidatorV2.NotAuthorized.selector);
         reg.validationRequest(op, 1, "squat", keccak256("spec"));
         // and the hash is domain separated, so a squat on another chain/registry cannot collide anyway
-        assertTrue(reg.requestHashFor(keccak256("spec")) != keccak256("spec"));
+        assertTrue(reg.requestHashFor(1, keccak256("spec")) != keccak256("spec"));
     }
 
     // AV-02 / test_BUG_commitLeadTime_zeroWhenSameBlock: documented, not a bug: zero is possible in the same block.
