@@ -3,122 +3,121 @@
   "chainId": 5042,
   "mode": "anvil-fork",
   "forkedFrom": "https://rpc.mainnet.arc.io",
-  "forkBlock": 27007868,
-  "at": "2026-10-20T21:37:32.818Z",
-  "seconds": 47,
+  "forkBlock": 27514359,
+  "at": "2026-10-23T21:01:39.793Z",
+  "seconds": 51,
   "deployer": "0x33275DDdb0cB5Bc120740e048B030F107F144Ac8",
-  "startNonce": 0,
+  "startNonce": 6,
   "contracts": {
     "PredgeAgentValidatorV2": {
       "name": "PredgeAgentValidatorV2",
-      "address": "0xDC11e47D869e8FA2918A3e5fe09D76e8C11Fe675",
-      "nonce": 0,
+      "address": "0xAfF33F45707ebd84C779D2D0836513ef6706312c",
+      "nonce": 6,
       "args": [
         "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
         "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
         "0x0000000000000000000000000000000000000000"
       ],
       "constructorArgs": "0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c80000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc0000000000000000000000000000000000000000000000000000000000000000",
-      "sourceSha256": "39ce8493d21512143f7c0fa37419a3cd14e1808bceb3af3e9680dfedb107ecd0",
-      "txHash": "0x7dff382649311298b1297083d15d5a9728c9ed21056b5c22478e2b9decc306ad",
-      "block": 27007772,
-      "gasUsed": "1162822",
-      "effectiveGasPrice": "18539309000",
+      "sourceSha256": "188c8c4f4d75ca748cad006a4b30a825d2bc9e9725e42085685000e3ee0232dd",
+      "txHash": "0x83de1869cda9efd2e8e906797dc727d552c0a19857e53a85136b2382bc7107c7",
+      "block": 27514255,
+      "gasUsed": "1167799",
+      "effectiveGasPrice": "18546384000",
       "l1FeeWei": "0"
     },
     "AgentJobV2": {
       "name": "AgentJobV2",
-      "address": "0x93F70a097Ed45889f69759e5F62cDe0B9319E616",
-      "nonce": 1,
+      "address": "0x9e4A48A5Ebc237f6AEaF71211DcdF75628fC0507",
+      "nonce": 7,
       "args": [
         "259200"
       ],
       "constructorArgs": "0x000000000000000000000000000000000000000000000000000000000003f480",
-      "sourceSha256": "16050fa97d42c0982eac3bf4de36a4478c68165c7fbdfeac8e5b89960f6a8972",
-      "txHash": "0x4445cd5bcfcb19d369e681cbef99a02b29c79f8a0a711fe9d5c9628bc2ea2b6f",
-      "block": 27007773,
-      "gasUsed": "904910",
-      "effectiveGasPrice": "16516854495",
+      "sourceSha256": "c83bd1c9ce4e8643b39246586619b7a12e203653b3f03386de03ab58b58c4a9a",
+      "txHash": "0x56007fd54cfd2ecd647843c06c7bfb46aac90b7b96c6bba6e06ff9bc88e52b52",
+      "block": 27514256,
+      "gasUsed": "920066",
+      "effectiveGasPrice": "16523841415",
       "l1FeeWei": "0"
     },
     "PredgeValidatorBondV2": {
       "name": "PredgeValidatorBondV2",
-      "address": "0x500A9cE7CADC357C8b477B24e7Bf7D7A7CD3df22",
-      "nonce": 2,
+      "address": "0x6bfe9aE3C60C764B88D77218faeF7E4C87EEF547",
+      "nonce": 8,
       "args": [
         "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
         "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
-        "0x93F70a097Ed45889f69759e5F62cDe0B9319E616",
-        "86400",
+        "0x9e4A48A5Ebc237f6AEaF71211DcdF75628fC0507",
         "5000000000000000000",
         "0"
       ],
-      "constructorArgs": "0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c80000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc00000000000000000000000093f70a097ed45889f69759e5f62cde0b9319e61600000000000000000000000000000000000000000000000000000000000151800000000000000000000000000000000000000000000000004563918244f400000000000000000000000000000000000000000000000000000000000000000000",
-      "sourceSha256": "887d0ae4945ea287ebddc2d9169a8f88074a75f871a49d0f7667b12f6b8f7e7d",
-      "txHash": "0x6bb77a282877e03c7514896b104b8b587e97eb9e595c783522d9a2b9d4f5accf",
-      "block": 27007774,
-      "gasUsed": "1705859",
-      "effectiveGasPrice": "14694258990",
+      "constructorArgs": "0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c80000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc0000000000000000000000009e4a48a5ebc237f6aeaf71211dcdf75628fc05070000000000000000000000000000000000000000000000004563918244f400000000000000000000000000000000000000000000000000000000000000000000",
+      "sourceSha256": "0b84858a48a63548f0b889ca451587c6e57c81cf3b239e6521188f58aa8c694d",
+      "txHash": "0x38c568a459cc259c1a55536ea4deea1106279278377ad9d43a44221e48259155",
+      "block": 27514257,
+      "gasUsed": "1453368",
+      "effectiveGasPrice": "14702385894",
       "l1FeeWei": "0"
     },
     "PredgeSettlementV2": {
       "name": "PredgeSettlementV2",
-      "address": "0xef3450a304FD3B239ea90254370adD900b40C710",
-      "nonce": 3,
+      "address": "0xe7de9717cB95634639eF114Cda060dB1Fdf60F16",
+      "nonce": 9,
       "args": [
         "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
       ],
       "constructorArgs": "0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8",
       "sourceSha256": "fb87e5ef6756eb261c854ccf1f711234a2e657718aecb2e2d116557aa4ab84b7",
-      "txHash": "0x423ad3db6d7084cb675d6aa5272f674b131158ea7d7cd38c75f1a6680592a523",
-      "block": 27007775,
-      "gasUsed": "369083",
-      "effectiveGasPrice": "13177147241",
+      "txHash": "0xa9bee3dab4e3656dfc8f2092537cb8194b179d5626ab7d49f4e8fc089dc6c66a",
+      "block": 27514258,
+      "gasUsed": "369071",
+      "effectiveGasPrice": "13155542734",
       "l1FeeWei": "0"
     },
     "MockRefundProtocolV2": {
       "name": "MockRefundProtocolV2",
-      "address": "0xd01f1026c372749873EA32BDB017434a05226837",
-      "nonce": 4,
+      "address": "0x78461d287398a45a1204EfbcCa88804f9dacfA87",
+      "nonce": 10,
       "args": [
-        "0x5C18B53C186d76fcB8c7E4Ba4D6b6aF79dD38553"
+        "0x37a722A40875ff6a26E1F506B96a8d1Ae08353a1"
       ],
-      "constructorArgs": "0x0000000000000000000000005c18b53c186d76fcb8c7e4ba4d6b6af79dd38553",
+      "constructorArgs": "0x00000000000000000000000037a722a40875ff6a26e1f506b96a8d1ae08353a1",
       "sourceSha256": "e4f170d51e3a526a89bd4c0d1090b1441334fe5a610a0b43fef0dca078d3e66d",
-      "txHash": "0x4eec0b4ca00998536dc2a38a8ff945a3e72d24bb3fa5515b47e109aa39a31e30",
-      "block": 27007776,
+      "txHash": "0x6104ce5b2904386916b2c98ee4da9e2bd7a2a2933a6dd5826b5e707866a1c119",
+      "block": 27514259,
       "gasUsed": "408763",
-      "effectiveGasPrice": "11692456987",
+      "effectiveGasPrice": "11673485379",
       "l1FeeWei": "0"
     },
     "PredgeRefundArbiterV2": {
       "name": "PredgeRefundArbiterV2",
-      "address": "0x5C18B53C186d76fcB8c7E4Ba4D6b6aF79dD38553",
-      "nonce": 5,
+      "address": "0x37a722A40875ff6a26E1F506B96a8d1Ae08353a1",
+      "nonce": 11,
       "args": [
         "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
         "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
-        "0xd01f1026c372749873EA32BDB017434a05226837",
+        "0x78461d287398a45a1204EfbcCa88804f9dacfA87",
         "86400",
         "5000000000000000000",
         "0"
       ],
-      "constructorArgs": "0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c80000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc000000000000000000000000d01f1026c372749873ea32bdb017434a0522683700000000000000000000000000000000000000000000000000000000000151800000000000000000000000000000000000000000000000004563918244f400000000000000000000000000000000000000000000000000000000000000000000",
-      "sourceSha256": "4942e21f42a00e7034c5af74884dea2e0e1d4b7605d770d0b2ca9411df6e2a5e",
-      "txHash": "0xd9a8464349c27c4fb1dbb880dd1ad1716c084059c90a1ba311d06548cf617fac",
-      "block": 27007777,
-      "gasUsed": "1898263",
-      "effectiveGasPrice": "10392322204",
+      "constructorArgs": "0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c80000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc00000000000000000000000078461d287398a45a1204efbcca88804f9dacfa8700000000000000000000000000000000000000000000000000000000000151800000000000000000000000000000000000000000000000004563918244f400000000000000000000000000000000000000000000000000000000000000000000",
+      "sourceSha256": "b5dc07973805879660216a2047ce1471f6a05abeb49c07466efc77e0c5f56bcf",
+      "txHash": "0x99e4b4c6ff02869284724e8a5c4a9f593dd0dbf937fc3c52611ec42b97106bcd",
+      "block": 27514260,
+      "gasUsed": "1930219",
+      "effectiveGasPrice": "10375657423",
       "l1FeeWei": "0"
     }
   },
   "totals": {
-    "gasUsed": "6449700",
-    "liveGasPriceWei": "23900000000",
+    "gasUsed": "6249286",
+    "liveGasPriceWei": "25000000000",
     "l1FeeWei": "0",
     "l1FeeMethod": "none (execution gas only)",
-    "costWei": "154147830000000000",
-    "cost": "0.15414783",
+    "costWei": "156232150000000000",
+    "cost": "0.15623215",
     "native": "USDC"
   },
   "smoke": [
@@ -145,24 +144,26 @@
     "job.jobCount == 0",
     "bond.job == AgentJobV2",
     "bond params",
-    "bond.wouldSlash(unknown) == false",
+    "bond.verdictFor(no job) == 0",
+    "bond has no challenge() (v2.1: false verdicts are refused, not slashed)",
     "arbiter.refundProtocol == mock",
     "mock.arbiter == arbiter",
     "arbiter params",
-    "registry.requestHashFor is domain separated"
+    "registry.requestHashFor is domain separated",
+    "bond.specHashFor is domain separated"
   ],
   "e2e": [
     {
-      "step": "registry.validationRequest #1",
-      "gasUsed": 123226
+      "step": "registry.validationRequest",
+      "gasUsed": 123282
     },
     {
       "step": "job.createJob #1",
-      "gasUsed": 203490
+      "gasUsed": 203597
     },
     {
       "step": "bond.stakeAndCommit",
-      "gasUsed": 190513
+      "gasUsed": 165934
     },
     {
       "step": "job.submit (bytes, sha256 on-chain)",
@@ -170,11 +171,11 @@
     },
     {
       "step": "bond.recordScore(100) completes the job",
-      "gasUsed": 159228
+      "gasUsed": 221752
     },
     {
       "step": "registry.validationResponse",
-      "gasUsed": 132144
+      "gasUsed": 132382
     },
     {
       "step": "job.withdraw (provider pulls payout)",
@@ -189,76 +190,96 @@
       "gasUsed": 32279
     },
     {
-      "step": "registry.validationRequest #2",
-      "gasUsed": 123238
-    },
-    {
       "step": "job.createJob #2",
-      "gasUsed": 186390
+      "gasUsed": 186485
     },
     {
       "step": "bond.stakeAndCommit",
-      "gasUsed": 173413
-    },
-    {
-      "step": "registry.validationRequest #3",
-      "gasUsed": 123226
+      "gasUsed": 165922
     },
     {
       "step": "job.createJob #3",
-      "gasUsed": 169290
+      "gasUsed": 169397
     },
     {
       "step": "job.submit (j3, wrong output)",
       "gasUsed": 54547
     },
     {
-      "step": "registry.validationRequest #4",
-      "gasUsed": 123238
-    },
-    {
       "step": "job.createJob #4",
-      "gasUsed": 169290
+      "gasUsed": 169397
     },
     {
       "step": "bond.stakeAndCommit",
-      "gasUsed": 173413
+      "gasUsed": 148822
     },
     {
       "step": "job.submit (j4, provider submits the public commitment)",
-      "gasUsed": 54547
+      "gasUsed": 54535
     },
     {
       "step": "bond.recordScore(0) honest fail",
-      "gasUsed": 163942
-    },
-    {
-      "step": "registry.validationRequest #5",
-      "gasUsed": 123238
+      "gasUsed": 197054
     },
     {
       "step": "job.createJob #5",
-      "gasUsed": 169290
+      "gasUsed": 169397
     },
     {
       "step": "bond.stakeAndCommit",
-      "gasUsed": 173413
+      "gasUsed": 148822
     },
     {
-      "step": "job.submit (j5, wrong output)",
+      "step": "job.submit (j5, wrong output bytes)",
+      "gasUsed": 55205
+    },
+    {
+      "step": "bond.recordScore(0) on wrong bytes",
+      "gasUsed": 162866
+    },
+    {
+      "step": "job.createJob #7",
+      "gasUsed": 169397
+    },
+    {
+      "step": "bond.stakeAndCommit",
+      "gasUsed": 148834
+    },
+    {
+      "step": "job.submit (j7, leaked expected, no bytes)",
       "gasUsed": 54547
     },
     {
-      "step": "bond.recordScore(100) FALSE pass",
-      "gasUsed": 146928
+      "step": "bond.recordScore(0) j7",
+      "gasUsed": 162842
     },
     {
-      "step": "bond.challenge by a stranger",
-      "gasUsed": 131748
+      "step": "job.createJob #8",
+      "gasUsed": 169397
     },
     {
-      "step": "bond.withdraw (client)",
-      "gasUsed": 32262
+      "step": "bond.stakeAndCommit",
+      "gasUsed": 148834
+    },
+    {
+      "step": "job.submit (j8, correct bytes)",
+      "gasUsed": 55445
+    },
+    {
+      "step": "bond.recordScore(100) j8",
+      "gasUsed": 180028
+    },
+    {
+      "step": "job.createJob #6",
+      "gasUsed": 169397
+    },
+    {
+      "step": "bond.stakeAndCommit",
+      "gasUsed": 148834
+    },
+    {
+      "step": "job.submit (j6, bytes, operator stays silent)",
+      "gasUsed": 55445
     },
     {
       "step": "job.claimRefund (expired, never submitted)",
@@ -266,15 +287,23 @@
     },
     {
       "step": "bond.release (no verdict was given)",
-      "gasUsed": 104039
+      "gasUsed": 69800
     },
     {
-      "step": "bond.reclaim (j1, anyone, after window)",
-      "gasUsed": 47188
+      "step": "job.claimRefund (j6, silent evaluator)",
+      "gasUsed": 47292
+    },
+    {
+      "step": "bond.release (j6, forfeited to the provider)",
+      "gasUsed": 81906
+    },
+    {
+      "step": "bond.withdraw (provider gets the forfeited bond)",
+      "gasUsed": 35571
     },
     {
       "step": "bond.withdraw (staker)",
-      "gasUsed": 32262
+      "gasUsed": 32297
     },
     {
       "step": "mock.recordPayment",
@@ -286,15 +315,15 @@
     },
     {
       "step": "arbiter.rule(Refund)",
-      "gasUsed": 250669
+      "gasUsed": 250666
     },
     {
       "step": "arbiter.dispute (harmed payee)",
-      "gasUsed": 59538
+      "gasUsed": 59516
     },
     {
       "step": "arbiter.resolve(Release) overturns",
-      "gasUsed": 86656
+      "gasUsed": 86634
     },
     {
       "step": "arbiter.withdraw (payee gets the operator bond)",
@@ -310,7 +339,7 @@
     },
     {
       "step": "arbiter.rule(Refund, p2)",
-      "gasUsed": 233569
+      "gasUsed": 233566
     },
     {
       "step": "arbiter.finalize (undisputed, after window)",
@@ -323,32 +352,44 @@
   ],
   "attacksBlocked": [
     {
-      "attack": "challenge of an honest verdict",
-      "blockedBy": "VerdictHonest"
+      "attack": "Olympix 5.1.1 operator commits a value the client did not fix",
+      "blockedBy": "CommitmentNotBound"
     },
     {
       "attack": "H-01 recordScore before the provider submits",
       "blockedBy": "NotSubmitted"
     },
     {
-      "attack": "H-01 reclaim without a verdict",
-      "blockedBy": "NotScored"
+      "attack": "H-01 bond back without a verdict",
+      "blockedBy": "JobNotExpired"
     },
     {
       "attack": "H-02 commit after submission",
       "blockedBy": "NotOpen"
     },
     {
-      "attack": "H-02 honest fail is not slashable",
-      "blockedBy": "VerdictHonest"
+      "attack": "H-02 pass on a copied public value",
+      "blockedBy": "VerdictContradictsEvidence"
     },
     {
-      "attack": "M-02 slash pays the harmed client, challenger earns 0",
-      "blockedBy": "routing"
+      "attack": "false pass on wrong on-chain bytes",
+      "blockedBy": "VerdictContradictsEvidence"
+    },
+    {
+      "attack": "Olympix 5.1.1 pass on a leaked hash without bytes",
+      "blockedBy": "VerdictContradictsEvidence"
+    },
+    {
+      "attack": "false fail on correct on-chain bytes",
+      "blockedBy": "VerdictContradictsEvidence"
     },
     {
       "attack": "late submit after expiry",
       "blockedBy": "PastDeadline"
+    },
+    {
+      "attack": "Olympix 5.2.2 silence on delivered work is free",
+      "blockedBy": "bond forfeited to provider"
     },
     {
       "attack": "H-03 stranger files evidence for someone else's payment",
@@ -375,7 +416,7 @@
       "blockedBy": "NotOwner"
     }
   ],
-  "setVersion": "2026-10-20-v2",
+  "setVersion": "2026-10-23-v2.1",
   "erc8004": {
     "IdentityRegistry": {
       "address": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",

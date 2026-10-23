@@ -52,7 +52,7 @@ contract V1FindingsBondTest is Base {
         assertEq(address(job).balance, big);
         vm.deal(op, big);
         _stake(spec, E, SALT, id, big);
-        (,,,,,,, uint256 b,,) = bond.stakes(spec);
+        (,,,,,, uint256 b,,) = bond.stakes(spec);
         assertEq(b, big);
         assertEq(bond.totalBonded(), big);
     }
@@ -78,15 +78,13 @@ contract V1FindingsBondTest is Base {
         (uint256 id, bytes32 spec) = _newJob(1 ether, E, SALT);
         _stake(spec, E, SALT, id, 1 ether);
         _deliver(id, GOOD);
-        _score(spec, 100, E, SALT);
         address newOp = makeAddr("newOp");
         vm.prank(safe);
         bond.setOperator(newOp);
-        vm.warp(block.timestamp + WINDOW);
-        vm.prank(newOp);
-        bond.reclaim(spec);
+        vm.prank(newOp); // the new key scores (it was handed the preimage); the OLD staker is credited
+        bond.recordScore(spec, 100, E, SALT, 0);
         assertEq(bond.credit(newOp), 0);
-        assertEq(bond.credit(op), 1 ether);
+        assertEq(bond.credit(op), 1 ether, "the bond came back to the staker with the verdict");
     }
 
     // test_finding_comparisonIsRawEquality (VB-05): raw equality of the stored 32 bytes, and only for a hash
@@ -98,38 +96,25 @@ contract V1FindingsBondTest is Base {
         _stake(spec, h, SALT, id, 1 ether);
         _deliver(id, out);
         _score(spec, 100, h, SALT);
-        assertFalse(bond.wouldSlash(spec));
-        // a claimed hash equal to `expected`, with no bytes, is NOT a delivery: passing it is slashable
+        // a claimed hash equal to `expected`, with no bytes, is NOT a delivery: passing it is refused
         bytes32 salt2 = keccak256("salt2");
         (uint256 id2, bytes32 spec2) = _newJob(1 ether, E, salt2);
         _stake(spec2, E, salt2, id2, 1 ether);
         _submit(id2, E);
-        _score(spec2, 100, E, salt2);
-        assertTrue(bond.wouldSlash(spec2));
-    }
-
-    // Intended v2 challenge semantics, explicit: allowed while now < scoredAt+window, impossible from then on.
-    function test_challengeDeadlineBoundary() public {
-        (uint256 id, bytes32 spec) = _newJob(1 ether, E, SALT);
-        _stake(spec, E, SALT, id, 1 ether);
-        _submit(id, X);
-        _score(spec, 100, E, SALT);
-        vm.warp(block.timestamp + WINDOW - 1);
-        assertTrue(bond.wouldSlash(spec));
-        vm.warp(block.timestamp + 1);
-        assertFalse(bond.wouldSlash(spec));
-        vm.expectRevert(PredgeValidatorBondV2.WindowClosed.selector);
-        bond.challenge(spec);
-        bond.reclaim(spec); // reclaim opens at exactly the instant challenge closes
+        vm.prank(op);
+        vm.expectRevert(PredgeValidatorBondV2.VerdictContradictsEvidence.selector);
+        bond.recordScore(spec2, 100, E, salt2, 0);
     }
 
     // Parameter boundaries are inclusive.
     function test_paramBoundaries() public {
         vm.startPrank(safe);
-        bond.setParams(1 hours, 1, 0);
-        bond.setParams(30 days, 1, 10_000);
+        bond.setParams(1, 0);
+        bond.setParams(1, 10_000);
         vm.expectRevert(PredgeValidatorBondV2.BadParams.selector);
-        bond.setParams(30 days + 1, 1, 0);
+        bond.setParams(1, 10_001);
+        vm.expectRevert(PredgeValidatorBondV2.BadParams.selector);
+        bond.setParams(0, 0);
         vm.stopPrank();
     }
 

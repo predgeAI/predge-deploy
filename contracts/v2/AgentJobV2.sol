@@ -8,8 +8,8 @@ import {PullCredit} from "./access/PullCredit.sol";
 /// @notice A minimal ERC-8183-style agent job with escrowed native value and an evaluator named at
 ///         creation. The evaluator may be neither the client nor the provider (a trivial check: it
 ///         cannot detect two addresses controlled by one party). In Predge's deployment the evaluator is the
-///         `PredgeValidatorBondV2` contract, so the evaluator's verdict is backed by a bond and
-///         moves the money in the same transaction.
+///         `PredgeValidatorBondV2` contract, which only accepts a verdict that agrees with the on-chain
+///         deliverable hash and moves the money in the same transaction.
 ///
 ///         Lifecycle:
 ///           createJob  (client escrows value, names provider, evaluator, spec and an expiry)

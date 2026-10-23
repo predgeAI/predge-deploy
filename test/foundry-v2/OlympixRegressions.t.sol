@@ -38,38 +38,25 @@ contract OlympixBondRegressionTest is Base {
     }
 
     /// @dev 5.1.1-a/c, strongest remaining variant: the operator commits to the client's value (it must) and
-    ///      leaks it to a colluding provider, who submits the right hash with NO bytes. The PoC's harm
-    ///      assertions now hold: the pass is slashable, the client is made whole at full bond, the
-    ///      colluders do not profit and the operator cannot reclaim.
-    function test_5_1_1_leakedExpectedWithoutBytesIsSlashable() public {
-        uint256 providerBefore = provider.balance;
-        uint256 opBefore = op.balance;
+    ///      leaks it to a colluding provider, who submits the right hash with NO bytes. With option (a) the
+    ///      false pass is refused outright: the escrow never moves, whatever the bond size.
+    function test_5_1_1_leakedExpectedWithoutBytesCannotPass() public {
         (uint256 id, bytes32 spec) = _newJob(ESCROW, EXPECTED, SALT);
-        assertEq(bond.requiredBond(ESCROW), ESCROW, "bond fully covers the escrow");
         _stake(spec, EXPECTED, SALT, id, ESCROW);
         _submit(id, EXPECTED); // claimed hash only: no work, no bytes
         assertFalse(job.getJob(id).hashedOnChain);
-        _score(spec, 100, EXPECTED, SALT);
-        assertEq(job.credit(provider), ESCROW, "the false pass still moves the escrow...");
-
-        assertTrue(bond.wouldSlash(spec), "...but it is now slashable");
-        vm.prank(client);
-        bond.challenge(spec);
-        vm.warp(block.timestamp + WINDOW);
-        vm.expectRevert(PredgeValidatorBondV2.NotScored.selector);
-        bond.reclaim(spec);
-
-        vm.prank(provider);
-        job.withdraw();
-        int256 colludersProfit =
-            (int256(provider.balance) - int256(providerBefore)) + (int256(op.balance) - int256(opBefore));
-        assertLe(colludersProfit, 0, "colluders do not profit at full bond");
-        assertGe(bond.credit(client) + job.credit(client), ESCROW, "client is made whole");
+        vm.prank(op);
+        vm.expectRevert(PredgeValidatorBondV2.VerdictContradictsEvidence.selector);
+        bond.recordScore(spec, 100, EXPECTED, SALT, 0);
+        assertEq(job.credit(provider), 0, "the escrow did not move");
+        _score(spec, 0, EXPECTED, SALT); // the only verdict the operator can record
+        assertEq(job.credit(client), ESCROW, "client refunded");
+        assertEq(job.credit(provider), 0);
     }
 
-    /// @dev 5.1.1-b false fail: the operator cannot commit an unmatchable value; with the client's value, a 0
-    ///      on real bytes is slashable and pays the provider.
-    function test_5_1_1_falseFailOnRealWorkIsSlashable() public {
+    /// @dev 5.1.1-b false fail: the operator cannot commit an unmatchable value, and with the client's value a 0
+    ///      on real bytes is refused; the provider is paid.
+    function test_5_1_1_falseFailOnRealWorkRefused() public {
         (uint256 id, bytes32 spec) = _newJob(ESCROW, EXPECTED, SALT);
         bytes32 unmatchable = keccak256("garbage the operator picked");
         vm.prank(op);
@@ -79,12 +66,29 @@ contract OlympixBondRegressionTest is Base {
         _stake(spec, EXPECTED, SALT, id, ESCROW);
         _deliver(id, GOOD);
         assertTrue(job.getJob(id).hashedOnChain);
-        _score(spec, 0, EXPECTED, SALT); // false fail: client credited the escrow
-        assertTrue(bond.wouldSlash(spec));
-        vm.prank(provider);
-        bond.challenge(spec);
-        assertGe(job.credit(provider) + bond.credit(provider), ESCROW, "provider made whole at full bond");
-        assertEq(bond.credit(op), 0, "operator loses its bond");
+        vm.prank(op);
+        vm.expectRevert(PredgeValidatorBondV2.VerdictContradictsEvidence.selector);
+        bond.recordScore(spec, 0, EXPECTED, SALT, 0);
+        _score(spec, 100, EXPECTED, SALT);
+        assertEq(job.credit(provider), ESCROW, "provider paid");
+    }
+
+    /// @dev 5.1.2 (High, bond not collateralised against escrow): with option (a) the bond size no longer matters for
+    ///      correctness. At the shipped bondBps = 0, a colluding operator and provider cannot record a false pass on a
+    ///      mismatching on-chain deliverable, for any escrow.
+    function testFuzz_5_1_2_falsePassImpossibleAtShippedParams(uint96 escrow, bytes calldata wrong) public {
+        vm.assume(wrong.length != 0 && sha256(wrong) != EXPECTED);
+        escrow = uint96(bound(escrow, 1, 1_000 ether));
+        vm.prank(safe);
+        bond.setParams(MIN_BOND, 0);
+        (uint256 id, bytes32 spec) = _newJob(escrow, EXPECTED, SALT);
+        _stake(spec, EXPECTED, SALT, id, MIN_BOND);
+        _deliver(id, wrong);
+        vm.prank(op);
+        vm.expectRevert(PredgeValidatorBondV2.VerdictContradictsEvidence.selector);
+        bond.recordScore(spec, 100, EXPECTED, SALT, 0);
+        assertEq(job.credit(provider), 0);
+        assertEq(job.totalEscrowed(), escrow);
     }
 
     // ------------------------------------------------------------ 5.2.2 (a, b, c, d, e)
@@ -93,7 +97,7 @@ contract OlympixBondRegressionTest is Base {
     ///      and the provider receives it.
     function test_5_2_2_silenceForfeitsFloorBondToProvider() public {
         vm.prank(safe);
-        bond.setParams(WINDOW, MIN_BOND, 0);
+        bond.setParams(MIN_BOND, 0);
         (uint256 id, bytes32 spec) = _newJob(100 ether, EXPECTED, SALT);
         _stake(spec, EXPECTED, SALT, id, MIN_BOND);
         _deliver(id, GOOD);

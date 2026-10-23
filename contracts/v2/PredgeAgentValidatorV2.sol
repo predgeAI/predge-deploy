@@ -17,7 +17,8 @@ interface IIdentityOwner {
 ///           * It does not verify the ed25519 attestation. The operator verifies it off-chain and
 ///             commits `responseHash`, the keccak256 of the signed bytes.
 ///           * It is not linked to `PredgeValidatorBondV2`. A registry response is a statement; the
-///             bonded, slashable verdict is the bond's `Scored` event and the job it settled.
+///             bonded verdict, checked against the on-chain evidence, is the bond's `Scored` event and the
+///             job it settled.
 ///             Consumers that want the bonded one must read the bond.
 ///
 ///         Authorisation (fixes the v1 permissionless `validationRequest`): a request may be made

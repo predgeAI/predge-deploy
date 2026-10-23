@@ -79,29 +79,16 @@ contract JobBondHandler is Test {
         try job.submit(jobIds[i], d, out) {} catch {}
     }
 
+    /// @dev Option (a): a recorded verdict must equal the truth, so a successful call with a false score is a violation.
     function score(uint256 i, bool pass) external {
         if (specs.length == 0) return;
         i = bound(i, 0, specs.length - 1);
         bytes32 spec = specs[i];
-        vm.prank(op);
-        try bond.recordScore(spec, pass ? 100 : 0, expectedOf[spec], saltOf[spec], bytes32(0)) {} catch {}
-    }
-
-    function challenge(uint256 i) external {
-        if (specs.length == 0) return;
-        i = bound(i, 0, specs.length - 1);
-        bool should = bond.wouldSlash(specs[i]);
-        try bond.challenge(specs[i]) { if (!should) violation = true; } catch { if (should) violation = true; }
-    }
-
-    function reclaim(uint256 i) external {
-        if (specs.length == 0) return;
-        i = bound(i, 0, specs.length - 1);
-        bytes32 spec = specs[i];
-        (, , , , uint64 scoredAt, uint64 window, , , , ) = bond.stakes(spec);
-        try bond.reclaim(spec) {
-            // reclaim implies the window had elapsed from the score
-            if (block.timestamp < uint256(scoredAt) + window) violation = true;
+        IAgentJobV2.Job memory j = job.getJob(jobIds[i]);
+        bool delivered = j.hashedOnChain && j.deliverable == expectedOf[spec];
+        vm.prank(bond.operator());
+        try bond.recordScore(spec, pass ? 100 : 0, expectedOf[spec], saltOf[spec], bytes32(0)) {
+            if (pass != delivered) violation = true;
         } catch {}
     }
 
@@ -147,15 +134,15 @@ contract JobBondHandler is Test {
     }
 
     function _checkStake(bytes32 spec) internal {
-        (, PredgeValidatorBondV2.Status st, uint8 sc, , uint64 scoredAt, , uint256 jid, , bytes32 c, bytes32 e) = bond.stakes(spec);
+        (, PredgeValidatorBondV2.Status st, uint8 sc, , uint64 scoredAt, uint256 jid, , bytes32 c, bytes32 e) = bond.stakes(spec);
         uint8 s8 = uint8(st);
         if (s8 < prevStatus[spec]) violation = true; // never moves backwards
-        if (prevStatus[spec] >= 3 && s8 != prevStatus[spec]) violation = true; // final states are final
+        if (prevStatus[spec] >= 2 && s8 != prevStatus[spec]) violation = true; // Scored / Released / Forfeited are final
         if (s8 != 0) {
             if (firstCommitment[spec] == 0) { firstCommitment[spec] = c; firstJobId[spec] = jid; }
             if (c != firstCommitment[spec] || jid != firstJobId[spec]) violation = true;
         }
-        if (s8 >= 2 && s8 != 5 && s8 != 6) { // Released / Forfeited carry no verdict
+        if (s8 == 2) { // only Scored carries a verdict
             if (firstScoredAt[spec] == 0) { firstScoredAt[spec] = scoredAt; firstExpected[spec] = e; firstScore[spec] = sc; }
             if (scoredAt != firstScoredAt[spec] || e != firstExpected[spec] || sc != firstScore[spec]) violation = true;
         }
@@ -172,7 +159,7 @@ contract JobBondInvariantTest is StdInvariant, Test {
 
     function setUp() public {
         job = new AgentJobV2(3 days);
-        bond = new PredgeValidatorBondV2(address(0x5AFE), address(0x0A11), address(job), 1 days, 1e15, 10_000);
+        bond = new PredgeValidatorBondV2(address(0x5AFE), address(0x0A11), address(job), 1e15, 10_000);
         h = new JobBondHandler(job, bond);
         targetContract(address(h));
     }
@@ -188,8 +175,8 @@ contract JobBondInvariantTest is StdInvariant, Test {
     function invariant_totalBondedEqualsOpenBonds() public view {
         uint256 sum;
         for (uint256 i; i < h.specCount(); ++i) {
-            (, PredgeValidatorBondV2.Status st,,,,,, uint256 b,,) = bond.stakes(h.specs(i));
-            if (st == PredgeValidatorBondV2.Status.Committed || st == PredgeValidatorBondV2.Status.Scored) sum += b;
+            (, PredgeValidatorBondV2.Status st,,,,, uint256 b,,) = bond.stakes(h.specs(i));
+            if (st == PredgeValidatorBondV2.Status.Committed) sum += b;
             else assertEq(b, 0, "closed => bond == 0");
         }
         assertEq(bond.totalBonded(), sum);
@@ -210,21 +197,23 @@ contract JobBondInvariantTest is StdInvariant, Test {
         assertLe(job.totalCredit(), paid);
     }
 
-    function invariant_honestVerdictNeverSlashed() public view {
+    /// @dev Option (a): every verdict on record equals the on-chain truth, and the job settled the same way.
+    function invariant_everyRecordedVerdictIsTrue() public view {
         for (uint256 i; i < h.specCount(); ++i) {
             bytes32 spec = h.specs(i);
-            (, PredgeValidatorBondV2.Status st, uint8 score,,,,,,,) = bond.stakes(spec);
-            if (st != PredgeValidatorBondV2.Status.Slashed) continue;
+            (, PredgeValidatorBondV2.Status st, uint8 score,,,,,,) = bond.stakes(spec);
+            if (st != PredgeValidatorBondV2.Status.Scored) continue;
             IAgentJobV2.Job memory j = job.getJob(h.jobIds(i));
             bool delivered = j.hashedOnChain && j.deliverable == h.expectedOf(spec);
-            assertTrue((score == 100 && !delivered) || (score == 0 && delivered), "slashed => the verdict contradicted the deliverable");
+            assertEq(score, delivered ? 100 : 0, "recorded verdict == truth");
+            assertEq(uint8(j.state), uint8(delivered ? IAgentJobV2.State.Completed : IAgentJobV2.State.Rejected));
         }
     }
 
     /// @dev Olympix 5.2.2: a stake closed without a verdict pays the provider iff the provider had submitted.
     function invariant_silenceAfterSubmissionForfeits() public view {
         for (uint256 i; i < h.specCount(); ++i) {
-            (, PredgeValidatorBondV2.Status st,,,,,,,,) = bond.stakes(h.specs(i));
+            (, PredgeValidatorBondV2.Status st,,,,,,,) = bond.stakes(h.specs(i));
             uint64 submittedAt = job.getJob(h.jobIds(i)).submittedAt;
             if (st == PredgeValidatorBondV2.Status.Forfeited) assertGt(submittedAt, 0, "forfeit only after a submission");
             if (st == PredgeValidatorBondV2.Status.Released) assertEq(submittedAt, 0, "returned only if nothing was submitted");
@@ -235,7 +224,7 @@ contract JobBondInvariantTest is StdInvariant, Test {
     function invariant_stakeCommitsToClientValue() public view {
         for (uint256 i; i < h.specCount(); ++i) {
             bytes32 spec = h.specs(i);
-            (, PredgeValidatorBondV2.Status st,,,,,,, bytes32 c,) = bond.stakes(spec);
+            (, PredgeValidatorBondV2.Status st,,,,,, bytes32 c,) = bond.stakes(spec);
             if (st == PredgeValidatorBondV2.Status.None) continue;
             assertEq(c, keccak256(abi.encode(h.expectedOf(spec), h.saltOf(spec))));
             assertEq(bond.specHashFor(c), spec);
@@ -244,12 +233,12 @@ contract JobBondInvariantTest is StdInvariant, Test {
 
     function invariant_scoredNeverBeforeSubmission() public view {
         for (uint256 i; i < h.specCount(); ++i) {
-            (, PredgeValidatorBondV2.Status st,,, uint64 scoredAt,,,,,) = bond.stakes(h.specs(i));
+            (, PredgeValidatorBondV2.Status st,,, uint64 scoredAt,,,,) = bond.stakes(h.specs(i));
             if (
                 st == PredgeValidatorBondV2.Status.Committed || st == PredgeValidatorBondV2.Status.None
                     || st == PredgeValidatorBondV2.Status.Released || st == PredgeValidatorBondV2.Status.Forfeited
             ) continue;
-            assertGe(scoredAt, job.getJob(h.jobIds(i)).submittedAt, "H-01: window starts at or after the submission");
+            assertGe(scoredAt, job.getJob(h.jobIds(i)).submittedAt, "H-01: a verdict never precedes the submission");
             assertGt(job.getJob(h.jobIds(i)).submittedAt, 0);
         }
     }
@@ -264,7 +253,7 @@ contract JobBondInvariantTest is StdInvariant, Test {
 
     function invariant_writeOnceAndMonotonic() public {
         h.snapshot();
-        assertFalse(h.violation(), "write-once / monotonic / challenge-iff-lied / reclaim-after-window");
+        assertFalse(h.violation(), "write-once / monotonic / only true verdicts recorded");
     }
 
     function invariant_livenessNoPermanentLock() public view {

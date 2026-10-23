@@ -23,7 +23,7 @@ contract ConstructorGuardsTest is Test {
     }
 
     function mkBond(address j, uint16 bps) external returns (address) {
-        return address(new PredgeValidatorBondV2(safe, op, j, 1 hours, 1, bps));
+        return address(new PredgeValidatorBondV2(safe, op, j, 1, bps));
     }
 
     function mkArb(address rp, uint16 bps) external returns (address) {

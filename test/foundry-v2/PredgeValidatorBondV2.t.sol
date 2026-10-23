@@ -12,13 +12,11 @@ contract PredgeValidatorBondV2Test is Base {
     bytes32 internal constant SALT = keccak256("salt");
     bytes32 internal constant OTHER = keccak256("something else");
 
-    event Committed(bytes32 indexed requestHash, uint256 indexed jobId, address indexed staker, bytes32 commitment, uint256 bond, uint64 window);
-    event Scored(bytes32 indexed requestHash, uint256 indexed jobId, uint8 score, bytes32 expected, uint64 scoredAt, uint64 windowEnd);
-    event Slashed(bytes32 indexed requestHash, address indexed challenger, address indexed harmed, uint256 bond, uint8 recordedScore, bytes32 delivered);
-    event Reclaimed(bytes32 indexed requestHash, address indexed staker, uint256 bond);
+    event Committed(bytes32 indexed requestHash, uint256 indexed jobId, address indexed staker, bytes32 commitment, uint256 bond);
+    event Scored(bytes32 indexed requestHash, uint256 indexed jobId, uint8 score, bytes32 expected, address staker, uint256 bond);
     event Released(bytes32 indexed requestHash, address indexed staker, uint256 bond);
     event Forfeited(bytes32 indexed requestHash, address indexed provider, uint256 bond);
-    event ParamsUpdated(uint64 disputeWindow, uint256 minBond, uint16 bondBps);
+    event ParamsUpdated(uint256 minBond, uint16 bondBps);
 
     function setUp() public {
         _deployJobAndBond();
@@ -28,48 +26,45 @@ contract PredgeValidatorBondV2Test is Base {
     // ---- construction / params (M-01, L-01) ----
 
     /// @dev `new` under `vm.expectRevert` ends the test early in forge; deploy through an external call instead.
-    function mk(address o, address p, address j, uint64 w, uint256 m, uint16 b) external returns (address) {
-        return address(new PredgeValidatorBondV2(o, p, j, w, m, b));
+    function mk(address o, address p, address j, uint256 m, uint16 b) external returns (address) {
+        return address(new PredgeValidatorBondV2(o, p, j, m, b));
     }
 
     function test_constructor() public view {
         assertEq(bond.owner(), safe);
         assertEq(bond.operator(), op);
         assertEq(address(bond.job()), address(job));
-        assertEq(bond.disputeWindow(), WINDOW);
         assertEq(bond.minBond(), MIN_BOND);
         assertEq(bond.bondBps(), BPS);
     }
 
     function test_constructor_reverts() public {
         vm.expectRevert(Owned2Step.ZeroAddress.selector);
-        this.mk(address(0), op, address(job), WINDOW, MIN_BOND, BPS);
+        this.mk(address(0), op, address(job), MIN_BOND, BPS);
         vm.expectRevert(Owned2Step.ZeroAddress.selector);
-        this.mk(safe, address(0), address(job), WINDOW, MIN_BOND, BPS);
+        this.mk(safe, address(0), address(job), MIN_BOND, BPS);
         vm.expectRevert(Owned2Step.ZeroAddress.selector);
-        this.mk(safe, op, address(0), WINDOW, MIN_BOND, BPS);
+        this.mk(safe, op, address(0), MIN_BOND, BPS);
         vm.expectRevert(PredgeValidatorBondV2.BadParams.selector);
-        this.mk(safe, op, address(job), 59 minutes, MIN_BOND, BPS);
+        this.mk(safe, op, address(job), 0, BPS);
         vm.expectRevert(PredgeValidatorBondV2.BadParams.selector);
-        this.mk(safe, op, address(job), 31 days, MIN_BOND, BPS);
-        vm.expectRevert(PredgeValidatorBondV2.BadParams.selector);
-        this.mk(safe, op, address(job), WINDOW, 0, BPS);
-        vm.expectRevert(PredgeValidatorBondV2.BadParams.selector);
-        this.mk(safe, op, address(job), WINDOW, MIN_BOND, 10_001);
+        this.mk(safe, op, address(job), MIN_BOND, 10_001);
+        this.mk(safe, op, address(job), 1, 10_000); // both bounds inclusive
     }
 
     function test_setParams_ownerOnlyAndBounded() public {
         vm.prank(op);
         vm.expectRevert(Owned2Step.NotOwner.selector);
-        bond.setParams(2 days, 1, 5000);
+        bond.setParams(1, 5000);
         vm.startPrank(safe);
         vm.expectRevert(PredgeValidatorBondV2.BadParams.selector);
-        bond.setParams(1 minutes, 1, 5000);
+        bond.setParams(0, 5000);
+        vm.expectRevert(PredgeValidatorBondV2.BadParams.selector);
+        bond.setParams(1, 10_001);
         vm.expectEmit(false, false, false, true);
-        emit ParamsUpdated(2 days, 7, 5000);
-        bond.setParams(2 days, 7, 5000);
+        emit ParamsUpdated(7, 5000);
+        bond.setParams(7, 5000);
         vm.stopPrank();
-        assertEq(bond.disputeWindow(), 2 days);
         assertEq(bond.minBond(), 7);
         assertEq(bond.bondBps(), 5000);
     }
@@ -78,24 +73,21 @@ contract PredgeValidatorBondV2Test is Base {
         (uint256 id, bytes32 spec) = _newJob(10 ether, EXPECTED, SALT);
         _stake(spec, EXPECTED, SALT, id, 10 ether);
         vm.prank(safe);
-        bond.setParams(30 days, MIN_BOND, BPS); // owner stretches the window afterwards
+        bond.setParams(MIN_BOND, 0); // owner drops the bps afterwards
         _deliver(id, GOOD);
         _score(spec, 100, EXPECTED, SALT);
-        (,,,, , uint64 snap,,,,) = bond.stakes(spec);
-        assertEq(snap, WINDOW, "stake keeps the window it was made with");
-        vm.warp(block.timestamp + WINDOW);
-        bond.reclaim(spec); // would revert WindowOpen if the new 30d window applied
+        assertEq(bond.credit(op), 10 ether, "the staker gets back exactly what it posted");
     }
 
     function test_requiredBond_isMaxOfFloorAndScaled() public {
         assertEq(bond.requiredBond(1), MIN_BOND);
         assertEq(bond.requiredBond(10 ether), 10 ether);
         vm.prank(safe);
-        bond.setParams(WINDOW, MIN_BOND, 2500);
+        bond.setParams(MIN_BOND, 2500);
         assertEq(bond.requiredBond(10 ether), 2.5 ether);
         assertEq(bond.requiredBond(3), MIN_BOND);
         vm.prank(safe);
-        bond.setParams(WINDOW, 1, 3333);
+        bond.setParams(1, 3333);
         assertEq(bond.requiredBond(10), 4, "rounds up: ceil(3.333)");
     }
 
@@ -104,18 +96,17 @@ contract PredgeValidatorBondV2Test is Base {
     function test_stake_ok() public {
         (uint256 id, bytes32 spec) = _newJob(2 ether, EXPECTED, SALT);
         vm.expectEmit(true, true, true, true);
-        emit Committed(spec, id, op, _commitment(EXPECTED, SALT), 2 ether, WINDOW);
+        emit Committed(spec, id, op, _commitment(EXPECTED, SALT), 2 ether);
         _stake(spec, EXPECTED, SALT, id, 2 ether);
-        (address staker, PredgeValidatorBondV2.Status st,,,,, uint256 jobId, uint256 b, bytes32 c, bytes32 e) = bond.stakes(spec);
+        (address staker, PredgeValidatorBondV2.Status st,, uint64 stakedAt,, uint256 jobId, uint256 b, bytes32 c, bytes32 e) = bond.stakes(spec);
         assertEq(staker, op);
         assertEq(uint8(st), uint8(PredgeValidatorBondV2.Status.Committed));
+        assertEq(stakedAt, block.timestamp);
         assertEq(jobId, id);
         assertEq(b, 2 ether);
         assertEq(c, _commitment(EXPECTED, SALT));
         assertEq(e, bytes32(0), "expected is hidden until the reveal");
         assertEq(bond.totalBonded(), 2 ether);
-        (,,, uint64 stakedAt,,,,,,) = bond.stakes(spec);
-        assertEq(stakedAt, block.timestamp);
     }
 
     function test_stake_reverts() public {
@@ -189,7 +180,7 @@ contract PredgeValidatorBondV2Test is Base {
         bond.setOperator(newOp); // the owner rotates to the job's client
         vm.prank(newOp);
         vm.expectRevert(PredgeValidatorBondV2.ClientIsOperator.selector);
-        bond.recordScore(spec, 0, EXPECTED, SALT, 0);
+        bond.recordScore(spec, 100, EXPECTED, SALT, 0);
     }
 
     function test_stake_notOpenOnceSubmittedOrLapsed() public {
@@ -209,29 +200,37 @@ contract PredgeValidatorBondV2Test is Base {
 
     // ---- recordScore ----
 
-    function test_score_pass_movesTheMoney() public {
+    function test_score_pass_movesTheMoneyAndReturnsTheBond() public {
         (uint256 id, bytes32 spec) = _newJob(4 ether, EXPECTED, SALT);
         _stake(spec, EXPECTED, SALT, id, 4 ether);
         _deliver(id, GOOD);
+        assertEq(bond.verdictFor(id, EXPECTED), 100);
         vm.expectEmit(true, true, false, true);
-        emit Scored(spec, id, 100, EXPECTED, uint64(block.timestamp), uint64(block.timestamp) + WINDOW);
+        emit Scored(spec, id, 100, EXPECTED, op, 4 ether);
         _score(spec, 100, EXPECTED, SALT);
         assertEq(uint8(job.getJob(id).state), uint8(IAgentJobV2.State.Completed));
         assertEq(job.credit(provider), 4 ether);
         assertEq(job.getJob(id).reason, keccak256("reason"));
-        (, PredgeValidatorBondV2.Status st,, , uint64 scoredAt,,,,, bytes32 revealed) = bond.stakes(spec);
+        (, PredgeValidatorBondV2.Status st, uint8 sc,, uint64 scoredAt,, uint256 left,, bytes32 revealed) = bond.stakes(spec);
         assertEq(uint8(st), uint8(PredgeValidatorBondV2.Status.Scored));
+        assertEq(sc, 100);
         assertEq(revealed, EXPECTED);
-        assertGe(scoredAt, job.getJob(id).submittedAt, "window can never start before the submission");
+        assertEq(left, 0, "a scored stake holds no bond");
+        assertEq(scoredAt, block.timestamp);
+        assertGe(scoredAt, job.getJob(id).submittedAt, "the verdict never precedes the submission");
+        assertEq(bond.credit(op), 4 ether, "bond credited back to the staker with the verdict");
+        assertEq(bond.totalBonded(), 0);
     }
 
     function test_score_fail_refundsClient() public {
         (uint256 id, bytes32 spec) = _newJob(4 ether, EXPECTED, SALT);
         _stake(spec, EXPECTED, SALT, id, 4 ether);
         _submit(id, OTHER);
+        assertEq(bond.verdictFor(id, EXPECTED), 0);
         _score(spec, 0, EXPECTED, SALT);
         assertEq(uint8(job.getJob(id).state), uint8(IAgentJobV2.State.Rejected));
         assertEq(job.credit(client), 4 ether);
+        assertEq(bond.credit(op), 4 ether);
     }
 
     function test_score_reverts() public {
@@ -239,6 +238,8 @@ contract PredgeValidatorBondV2Test is Base {
         vm.startPrank(op);
         vm.expectRevert(PredgeValidatorBondV2.BadScore.selector);
         bond.recordScore(spec, 50, EXPECTED, SALT, 0);
+        vm.expectRevert(PredgeValidatorBondV2.BadScore.selector);
+        bond.recordScore(spec, 1, EXPECTED, SALT, 0);
         vm.expectRevert(PredgeValidatorBondV2.NotCommitted.selector);
         bond.recordScore(spec, 100, EXPECTED, SALT, 0);
         bond.stakeAndCommit{value: 1 ether}(spec, _commitment(EXPECTED, SALT), id);
@@ -269,92 +270,56 @@ contract PredgeValidatorBondV2Test is Base {
         bond.recordScore(spec, 100, EXPECTED, SALT, 0);
     }
 
-    // ---- challenge ----
+    // ---- option (a): a false verdict cannot be recorded ----
 
-    /// @dev `delivered == EXPECTED` means the provider delivers the real bytes; anything else is a claimed hash.
-    function _scored(uint256 n, bytes32 delivered, uint8 score, uint256 escrow) internal returns (uint256 id, bytes32 spec) {
-        bytes32 salt = keccak256(abi.encode(SALT, n));
-        (id, spec) = _newJob(escrow, EXPECTED, salt);
-        _stake(spec, EXPECTED, salt, id, bond.requiredBond(escrow));
-        if (delivered == EXPECTED) _deliver(id, GOOD);
-        else _submit(id, delivered);
-        _score(spec, score, EXPECTED, salt);
+    function _expectContradiction(bytes32 spec, uint8 score, bytes32 salt) internal {
+        vm.prank(op);
+        vm.expectRevert(PredgeValidatorBondV2.VerdictContradictsEvidence.selector);
+        bond.recordScore(spec, score, EXPECTED, salt, 0);
     }
 
-    function test_challenge_falsePass_paysClientNotCaller() public {
-        (, bytes32 spec) = _scored(1, OTHER, 100, 5 ether);
-        assertTrue(bond.wouldSlash(spec));
-        uint256 callerBefore = stranger.balance;
-        vm.expectEmit(true, true, true, true);
-        emit Slashed(spec, stranger, client, 5 ether, 100, OTHER);
-        vm.prank(stranger);
-        bond.challenge(spec);
-        assertEq(bond.credit(client), 5 ether, "harmed client is credited");
-        assertEq(bond.credit(stranger), 0, "challenger earns nothing");
-        assertEq(stranger.balance, callerBefore);
-        assertEq(bond.totalBonded(), 0);
-        assertEq(bond.slashCount(), 1);
-        (,,,,,,, uint256 left,,) = bond.stakes(spec);
-        assertEq(left, 0, "slashed stake holds no bond");
-        assertFalse(bond.wouldSlash(spec));
-        vm.prank(client);
-        bond.withdraw();
-        assertEq(client.balance, 1_000 ether - 5 ether + 5 ether, "client lost the escrow and got the bond");
+    function test_falsePass_wrongBytes_reverts() public {
+        (uint256 id, bytes32 spec) = _newJob(1 ether, EXPECTED, SALT);
+        _stake(spec, EXPECTED, SALT, id, 1 ether);
+        _deliver(id, "not the output");
+        _expectContradiction(spec, 100, SALT);
+        _score(spec, 0, EXPECTED, SALT); // the true verdict goes through
+        assertEq(job.credit(client), 1 ether);
     }
 
-    function test_challenge_falseFail_paysProvider() public {
-        (, bytes32 spec) = _scored(1, EXPECTED, 0, 5 ether);
-        vm.prank(stranger);
-        bond.challenge(spec);
-        assertEq(bond.credit(provider), 5 ether);
+    /// @dev The provider knows `expected` (e.g. leaked by the client) and claims it without bytes: still not a delivery.
+    function test_falsePass_claimedHashWithoutBytes_reverts() public {
+        (uint256 id, bytes32 spec) = _newJob(1 ether, EXPECTED, SALT);
+        _stake(spec, EXPECTED, SALT, id, 1 ether);
+        _submit(id, EXPECTED);
+        assertEq(bond.verdictFor(id, EXPECTED), 0);
+        _expectContradiction(spec, 100, SALT);
+        _score(spec, 0, EXPECTED, SALT);
+        assertEq(job.credit(provider), 0);
     }
 
-    function test_challenge_honestVerdictsRevert() public {
-        (, bytes32 s1) = _scored(1, EXPECTED, 100, 1 ether);
-        (, bytes32 s2) = _scored(2, OTHER, 0, 1 ether);
-        assertFalse(bond.wouldSlash(s1));
-        assertFalse(bond.wouldSlash(s2));
-        vm.expectRevert(PredgeValidatorBondV2.VerdictHonest.selector);
-        bond.challenge(s1);
-        vm.expectRevert(PredgeValidatorBondV2.VerdictHonest.selector);
-        bond.challenge(s2);
+    function test_falseFail_correctBytes_reverts() public {
+        (uint256 id, bytes32 spec) = _newJob(1 ether, EXPECTED, SALT);
+        _stake(spec, EXPECTED, SALT, id, 1 ether);
+        _deliver(id, GOOD);
+        _expectContradiction(spec, 0, SALT);
+        _score(spec, 100, EXPECTED, SALT);
+        assertEq(job.credit(provider), 1 ether);
     }
 
-    function test_challenge_stateAndWindowGuards() public {
-        vm.expectRevert(PredgeValidatorBondV2.NotScored.selector);
-        bond.challenge(keccak256("none"));
-        (, bytes32 spec) = _scored(1, OTHER, 100, 1 ether);
-        vm.warp(block.timestamp + WINDOW);
-        assertFalse(bond.wouldSlash(spec));
-        vm.expectRevert(PredgeValidatorBondV2.WindowClosed.selector);
-        bond.challenge(spec);
-        bond.reclaim(spec); // a lie nobody challenged in time stands, by design
-        vm.expectRevert(PredgeValidatorBondV2.NotScored.selector);
-        bond.challenge(spec);
-    }
-
-    // ---- reclaim / release ----
-
-    function test_reclaim_paysStakerAfterWindowEvenAfterRotation() public {
-        (, bytes32 spec) = _scored(1, EXPECTED, 100, 3 ether);
-        vm.expectRevert(PredgeValidatorBondV2.WindowOpen.selector);
-        bond.reclaim(spec);
-        address newOp = makeAddr("newOp");
+    /// @dev bondBps = 0 (the shipped value) and the smallest floor: the false pass is still impossible (Olympix 5.1.2).
+    function test_falsePass_impossibleAtZeroBps() public {
         vm.prank(safe);
-        bond.setOperator(newOp);
-        vm.warp(block.timestamp + WINDOW);
-        vm.expectEmit(true, true, false, true);
-        emit Reclaimed(spec, op, 3 ether);
-        vm.prank(newOp); // the new key triggers it, the OLD staker is credited (L-04)
-        bond.reclaim(spec);
-        assertEq(bond.credit(op), 3 ether);
-        assertEq(bond.credit(newOp), 0);
-        assertEq(bond.totalBonded(), 0);
-        (,,,,,,, uint256 left,,) = bond.stakes(spec);
-        assertEq(left, 0, "reclaimed stake holds no bond");
-        vm.expectRevert(PredgeValidatorBondV2.NotScored.selector);
-        bond.reclaim(spec);
+        bond.setParams(1, 0);
+        (uint256 id, bytes32 spec) = _newJob(100 ether, EXPECTED, SALT);
+        _stake(spec, EXPECTED, SALT, id, 1);
+        _deliver(id, "colluding provider, wrong output");
+        _expectContradiction(spec, 100, SALT);
+        assertEq(uint8(job.getJob(id).state), uint8(IAgentJobV2.State.Submitted));
+        assertEq(job.credit(provider), 0);
     }
+
+    // ---- release ----
 
     function test_release_whenJobExpiredWithoutVerdict() public {
         (uint256 id, bytes32 spec) = _newJob(2 ether, EXPECTED, SALT);
@@ -365,10 +330,18 @@ contract PredgeValidatorBondV2Test is Base {
         vm.expectRevert(PredgeValidatorBondV2.JobNotExpired.selector); // lapsed but not yet claimed
         bond.release(spec);
         job.claimRefund(id);
+        address newOp = makeAddr("newOp");
+        vm.prank(safe);
+        bond.setOperator(newOp);
         vm.expectEmit(true, true, false, true);
         emit Released(spec, op, 2 ether);
+        vm.prank(newOp); // the new key triggers it, the OLD staker is credited (L-04)
         bond.release(spec);
         assertEq(bond.credit(op), 2 ether);
+        assertEq(bond.credit(newOp), 0);
+        (, PredgeValidatorBondV2.Status st,,,,, uint256 left,,) = bond.stakes(spec);
+        assertEq(uint8(st), uint8(PredgeValidatorBondV2.Status.Released));
+        assertEq(left, 0);
         vm.expectRevert(PredgeValidatorBondV2.BadStatus.selector);
         bond.release(spec);
     }
@@ -386,7 +359,7 @@ contract PredgeValidatorBondV2Test is Base {
         assertEq(bond.credit(op), 0);
         assertEq(bond.credit(provider), 2 ether);
         assertEq(bond.totalBonded(), 0);
-        (, PredgeValidatorBondV2.Status st,,,,,, uint256 left,,) = bond.stakes(spec);
+        (, PredgeValidatorBondV2.Status st,,,,, uint256 left,,) = bond.stakes(spec);
         assertEq(uint8(st), uint8(PredgeValidatorBondV2.Status.Forfeited));
         assertEq(left, 0);
         assertEq(job.credit(client), 2 ether, "documented timeout policy: the escrow still goes to the client");
@@ -397,67 +370,75 @@ contract PredgeValidatorBondV2Test is Base {
     function test_release_reverts() public {
         vm.expectRevert(PredgeValidatorBondV2.NotCommitted.selector);
         bond.release(keccak256("none"));
-        (, bytes32 spec) = _scored(1, EXPECTED, 100, 1 ether);
+        (uint256 id, bytes32 spec) = _newJob(1 ether, EXPECTED, SALT);
+        _stake(spec, EXPECTED, SALT, id, 1 ether);
+        _deliver(id, GOOD);
+        _score(spec, 100, EXPECTED, SALT);
         vm.expectRevert(PredgeValidatorBondV2.BadStatus.selector);
         bond.release(spec);
     }
 
     // ---- pull payments ----
 
-    function test_payoutToRevertingStakerDoesNotBlock() public {
-        // The harmed party cannot receive value: the slash still lands as credit and can be redirected.
+    function test_payoutToRevertingProviderDoesNotBlock() public {
+        // The forfeit beneficiary cannot receive value: the bond still lands as credit and can be redirected.
         NoReceive bad = new NoReceive();
         bytes32 spec = _bspec(EXPECTED, SALT);
-        vm.deal(address(bad), 1 ether);
-        vm.prank(address(bad));
-        uint256 id = job.createJob{value: 1 ether}(provider, address(bond), spec, uint64(block.timestamp + 1 days));
+        vm.prank(client);
+        uint256 id = job.createJob{value: 1 ether}(address(bad), address(bond), spec, uint64(block.timestamp + 1 days));
         _stake(spec, EXPECTED, SALT, id, 1 ether);
-        _submit(id, OTHER);
-        _score(spec, 100, EXPECTED, SALT);
-        bond.challenge(spec);
+        vm.prank(address(bad));
+        job.submit(id, OTHER, "");
+        vm.warp(block.timestamp + EVAL_WINDOW);
+        job.claimRefund(id);
+        bond.release(spec);
         assertEq(bond.credit(address(bad)), 1 ether);
         vm.expectRevert(PullCredit.TransferFailed.selector);
         bad.callWithdraw(address(bond));
         vm.prank(address(bad));
         bond.withdrawTo(payable(stranger));
         assertEq(bond.credit(address(bad)), 0);
+        assertEq(stranger.balance, 10 ether + 1 ether);
     }
 
     // ---- fuzz ----
 
-    /// @dev Whatever the provider submits, the verdict is slashable iff it contradicts the truth, where
-    ///      "delivered" means bytes hashed on-chain whose hash equals the client's expected value.
-    function testFuzz_slashableIffContradicted(bytes32 salt, bool viaBytes, bool matching, bool claimPass, bytes32 junk) public {
+    /// @dev Whatever the provider submits and whatever the operator claims, recordScore accepts the verdict
+    ///      iff it equals the truth ("delivered" = bytes hashed on-chain whose hash equals the client's
+    ///      expected value). A false verdict always reverts and moves nothing.
+    function testFuzz_noFalseVerdictCanBeRecorded(bytes32 salt, bool viaBytes, bool matching, bool claimPass, bytes32 junk, uint96 escrow)
+        public
+    {
         vm.assume(junk != bytes32(0) && junk != EXPECTED);
-        (uint256 id, bytes32 spec) = _newJob(1 ether, EXPECTED, salt);
-        _stake(spec, EXPECTED, salt, id, 1 ether);
+        escrow = uint96(bound(escrow, 1, 100 ether));
+        (uint256 id, bytes32 spec) = _newJob(escrow, EXPECTED, salt);
+        uint256 b = bond.requiredBond(escrow);
+        _stake(spec, EXPECTED, salt, id, b);
         if (viaBytes) _deliver(id, matching ? GOOD : abi.encode(junk));
         else _submit(id, matching ? EXPECTED : junk); // a claimed hash, even the right one, is not a delivery
-        _score(spec, claimPass ? 100 : 0, EXPECTED, salt);
         bool truth = viaBytes && matching;
-        bool lied = claimPass != truth;
-        assertEq(bond.wouldSlash(spec), lied);
-        if (lied) {
-            bond.challenge(spec);
-            assertEq(bond.credit(claimPass ? client : provider), 1 ether);
+        assertEq(bond.verdictFor(id, EXPECTED), truth ? 100 : 0);
+        uint8 claimed = claimPass ? 100 : 0;
+        if (claimPass != truth) {
+            _expectContradiction(spec, claimed, salt);
+            assertEq(uint8(job.getJob(id).state), uint8(IAgentJobV2.State.Submitted), "a false verdict moves nothing");
+            assertEq(bond.totalBonded(), b);
         } else {
-            vm.expectRevert(PredgeValidatorBondV2.VerdictHonest.selector);
-            bond.challenge(spec);
+            _score(spec, claimed, EXPECTED, salt);
+            assertEq(uint8(job.getJob(id).state), uint8(truth ? IAgentJobV2.State.Completed : IAgentJobV2.State.Rejected));
+            assertEq(job.credit(truth ? provider : client), escrow);
+            assertEq(bond.credit(op), b);
         }
     }
 
-    /// @dev Self-challenge is never profitable: whoever calls challenge, the operator's net is <= 0 on a lie.
-    function testFuzz_operatorNeverProfitsFromChallenging(uint96 escrow, bool claimPass) public {
-        escrow = uint96(bound(escrow, 1, 100 ether));
-        (uint256 id, bytes32 spec) = _newJob(escrow, EXPECTED, SALT);
-        uint256 b = bond.requiredBond(escrow);
-        _stake(spec, EXPECTED, SALT, id, b);
-        if (claimPass) _submit(id, OTHER); // the verdict below is the opposite of the truth
-        else _deliver(id, GOOD);
-        _score(spec, claimPass ? 100 : 0, EXPECTED, SALT);
-        vm.prank(op);
-        bond.challenge(spec);
-        assertEq(bond.credit(op), 0);
-        assertGe(bond.credit(claimPass ? client : provider), b);
+    /// @dev Any output bytes at all: a pass is recorded iff sha256(bytes) == expected, a fail iff not.
+    function testFuzz_passIffOnChainHashMatches(bytes calldata out, bool claimPass) public {
+        vm.assume(out.length != 0);
+        (uint256 id, bytes32 spec) = _newJob(1 ether, EXPECTED, SALT);
+        _stake(spec, EXPECTED, SALT, id, 1 ether);
+        _deliver(id, out);
+        bool truth = sha256(out) == EXPECTED;
+        if (claimPass != truth) _expectContradiction(spec, claimPass ? 100 : 0, SALT);
+        else _score(spec, claimPass ? 100 : 0, EXPECTED, SALT);
     }
 }
