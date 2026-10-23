@@ -105,7 +105,7 @@ Deployed 20-21 Oct 2026. The same six addresses on both chains. All six are veri
 - **Owner:** `0x9084f5000E07C7133D6dA5eE4f271AB6D1821144`, a **temporary single EOA**. A transfer to a Safe 2-of-3 multisig via `Ownable2Step` (`transferOwnership`, then `acceptOwnership`) is planned, target this week. Until then, treat the owner as a single point of control.
 - **Operator** (hot ops key, rotatable by the owner): `0x8ffFB76c4329DDC8ee4a859DDF55AB48ba25e292`.
 - **Bond floor:** minimal, about $5 (5 USDC on Arc, 0.002 ETH on Base). No percentage of job value (bps = 0). It is a floor, not coverage of job value.
-- **Status:** an external Olympix scan of v2 (commit `edd1c46`) was requested through Circle's Arc programme. Results are pending. The on-chain bonds are not claimed as a guarantee. The signed verdict API (`api.predge.io`) is unchanged and remains the product.
+- **Status:** Olympix (BugPoCer, via Circle's Arc programme) scanned v2 at commit `c47ed42` on 23 Oct 2026: 2 High, 3 Medium, 12 Low. Fixes are on branch `fix/olympix-2026-10-23` and are **not deployed**: the Arc and Base instances above are the scanned code and are affected by the confirmed findings (the contracts are not upgradeable, so a fix means a redeployment). The on-chain bonds are not claimed as a guarantee. The signed verdict API (`api.predge.io`) is unchanged and remains the product.
 
 ### v1 (legacy): 16 mainnets
 
