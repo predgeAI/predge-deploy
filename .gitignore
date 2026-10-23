@@ -3,3 +3,11 @@ node_modules/
 *.key
 deployer.json
 .DS_Store
+# audit / foundry
+.audit-venv/
+.audit-venv-myth/
+out-foundry/
+cache-foundry/
+lcov.info
+gambit_out/
+cache/
