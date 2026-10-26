@@ -10,9 +10,9 @@ node deploy.mjs --chain base --fork     # full deploy + smoke + end-to-end on a 
 CONFIRM_MAINNET=base node deploy.mjs --chain base --broadcast   # the real deploy
 ```
 
-## v2 (self-audit fixes, live on Arc and Base)
+## v2 (self-audit fixes, live on 9 chains)
 
-`contracts/v2/` is the redesigned set that fixes the 20.10.2026 self-audit findings (H-01..H-03, M-01..M-05, L-01..L-07). v2 is deployed on Arc and Base only (see [Deployments](#deployments)). The 16-chain set is v1, legacy, and is untouched. Design, finding-by-finding mapping and owner actions: `SELF-AUDIT-2026-10-20/v2-design.md` (Downloads).
+`contracts/v2/` is the redesigned set that fixes the 20.10.2026 self-audit findings (H-01..H-03, M-01..M-05, L-01..L-07). v2.1 is deployed on Arc, Base, Arbitrum, Avalanche, BNB Chain, Celo, Optimism, Sonic and Unichain (see [Deployments](#deployments)). The v1 set stays deployed as legacy on its 16 chains and is untouched. Design, finding-by-finding mapping and owner actions: `SELF-AUDIT-2026-10-20/v2-design.md` (Downloads).
 
 **v2.1 (23.10.2026, set `2026-10-23-v2.1`)** adds the fixes for the Olympix BugPoCer scan of `c47ed42` and the owner's option (a)
 for the validator bond: `PredgeValidatorBondV2.recordScore` refuses any verdict that contradicts the on-chain evidence and reverts
@@ -100,11 +100,11 @@ Canonical v1 addresses for deployer `0x5d016C1B4d7A42eB7c982da1Ae7fFdB958CFCAe9`
 
 ## Deployments
 
-### v2 (current, v2.1): Arc (5042) and Base (8453)
+### v2 (current, v2.1): Arc (5042), Base (8453), Arbitrum (42161), Avalanche (43114), BNB Chain (56), Celo (42220), Optimism (10), Sonic (146), Unichain (130)
 
 Deployed 2026-10-23 from set `2026-10-23-v2.1` (deployer nonces 6..11). The same six addresses on both chains. All six are verified on Sourcify. Receipts: [`deployments/v2/arc.json`](deployments/v2/arc.json), [`deployments/v2/base.json`](deployments/v2/base.json).
 
-| Contract | Address (Arc and Base) | Sourcify | Explorer |
+| Contract | Address (all nine chains) | Sourcify | Explorer |
 |---|---|---|---|
 | PredgeAgentValidatorV2 | `0xE4CFdE5dbD9afD518b9c59136939607505bF643D` | [Sourcify](https://sourcify.dev/#/lookup/0xE4CFdE5dbD9afD518b9c59136939607505bF643D) | [Arc](https://explorer.arc.io/address/0xE4CFdE5dbD9afD518b9c59136939607505bF643D), [Base](https://basescan.org/address/0xE4CFdE5dbD9afD518b9c59136939607505bF643D) |
 | AgentJobV2 | `0x5C673c6aBF3c60C3F6Ce3f1509f5d99C08F8B13F` | [Sourcify](https://sourcify.dev/#/lookup/0x5C673c6aBF3c60C3F6Ce3f1509f5d99C08F8B13F) | [Arc](https://explorer.arc.io/address/0x5C673c6aBF3c60C3F6Ce3f1509f5d99C08F8B13F), [Base](https://basescan.org/address/0x5C673c6aBF3c60C3F6Ce3f1509f5d99C08F8B13F) |
@@ -113,6 +113,7 @@ Deployed 2026-10-23 from set `2026-10-23-v2.1` (deployer nonces 6..11). The same
 | MockRefundProtocolV2 (demo refund protocol) | `0x50041FdAb10f8f56E24FA9CA806f082CcAeb05E9` | [Sourcify](https://sourcify.dev/#/lookup/0x50041FdAb10f8f56E24FA9CA806f082CcAeb05E9) | [Arc](https://explorer.arc.io/address/0x50041FdAb10f8f56E24FA9CA806f082CcAeb05E9), [Base](https://basescan.org/address/0x50041FdAb10f8f56E24FA9CA806f082CcAeb05E9) |
 | PredgeRefundArbiterV2 | `0xf404F908cb1ba47C01AB8526B725aAA940557eA9` | [Sourcify](https://sourcify.dev/#/lookup/0xf404F908cb1ba47C01AB8526B725aAA940557eA9) | [Arc](https://explorer.arc.io/address/0xf404F908cb1ba47C01AB8526B725aAA940557eA9), [Base](https://basescan.org/address/0xf404F908cb1ba47C01AB8526B725aAA940557eA9) |
 
+- **26 Oct 2026, seven more chains:** Arbitrum, Avalanche, BNB Chain, Celo, Optimism, Sonic and Unichain, the same six addresses as above. The v2 deployer was fresh on these chains, so `scripts/v2-burn-nonces.mjs` first sent six 0-value self-transactions (nonces 0..5) and the set then landed at nonces 6..11, exactly as on Arc and Base. 30 read-only smoke checks passed on every chain and all 42 contracts are exact matches on Sourcify. Receipts: [`deployments/v2/optimism.json`](deployments/v2/optimism.json), [`deployments/v2/unichain.json`](deployments/v2/unichain.json), [`deployments/v2/arbitrum.json`](deployments/v2/arbitrum.json), [`deployments/v2/bnb.json`](deployments/v2/bnb.json), [`deployments/v2/avalanche.json`](deployments/v2/avalanche.json), [`deployments/v2/sonic.json`](deployments/v2/sonic.json), [`deployments/v2/celo.json`](deployments/v2/celo.json).
 - **Owner:** `0x9084f5000E07C7133D6dA5eE4f271AB6D1821144` (TEMPORARY owner = Amir EOA 0x9084…1144 by owner decision; transferOwnership→acceptOwnership to the Safe once created.). **Operator** (hot ops key, rotatable by the owner): `0x8ffFB76c4329DDC8ee4a859DDF55AB48ba25e292`.
 - **Bond floor:** minimal (bps = 0), per-chain floor from `config/v2.chains.json`. Since v2.1 the validator bond backs liveness only: `recordScore` refuses any verdict that contradicts the on-chain evidence (pass needs the output bytes hashed on-chain and equal to the client-committed `expected`; fail needs the opposite), so a false verdict cannot be recorded at any bond size and there is no challenge window.
 - **Status:** v2.1 contains the fixes for the Olympix BugPoCer scan of `c47ed42` (23 Oct 2026) and the option (a) verdict check. The signed verdict API (`api.predge.io`) is unchanged and remains the product.
