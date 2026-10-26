@@ -6,15 +6,22 @@
 //   CONFIRM_MAINNET=base node deploy.mjs --chain base --broadcast
 //                                                the real thing: deploy, verify source, read-only smoke, deployments/base.json.
 // Options: --rpc <url> (override), --no-verify, --no-e2e (fork), --keep-anvil (fork)
+//
+//   --set v2   the v2 contract set (contracts/v2, config/set.v2.json). Roles (deployer / owner Safe / operator) come from
+//              config/v2.config.json and must be filled in by the owner; --fork uses throwaway anvil accounts and also runs
+//              the v1 attack sequences, which must revert. A real v2 --broadcast needs --key-file <new v2 deployer json>.
+//              v2 NEVER reads ~/.predge-deployer. Outputs go to deployments/v2/ and deployments/fork-v2/.
 import { spawn } from "node:child_process";
 import { writeFileSync, mkdirSync, existsSync, readFileSync } from "node:fs";
 import { createServer } from "node:net";
 import { formatEther, Wallet } from "ethers";
-import { chainConfig, pickRpc, providerFor, withRetry, rawRpc, waitReceipt, SET } from "./lib/chains.mjs";
+import { chainConfig, pickRpc, providerFor, withRetry, rawRpc, waitReceipt, SET, SET_V2 } from "./lib/chains.mjs";
 import { loadDeployer } from "./lib/key.mjs";
 import { resolvePlan } from "./lib/plan.mjs";
 import { maskImmutables, SOLC_VERSION, SETTINGS } from "./lib/compile.mjs";
 import { readOnly, e2e } from "./lib/smoke.mjs";
+import { readOnlyV2, e2eV2 } from "./lib/smoke-v2.mjs";
+import { realRoles, forkRoles, chainParams, anvilWallets, v2KeyFile } from "./lib/v2.mjs";
 import { verifyStep } from "./lib/verify.mjs";
 import { l1FeeWei } from "./lib/fees.mjs";
 
@@ -22,6 +29,11 @@ const argv = process.argv.slice(2);
 const flag = (f) => argv.includes(f);
 const opt = (f) => { const i = argv.indexOf(f); return i >= 0 ? argv[i + 1] : undefined; };
 const ROOT = new URL("./", import.meta.url).pathname;
+const V2 = opt("--set") === "v2";
+if (opt("--set") && !V2 && opt("--set") !== "v1") { console.error(`unknown --set ${opt("--set")} (v1 | v2)`); process.exit(2); }
+const SETUSED = V2 ? SET_V2 : SET;
+const OUT = V2 ? "deployments/v2" : "deployments";
+const OUTFORK = V2 ? "deployments/fork-v2" : "deployments/fork";
 const ANVIL = process.env.ANVIL_BIN || (existsSync(`${process.env.HOME}/.foundry/bin/anvil`) ? `${process.env.HOME}/.foundry/bin/anvil` : "anvil");
 const ERC8004 = {
   IdentityRegistry: "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
@@ -111,9 +123,16 @@ async function main() {
 
   const liveUrl = await pickRpc(chain, opt("--rpc"));
   const live = providerFor(liveUrl, chain.chainId);
-  const deployer = loadDeployer(live);
-  const plan = resolvePlan(deployer.address);
-  log(`deployer ${deployer.address}  rpc ${liveUrl}`);
+  // v1: the one deployer key. v2: roles from config (real runs) or anvil accounts (fork); a v2 key is only loaded to broadcast.
+  const roles = V2 ? (mode === "fork" ? forkRoles() : realRoles()) : null;
+  let deployer;
+  if (V2) deployer = mode === "broadcast" ? loadDeployer(live, v2KeyFile(opt("--key-file"))) : { address: roles.deployer };
+  else deployer = loadDeployer(live);
+  if (V2 && mode === "broadcast" && deployer.address !== roles.deployer) throw new Error(`--key-file address ${deployer.address} != config deployer ${roles.deployer}`);
+  const plan = V2
+    ? resolvePlan(deployer.address, { owner: roles.owner, operator: roles.operator, ...chainParams(chain.name) }, SET_V2)
+    : resolvePlan(deployer.address);
+  log(`deployer ${deployer.address}  rpc ${liveUrl}${V2 ? `  (v2: owner ${roles.owner}, operator ${roles.operator})` : ""}`);
   for (const s of plan) log(`  nonce ${s.nonce}  ${s.name.padEnd(22)} -> ${s.address}`);
 
   if (mode === "broadcast") {
@@ -135,31 +154,34 @@ async function main() {
     }
     const need = (gas * price * 150n) / 100n;
     log(`\nnonce ${nonce}, balance ${formatEther(bal)} ${chain.native}; estimated gas ${gas} @ ${price} wei = ${formatEther(gas * price)} ${chain.native} (fund >= ${formatEther(need)} incl. 50% buffer; L2 data fees: see funding table)`);
-    if (nonce > 0 && (await live.getCode(plan[Math.min(nonce, plan.length) - 1].address)).length <= 2)
+    const base = plan[0].nonce, done = nonce - base;
+    if (done < 0 || done > plan.length) throw new Error(`deployer nonce ${nonce} on ${chain.name} is outside this set's nonces ${base}..${base + plan.length}: nonce desync.`);
+    if (done > 0 && (await live.getCode(plan[done - 1].address)).length <= 2)
       throw new Error(`deployer nonce ${nonce} on ${chain.name} but the contract for nonce ${nonce - 1} is missing: nonce desync.`);
     if (mode === "dry-run") { log("dry run only. Nothing sent."); return; }
     if (bal < (gas * price)) { console.error(`Balance too low. Fund ${deployer.address} with >= ${formatEther(need)} ${chain.native} on ${chain.name}.`); process.exit(4); }
 
     const results = await deploySet(live, deployer, plan, { log, gasLimitPct: chain.gasLimitPct });
-    const smoke = await readOnly(live, plan, deployer.address);
+    const smoke = V2 ? await readOnlyV2(live, plan, roles) : await readOnly(live, plan, deployer.address);
     log(`smoke: ${smoke.length} checks passed`);
     const verification = {};
-    mkdirSync(`${ROOT}deployments/verify`, { recursive: true });
+    mkdirSync(`${ROOT}${OUT}/verify`, { recursive: true });
     for (const s of plan) {
-      writeFileSync(`${ROOT}deployments/verify/${s.name}.json`, json(s.compiled.input));
+      writeFileSync(`${ROOT}${OUT}/verify/${s.name}.json`, json(s.compiled.input));
       const r = results.find((x) => x.name === s.name);
       verification[s.name] = flag("--no-verify") ? { ok: false, todo: "skipped (--no-verify)" } : await verifyStep(chain, s, r?.txHash);
       log(`  verify ${s.name}: ${verification[s.name].ok ? "OK via " + verification[s.name].via : "TODO " + JSON.stringify(verification[s.name].tried ?? verification[s.name].todo).slice(0, 200)}`);
     }
     const record = {
-      chain: chain.name, chainId: chain.chainId, deployer: deployer.address, operator: plan[0].args[0], setVersion: SET.version,
+      chain: chain.name, chainId: chain.chainId, deployer: deployer.address, operator: V2 ? roles.operator : plan[0].args[0], ...(V2 ? { owner: roles.owner } : {}), setVersion: SETUSED.version,
       compiler: { solc: plan[0].compiled.compilerVersion, settings: { optimizer: SETTINGS.optimizer, evmVersion: SETTINGS.evmVersion } },
       deployedAt: new Date().toISOString(), explorer: chain.explorer,
       contracts: Object.fromEntries(results.map(({ rawTx, ...r }) => [r.name, { ...r, verified: verification[r.name] }])),
       erc8004: await registries(live), smoke, legacy: chain.legacy ?? null,
     };
-    writeFileSync(`${ROOT}deployments/${chain.name}.json`, json(record));
-    log(`wrote deployments/${chain.name}.json`);
+    mkdirSync(`${ROOT}${OUT}`, { recursive: true });
+    writeFileSync(`${ROOT}${OUT}/${chain.name}.json`, json(record));
+    log(`wrote ${OUT}/${chain.name}.json`);
     return;
   }
 
@@ -173,15 +195,24 @@ async function main() {
   const { url: forkUrl, child } = started;
   try {
     const fork = providerFor(forkUrl, chain.chainId);
-    const forkWallet = new Wallet(deployer.privateKey, fork);
+    // v1 forks with the real deployer key (it is only ever funded on the fork). v2 NEVER does: anvil account 0.
+    const anvil = V2 ? anvilWallets(fork) : null;
+    const forkWallet = V2 ? anvil[0] : new Wallet(deployer.privateKey, fork);
+    if (V2) for (const w of anvil) { await fork.send("anvil_setCode", [w.address, "0x"]); await fork.send("anvil_setNonce", [w.address, "0x0"]); await fork.send("anvil_setBalance", [w.address, "0x3635C9ADC5DEA00000"]); } // clean EOAs at nonce 0 (the public anvil keys are heavily used on mainnets), 1000 native, fork only
+    if (V2 && plan[0].nonce > 0) await fork.send("anvil_setNonce", [anvil[0].address, "0x" + plan[0].nonce.toString(16)]); // the fork deployer starts where the real one does (set nonceBase)
     const startNonce = await fork.getTransactionCount(deployer.address);
     await fork.send("anvil_setBalance", [deployer.address, "0x56BC75E2D63100000"]); // 100 native, fork only
     const t0 = Date.now();
     const results = await deploySet(fork, forkWallet, plan, { log, gasLimitPct: chain.gasLimitPct });
-    const smoke = await readOnly(fork, plan, deployer.address);
+    const smoke = V2 ? await readOnlyV2(fork, plan, roles) : await readOnly(fork, plan, deployer.address);
     log(`smoke: ${smoke.length} read-only checks passed`);
-    let steps = null;
-    if (!flag("--no-e2e")) {
+    let steps = null, attacks = null;
+    if (!flag("--no-e2e") && V2) {
+      const [, owner, op, client, worker, party] = anvil;
+      const r = await e2eV2(fork, plan, { owner, op, client, worker, party }, async (s) => { await fork.send("evm_increaseTime", [s]); await fork.send("evm_mine", []); });
+      steps = r.steps; attacks = r.attacks;
+      log(`e2e: ${steps.length} honest-path txs passed; ${attacks.length} attack sequences blocked (H-01, H-02, H-03, M-03, Olympix 5.1.1/5.2.2, false pass/fail)`);
+    } else if (!flag("--no-e2e")) {
       // Fresh throwaway keys, funded on the fork only (the well-known anvil test accounts carry
       // EIP-7702 delegations on several mainnets, so they are not clean EOAs on a fork).
       const signers = [0, 1, 2].map(() => Wallet.createRandom().connect(fork));
@@ -206,12 +237,12 @@ async function main() {
       at: new Date().toISOString(), seconds: Math.round((Date.now() - t0) / 1000), deployer: deployer.address, startNonce,
       contracts: Object.fromEntries(results.map(({ rawTx, ...r }) => [r.name, r])),
       totals: { gasUsed: gasUsed.toString(), liveGasPriceWei: gasPrice.toString(), l1FeeWei: l1.toString(), l1FeeMethod: [...l1how].join("; "), costWei: costWei.toString(), cost: formatEther(costWei), native: chain.native },
-      smoke: smoke.map((c) => c.check), e2e: steps, erc8004: await registries(live),
+      smoke: smoke.map((c) => c.check), e2e: steps, ...(V2 ? { attacksBlocked: attacks, setVersion: SETUSED.version } : {}), erc8004: await registries(live),
     };
-    mkdirSync(`${ROOT}deployments/fork`, { recursive: true });
-    writeFileSync(`${ROOT}deployments/fork/${chain.name}.json`, json(record));
+    mkdirSync(`${ROOT}${OUTFORK}`, { recursive: true });
+    writeFileSync(`${ROOT}${OUTFORK}/${chain.name}.json`, json(record));
     log(`fork total: gas ${gasUsed} @ live ${gasPrice} wei + L1 ${formatEther(l1)} = ${formatEther(costWei)} ${chain.native}`);
-    log(`wrote deployments/fork/${chain.name}.json`);
+    log(`wrote ${OUTFORK}/${chain.name}.json`);
   } finally {
     if (!flag("--keep-anvil")) child.kill();
   }

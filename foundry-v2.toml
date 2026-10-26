@@ -1,0 +1,21 @@
+# Foundry config for the Predge v2 contracts (contracts/v2). Kept separate from any v1 foundry.toml so the
+# two suites never collide. Use:  FOUNDRY_CONFIG=foundry-v2.toml forge test      (or `npm run v2:test`)
+# Compiler settings mirror lib/compile.mjs exactly: solc 0.8.26, optimizer 200, cancun.
+[profile.default]
+src = "contracts/v2"
+test = "test/foundry-v2"
+out = "build-v2/out"
+cache_path = "build-v2/cache"
+libs = ["foundry-lib"]
+remappings = ["forge-std/=foundry-lib/forge-std/src/"]
+solc_version = "0.8.26"
+optimizer = true
+optimizer_runs = 200
+evm_version = "cancun"
+bytecode_hash = "ipfs"
+fuzz = { runs = 1000 }
+invariant = { runs = 256, depth = 64, fail_on_revert = false }
+
+[profile.ci]
+fuzz = { runs = 5000 }
+invariant = { runs = 512, depth = 100, fail_on_revert = false }

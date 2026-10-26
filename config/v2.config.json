@@ -1,0 +1,7 @@
+{
+  "_comment": "Owner-supplied v2 identities. 20.10.2026: deployer and operator generated locally (keys in ~/.predge-deployer-v2/, 0600, never committed), nonce 0 on Arc and Base at creation; owner stays null until the Safe exists. `deployer` = a NEW key created by the owner (pays gas only, holds no role, nonce 0 on every chain). `owner` = the Safe multisig (on EVERY chain you deploy to, at the same address if you want the same wiring everywhere). `operator` = the hot ops key (rotatable by the owner). dry-run and --broadcast refuse to run while any of these is null. --fork ignores this file and uses throwaway anvil accounts.",
+  "deployer": "0xbB7A0c24677339045434273FFC2266B99E1e1301",
+  "owner": "0x9084f5000e07c7133d6da5ee4f271ab6d1821144",
+  "operator": "0x8ffFB76c4329DDC8ee4a859DDF55AB48ba25e292",
+  "_owner_note": "20.10.2026: TEMPORARY owner = Amir EOA 0x9084\u20261144 by owner decision; transferOwnership\u2192acceptOwnership to the Safe once created."
+}

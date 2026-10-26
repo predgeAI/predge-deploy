@@ -1,0 +1,162 @@
+{
+  "chain": "sonic",
+  "chainId": 146,
+  "mode": "anvil-fork",
+  "forkedFrom": "https://rpc.soniclabs.com",
+  "forkBlock": 81327451,
+  "at": "2026-10-19T23:07:08.417Z",
+  "seconds": 5,
+  "deployer": "0x33275DDdb0cB5Bc120740e048B030F107F144Ac8",
+  "startNonce": 0,
+  "contracts": {
+    "PredgeAgentValidatorV2": {
+      "name": "PredgeAgentValidatorV2",
+      "address": "0xDC11e47D869e8FA2918A3e5fe09D76e8C11Fe675",
+      "nonce": 0,
+      "args": [
+        "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+        "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
+        "0x0000000000000000000000000000000000000000"
+      ],
+      "constructorArgs": "0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c80000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc0000000000000000000000000000000000000000000000000000000000000000",
+      "sourceSha256": "185b34b837ea7e0689bf599043cc79dba5b183dc0a660bb09879eb8da2cabd70",
+      "txHash": "0x14627b93d9717aa562a2daa3457f4835289476b2caaf6fef8ff1e8d61d74acf7",
+      "block": 81327443,
+      "gasUsed": "1162822",
+      "effectiveGasPrice": "44784296225",
+      "l1FeeWei": "0"
+    },
+    "AgentJobV2": {
+      "name": "AgentJobV2",
+      "address": "0x93F70a097Ed45889f69759e5F62cDe0B9319E616",
+      "nonce": 1,
+      "args": [
+        "259200"
+      ],
+      "constructorArgs": "0x000000000000000000000000000000000000000000000000000000000003f480",
+      "sourceSha256": "16050fa97d42c0982eac3bf4de36a4478c68165c7fbdfeac8e5b89960f6a8972",
+      "txHash": "0x2c25234897ae197540aa6bc76d3b1f1220e3122e35c496210b57ab70c20701d8",
+      "block": 81327444,
+      "gasUsed": "904910",
+      "effectiveGasPrice": "39313804865",
+      "l1FeeWei": "0"
+    },
+    "PredgeValidatorBondV2": {
+      "name": "PredgeValidatorBondV2",
+      "address": "0x500A9cE7CADC357C8b477B24e7Bf7D7A7CD3df22",
+      "nonce": 2,
+      "args": [
+        "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+        "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
+        "0x93F70a097Ed45889f69759e5F62cDe0B9319E616",
+        "86400",
+        "80000000000000000000",
+        "10000"
+      ],
+      "constructorArgs": "0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c80000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc00000000000000000000000093f70a097ed45889f69759e5f62cde0b9319e6160000000000000000000000000000000000000000000000000000000000015180000000000000000000000000000000000000000000000004563918244f4000000000000000000000000000000000000000000000000000000000000000002710",
+      "sourceSha256": "46bede16b7872b00005812a4f6899cfb8f151649a620f740122f81a1bd0fa22d",
+      "txHash": "0x69bb436d6a8e9614c443117d815ea8749126d137dd97a0fdb6036b063aba8eb0",
+      "block": 81327445,
+      "gasUsed": "1711545",
+      "effectiveGasPrice": "34526312785",
+      "l1FeeWei": "0"
+    },
+    "PredgeSettlementV2": {
+      "name": "PredgeSettlementV2",
+      "address": "0xef3450a304FD3B239ea90254370adD900b40C710",
+      "nonce": 3,
+      "args": [
+        "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
+      ],
+      "constructorArgs": "0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8",
+      "sourceSha256": "fb87e5ef6756eb261c854ccf1f711234a2e657718aecb2e2d116557aa4ab84b7",
+      "txHash": "0xfa8d0f87f68512cb15a1ce08466ad0791f6dac3ba53d2410b705bddcb1ea37e1",
+      "block": 81327446,
+      "gasUsed": "369083",
+      "effectiveGasPrice": "30338392777",
+      "l1FeeWei": "0"
+    },
+    "MockRefundProtocolV2": {
+      "name": "MockRefundProtocolV2",
+      "address": "0xd01f1026c372749873EA32BDB017434a05226837",
+      "nonce": 4,
+      "args": [
+        "0x5C18B53C186d76fcB8c7E4Ba4D6b6aF79dD38553"
+      ],
+      "constructorArgs": "0x0000000000000000000000005c18b53c186d76fcb8c7e4ba4d6b6af79dd38553",
+      "sourceSha256": "e4f170d51e3a526a89bd4c0d1090b1441334fe5a610a0b43fef0dca078d3e66d",
+      "txHash": "0xfa31df1661c7b3565caa968714f99c51644b15255fe68dd4ade19943ff38d62c",
+      "block": 81327447,
+      "gasUsed": "408763",
+      "effectiveGasPrice": "26671635095",
+      "l1FeeWei": "0"
+    },
+    "PredgeRefundArbiterV2": {
+      "name": "PredgeRefundArbiterV2",
+      "address": "0x5C18B53C186d76fcB8c7E4Ba4D6b6aF79dD38553",
+      "nonce": 5,
+      "args": [
+        "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+        "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
+        "0xd01f1026c372749873EA32BDB017434a05226837",
+        "86400",
+        "80000000000000000000",
+        "1000"
+      ],
+      "constructorArgs": "0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c80000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc000000000000000000000000d01f1026c372749873ea32bdb017434a052268370000000000000000000000000000000000000000000000000000000000015180000000000000000000000000000000000000000000000004563918244f40000000000000000000000000000000000000000000000000000000000000000003e8",
+      "sourceSha256": "0d94db694bf2e39bfaca5398e2fcdef5b11942a656fab3de7f4468f40fd78746",
+      "txHash": "0x87cf7bfd85c8be710290afc30483592fa66139d2526bba13f060d9c67874010c",
+      "block": 81327448,
+      "gasUsed": "1918199",
+      "effectiveGasPrice": "23463205389",
+      "l1FeeWei": "0"
+    }
+  },
+  "totals": {
+    "gasUsed": "6475322",
+    "liveGasPriceWei": "55000000000",
+    "l1FeeWei": "0",
+    "l1FeeMethod": "none (execution gas only)",
+    "costWei": "356142710000000000",
+    "cost": "0.35614271",
+    "native": "S"
+  },
+  "smoke": [
+    "PredgeAgentValidatorV2 runtime == compiled",
+    "AgentJobV2 runtime == compiled",
+    "PredgeValidatorBondV2 runtime == compiled",
+    "PredgeSettlementV2 runtime == compiled",
+    "MockRefundProtocolV2 runtime == compiled",
+    "PredgeRefundArbiterV2 runtime == compiled",
+    "registry.owner == owner (not the deployer)",
+    "registry.pendingOwner == 0",
+    "bond.owner == owner (not the deployer)",
+    "bond.pendingOwner == 0",
+    "settlement.owner == owner (not the deployer)",
+    "settlement.pendingOwner == 0",
+    "arbiter.owner == owner (not the deployer)",
+    "arbiter.pendingOwner == 0",
+    "registry.operator == operator",
+    "bond.operator == operator",
+    "arbiter.operator == operator",
+    "no contract has a renounceOwnership",
+    "registry.identityRegistry",
+    "job.evaluationWindow",
+    "job.jobCount == 0",
+    "bond.job == AgentJobV2",
+    "bond params",
+    "bond.wouldSlash(unknown) == false",
+    "arbiter.refundProtocol == mock",
+    "mock.arbiter == arbiter",
+    "arbiter params",
+    "registry.requestHashFor is domain separated"
+  ],
+  "e2e": null,
+  "attacksBlocked": null,
+  "setVersion": "2026-10-20-v2",
+  "erc8004": {
+    "IdentityRegistry": null,
+    "ReputationRegistry": null,
+    "ValidationRegistry": null
+  }
+}

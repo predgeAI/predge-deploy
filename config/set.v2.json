@@ -1,0 +1,20 @@
+{
+  "_comment": "The Predge v2 set (contracts/v2). Same rules as set.json: contract i is created at deployer nonce nonceBase + i, so a fresh v2 deployer + this order gives the same addresses on every chain. Never reorder; append only. $owner is the Safe, $operator the hot ops key, $deployer holds NO role (it only pays gas). Chain-specific values (minBond, arbiterMinBond) come from config/v2.chains.json and do not change the addresses. Owner decision 20.10.2026: bonds MINIMAL, bondBps = arbiterBondBps = 0, so every bond is exactly the per-chain floor (~$5); the bps mechanism stays in the contracts and the Safe can raise it later with setParams (a paid bonded-verdict tier). 23.10.2026 (v2.1, Olympix fixes + option a): the v2 deployer already used nonces 0..5 on Arc and Base for the 20.10 set, so v2.1 is created at nonces 6..11 (nonceBase 6), again the same addresses on both chains; the validator bond has no dispute window any more (recordScore refuses a false verdict, so nothing is left to challenge).",
+  "version": "2026-10-23-v2.1",
+  "nonceBase": 6,
+  "params": {
+    "challengeWindow": "86400",
+    "evaluationWindow": "259200",
+    "bondBps": "0",
+    "arbiterBondBps": "0",
+    "identityRegistry": "0x0000000000000000000000000000000000000000"
+  },
+  "plan": [
+    { "name": "PredgeAgentValidatorV2", "file": "v2/PredgeAgentValidatorV2", "args": ["$owner", "$operator", "$identityRegistry"], "role": "ERC-8004 validation registry, request-before-response, domain-separated request hashes" },
+    { "name": "AgentJobV2", "file": "v2/AgentJobV2", "args": ["$evaluationWindow"], "role": "ERC-8183-style job escrow with expiry and pull payments; no owner" },
+    { "name": "PredgeValidatorBondV2", "file": "v2/PredgeValidatorBondV2", "args": ["$owner", "$operator", "$AgentJobV2", "$minBond", "$bondBps"], "role": "commit-reveal validator bond; the evaluator of AgentJobV2; records only verdicts that match the on-chain evidence" },
+    { "name": "PredgeSettlementV2", "file": "v2/PredgeSettlementV2", "args": ["$owner"], "role": "pay-per-route receipts in the native token" },
+    { "name": "MockRefundProtocolV2", "file": "v2/mocks/MockRefundProtocolV2", "args": ["$PredgeRefundArbiterV2"], "role": "DEMO ONLY stand-in Refund Protocol (moves no money); out of audit scope" },
+    { "name": "PredgeRefundArbiterV2", "file": "v2/PredgeRefundArbiterV2", "args": ["$owner", "$operator", "$MockRefundProtocolV2", "$challengeWindow", "$arbiterMinBond", "$arbiterBondBps"], "role": "optimistic bonded refund arbiter; Safe is the court of last resort" }
+  ]
+}
