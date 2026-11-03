@@ -3,3 +3,4 @@ node_modules/
 *.key
 deployer.json
 .DS_Store
+.env.*

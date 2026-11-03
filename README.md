@@ -38,6 +38,38 @@ node scripts/v2-post-deploy.mjs --chains arc,base         # after a v2.1 broadca
 Real v2 runs (`--set v2` without `--fork`) refuse to start until the owner fills `config/v2.config.json` (new deployer address, the Safe, the ops key)
 and, to broadcast, pass `--key-file <the NEW v2 deployer json>`. v2 never reads `~/.predge-deployer`. `--fork` uses throwaway accounts only.
 
+## Rootstock testnet (chainId 31) PoC
+
+The v2.1 set (contracts unchanged since 013ad4c) on Rootstock testnet for the public IBUKI PoC. Testnet only, never a mainnet key:
+roles and the deployer key are throwaway testnet keys in `.env.rsk-testnet` (gitignored, 0600); `config/v2.config.json` is not read.
+The fresh deployer starts at nonce 0 (`v2.nonceBase: 0` in `config/chains.json`), so these addresses differ from the mainnet set.
+
+```bash
+npm run v2:rsk-testnet:dry      # plan, addresses, nonce/balance, gas estimate on the live testnet. Sends nothing.
+node deploy.mjs --set v2 --chain rootstock-testnet --fork   # anvil fork: deploy + 49 honest-path txs + 16 attack sequences
+npm run v2:rsk-testnet:deploy   # after the deployer is funded from https://faucet.rootstock.io (CONFIRM_TESTNET guard)
+```
+
+Live since 3 Nov 2026 (blocks 8254116..8254127), all six verified on [Blockscout](https://rootstock-testnet.blockscout.com) and
+exact-match on Sourcify. Receipts, constructor args and the 30 read-only smoke checks: [deployments/v2/rootstock-testnet.json](deployments/v2/rootstock-testnet.json).
+
+| Nonce | Contract | Address |
+|---|---|---|
+| 0 | `PredgeAgentValidatorV2` | [0xb7A912662E03eEE453204538D5F67880b079A862](https://rootstock-testnet.blockscout.com/address/0xb7A912662E03eEE453204538D5F67880b079A862) |
+| 1 | `AgentJobV2` | [0x5D6E0290cBA483CE53c834A1783FE1073915235B](https://rootstock-testnet.blockscout.com/address/0x5D6E0290cBA483CE53c834A1783FE1073915235B) |
+| 2 | `PredgeValidatorBondV2` | [0xDf2cf20B011FC8d5df16070c7c25F806C63935fD](https://rootstock-testnet.blockscout.com/address/0xDf2cf20B011FC8d5df16070c7c25F806C63935fD) |
+| 3 | `PredgeSettlementV2` | [0x9F0cbf53CCEB9D9474b6802Bb496684D976aD977](https://rootstock-testnet.blockscout.com/address/0x9F0cbf53CCEB9D9474b6802Bb496684D976aD977) |
+| 4 | `MockRefundProtocolV2` | [0x3ffBFcFb6D5621E3A43e22adcBC572824Ae452C5](https://rootstock-testnet.blockscout.com/address/0x3ffBFcFb6D5621E3A43e22adcBC572824Ae452C5) |
+| 5 | `PredgeRefundArbiterV2` | [0x879D437362022e54d257af68605D53ec52372621](https://rootstock-testnet.blockscout.com/address/0x879D437362022e54d257af68605D53ec52372621) |
+
+The broadcast run stopped after the sixth deploy (the public node answered `eth_getCode` with `0x` for a contract whose receipt
+was already in, and the smoke check crashed on the empty code). The smoke check now waits for the code, and the record was rebuilt
+without sending anything:
+
+```bash
+node deploy.mjs --set v2 --chain rootstock-testnet --record-only --txs <{"<Contract>": "0x<creation tx>"}.json>   # sends nothing, loads no key
+```
+
 ## The set
 
 Order is the deployer's nonce. Contract *i* is created at nonce *i*.

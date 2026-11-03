@@ -122,6 +122,13 @@
       "priceUsd": 0.99895,
       "minBond": "5000000000000000000",
       "arbiterMinBond": "5000000000000000000"
+    },
+    "rootstock-testnet": {
+      "native": "tRBTC",
+      "priceUsd": 81371,
+      "minBond": "60000000000000",
+      "arbiterMinBond": "60000000000000",
+      "_note": "testnet: same floor as rootstock mainnet (~$5 at the 20.10 RBTC price), paid in tRBTC"
     }
   }
 }

@@ -5,6 +5,11 @@
 //   node deploy.mjs --chain base --fork          deploy + smoke + end-to-end on a local `anvil --fork-url` of the chain. Sends nothing to the chain.
 //   CONFIRM_MAINNET=base node deploy.mjs --chain base --broadcast
 //                                                the real thing: deploy, verify source, read-only smoke, deployments/base.json.
+//   node deploy.mjs --chain base --record-only --txs <file.json>
+//                                                resume after a crash between the last deploy and the record: sends NOTHING and loads no key.
+//                                                Rebuilds deployments/<chain>.json from the creation receipts ({"<Contract>": "0x<txHash>"}),
+//                                                checking each tx (status 1, from the deployer, at its nonce, initcode == compiled, contractAddress),
+//                                                then runs the same read-only smoke and source verification as --broadcast.
 // Options: --rpc <url> (override), --no-verify, --no-e2e (fork), --keep-anvil (fork)
 //
 //   --set v2   the v2 contract set (contracts/v2, config/set.v2.json). Roles (deployer / owner Safe / operator) come from
@@ -15,13 +20,13 @@ import { spawn } from "node:child_process";
 import { writeFileSync, mkdirSync, existsSync, readFileSync } from "node:fs";
 import { createServer } from "node:net";
 import { formatEther, Wallet } from "ethers";
-import { chainConfig, pickRpc, providerFor, withRetry, rawRpc, waitReceipt, SET, SET_V2 } from "./lib/chains.mjs";
+import { chainConfig, pickRpc, providerFor, withRetry, rawRpc, waitReceipt, waitCode, SET, SET_V2 } from "./lib/chains.mjs";
 import { loadDeployer } from "./lib/key.mjs";
 import { resolvePlan } from "./lib/plan.mjs";
 import { maskImmutables, SOLC_VERSION, SETTINGS } from "./lib/compile.mjs";
 import { readOnly, e2e } from "./lib/smoke.mjs";
 import { readOnlyV2, e2eV2 } from "./lib/smoke-v2.mjs";
-import { realRoles, forkRoles, chainParams, anvilWallets, v2KeyFile } from "./lib/v2.mjs";
+import { realRoles, forkRoles, chainParams, anvilWallets, v2KeyFile, testnetSetup } from "./lib/v2.mjs";
 import { verifyStep } from "./lib/verify.mjs";
 import { l1FeeWei } from "./lib/fees.mjs";
 
@@ -107,6 +112,32 @@ async function deploySet(provider, wallet, plan, { log, gasLimitPct = 125 }) {
   return results;
 }
 
+/** --record-only: the creation receipts of a set that is already on chain, checked against the plan. Sends nothing. */
+async function recordSet(provider, deployerAddress, plan, txs, { log }) {
+  const results = [];
+  for (const step of plan) {
+    const hash = txs[step.name];
+    if (!hash) throw new Error(`--txs has no tx hash for ${step.name}`);
+    const [tx, r] = await Promise.all([withRetry("getTransaction", () => provider.getTransaction(hash)), withRetry("receipt", () => provider.getTransactionReceipt(hash))]);
+    if (!tx || !r) throw new Error(`${step.name}: no tx/receipt for ${hash}`);
+    const bad = [
+      r.status !== 1 && `status ${r.status}`,
+      tx.from !== deployerAddress && `from ${tx.from} != deployer ${deployerAddress}`,
+      tx.nonce !== step.nonce && `nonce ${tx.nonce} != ${step.nonce}`,
+      tx.to !== null && `tx.to ${tx.to} (not a creation)`,
+      tx.data.toLowerCase() !== step.initcode.toLowerCase() && "initcode != compiled creation code + constructor args",
+      r.contractAddress !== step.address && `contractAddress ${r.contractAddress} != ${step.address}`,
+    ].filter(Boolean);
+    if (bad.length) throw new Error(`${step.name} ${hash}: ${bad.join("; ")}`);
+    const code = await waitCode(provider, step.address);
+    const c = step.compiled;
+    if (maskImmutables(code, c.immutableReferences) !== maskImmutables(c.deployedBytecode, c.immutableReferences)) throw new Error(`${step.address} does not hold ${step.name}`);
+    log(`  = ${step.name.padEnd(22)} ${step.address} gas ${r.gasUsed} tx ${hash} (receipt checked)`);
+    results.push({ ...pick(step), txHash: hash, block: r.blockNumber, gasUsed: r.gasUsed.toString(), effectiveGasPrice: (r.gasPrice ?? tx.gasPrice ?? 0n).toString() });
+  }
+  return results;
+}
+
 function pick(step) {
   return { name: step.name, address: step.address, nonce: step.nonce, args: step.args.map(String), constructorArgs: step.constructorArgs, sourceSha256: step.compiled.sourceSha256, source: step.source };
 }
@@ -117,32 +148,50 @@ async function main() {
   const name = opt("--chain");
   if (!name) { console.error("usage: node deploy.mjs --chain <name> [--fork | --broadcast]"); process.exit(2); }
   const chain = chainConfig(name);
-  const mode = flag("--broadcast") ? "broadcast" : flag("--fork") ? "fork" : "dry-run";
+  const mode = flag("--record-only") ? "record" : flag("--broadcast") ? "broadcast" : flag("--fork") ? "fork" : "dry-run";
+  if (mode === "record" && (flag("--broadcast") || flag("--fork"))) throw new Error("--record-only sends nothing: do not combine it with --broadcast or --fork");
   const T0 = Date.now(); const log = (...a) => console.log(`[${((Date.now() - T0) / 1000).toFixed(1)}s]`, ...a);
   log(`\n=== predge-deploy ${chain.name} (chainId ${chain.chainId}) mode=${mode} solc ${SOLC_VERSION} opt ${SETTINGS.optimizer.runs} evm ${SETTINGS.evmVersion} ===`);
 
   const liveUrl = await pickRpc(chain, opt("--rpc"));
   const live = providerFor(liveUrl, chain.chainId);
+  // Testnet chains (config "testnet": true) are v2-only and use throwaway roles + key from the chain's env file, never a mainnet key.
+  if (chain.testnet && !V2) throw new Error(`${chain.name} is a testnet: only --set v2 is wired for it (v1 would load the mainnet v1 key)`);
+  if (chain.testnet && opt("--key-file")) throw new Error(`${chain.name}: --key-file is not used on testnets; the key comes from ${chain.v2?.envFile}`);
+  const TN = V2 && chain.testnet && mode !== "fork" ? testnetSetup(chain, ROOT, live) : null;
   // v1: the one deployer key. v2: roles from config (real runs) or anvil accounts (fork); a v2 key is only loaded to broadcast.
-  const roles = V2 ? (mode === "fork" ? forkRoles() : realRoles()) : null;
+  const roles = V2 ? (mode === "fork" ? forkRoles() : TN ? TN.roles : realRoles()) : null;
   let deployer;
-  if (V2) deployer = mode === "broadcast" ? loadDeployer(live, v2KeyFile(opt("--key-file"))) : { address: roles.deployer };
+  if (TN) deployer = mode === "broadcast" ? TN.loadKey() : { address: roles.deployer };
+  else if (V2) deployer = mode === "broadcast" ? loadDeployer(live, v2KeyFile(opt("--key-file"))) : { address: roles.deployer };
   else deployer = loadDeployer(live);
   if (V2 && mode === "broadcast" && deployer.address !== roles.deployer) throw new Error(`--key-file address ${deployer.address} != config deployer ${roles.deployer}`);
+  // A chain may pin its own nonceBase (a fresh testnet deployer starts at 0); addresses then differ from the mainnet set.
+  const SETV2 = chain.v2?.nonceBase !== undefined ? { ...SET_V2, nonceBase: chain.v2.nonceBase } : SET_V2;
   const plan = V2
-    ? resolvePlan(deployer.address, { owner: roles.owner, operator: roles.operator, ...chainParams(chain.name) }, SET_V2)
+    ? resolvePlan(deployer.address, { owner: roles.owner, operator: roles.operator, ...chainParams(chain.name) }, SETV2)
     : resolvePlan(deployer.address);
   log(`deployer ${deployer.address}  rpc ${liveUrl}${V2 ? `  (v2: owner ${roles.owner}, operator ${roles.operator})` : ""}`);
   for (const s of plan) log(`  nonce ${s.nonce}  ${s.name.padEnd(22)} -> ${s.address}`);
 
-  if (mode === "broadcast") {
+  if (mode === "record") {
+    const id = Number((await live.getNetwork()).chainId);
+    if (id !== chain.chainId) throw new Error(`rpc ${liveUrl} is chainId ${id}, expected ${chain.chainId}`);
+  } else if (mode === "broadcast" && chain.testnet) {
+    if (process.env.CONFIRM_TESTNET !== chain.name) {
+      console.error(`Refusing to broadcast: set CONFIRM_TESTNET=${chain.name} to deploy to the ${chain.name} testnet.`);
+      process.exit(3);
+    }
+    const id = Number((await live.getNetwork()).chainId);
+    if (id !== chain.chainId) throw new Error(`rpc ${liveUrl} is chainId ${id}, expected testnet ${chain.chainId}`);
+  } else if (mode === "broadcast") {
     if (process.env.CONFIRM_MAINNET !== chain.name) {
       console.error(`Refusing to broadcast: set CONFIRM_MAINNET=${chain.name} to deploy to ${chain.name} mainnet.`);
       process.exit(3);
     }
   }
 
-  if (mode === "dry-run" || mode === "broadcast") {
+  if (mode === "dry-run" || mode === "broadcast" || mode === "record") {
     const [bal, nonce, fee] = await Promise.all([live.getBalance(deployer.address), live.getTransactionCount(deployer.address, "pending"), live.getFeeData()]);
     const price = fee.gasPrice ?? fee.maxFeePerGas;
     let gas = 0n;
@@ -159,9 +208,18 @@ async function main() {
     if (done > 0 && (await live.getCode(plan[done - 1].address)).length <= 2)
       throw new Error(`deployer nonce ${nonce} on ${chain.name} but the contract for nonce ${nonce - 1} is missing: nonce desync.`);
     if (mode === "dry-run") { log("dry run only. Nothing sent."); return; }
-    if (bal < (gas * price)) { console.error(`Balance too low. Fund ${deployer.address} with >= ${formatEther(need)} ${chain.native} on ${chain.name}.`); process.exit(4); }
+    if (mode !== "record" && bal < (gas * price)) { console.error(`Balance too low. Fund ${deployer.address} with >= ${formatEther(need)} ${chain.native} on ${chain.name}.`); process.exit(4); }
 
-    const results = await deploySet(live, deployer, plan, { log, gasLimitPct: chain.gasLimitPct });
+    let results, deployedAt = new Date().toISOString();
+    if (mode === "record") {
+      const f = opt("--txs");
+      if (!f) throw new Error("--record-only needs --txs <file.json> mapping contract name -> creation tx hash");
+      results = await recordSet(live, deployer.address, plan, JSON.parse(readFileSync(f, "utf8")), { log });
+      const last = await live.getBlock(Math.max(...results.map((r) => r.block)));
+      deployedAt = new Date(Number(last.timestamp) * 1000).toISOString();
+    } else {
+      results = await deploySet(live, deployer, plan, { log, gasLimitPct: chain.gasLimitPct });
+    }
     const smoke = V2 ? await readOnlyV2(live, plan, roles) : await readOnly(live, plan, deployer.address);
     log(`smoke: ${smoke.length} checks passed`);
     const verification = {};
@@ -175,7 +233,7 @@ async function main() {
     const record = {
       chain: chain.name, chainId: chain.chainId, deployer: deployer.address, operator: V2 ? roles.operator : plan[0].args[0], ...(V2 ? { owner: roles.owner } : {}), setVersion: SETUSED.version,
       compiler: { solc: plan[0].compiled.compilerVersion, settings: { optimizer: SETTINGS.optimizer, evmVersion: SETTINGS.evmVersion } },
-      deployedAt: new Date().toISOString(), explorer: chain.explorer,
+      deployedAt, ...(mode === "record" ? { recordedAt: new Date().toISOString(), recordedFrom: "receipts (--record-only: the broadcast run stopped after the last deploy, before writing this record)" } : {}), explorer: chain.explorer,
       contracts: Object.fromEntries(results.map(({ rawTx, ...r }) => [r.name, { ...r, verified: verification[r.name] }])),
       erc8004: await registries(live), smoke, legacy: chain.legacy ?? null,
     };
