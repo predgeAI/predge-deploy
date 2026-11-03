@@ -17,7 +17,10 @@
     "v2:fork": "node deploy.mjs --set v2 --fork --chain",
     "v2:mutate": "node scripts/mutate-v2.mjs",
     "v2:rsk-testnet:dry": "node deploy.mjs --set v2 --chain rootstock-testnet",
-    "v2:rsk-testnet:deploy": "CONFIRM_TESTNET=rootstock-testnet node deploy.mjs --set v2 --chain rootstock-testnet --broadcast"
+    "v2:rsk-testnet:deploy": "CONFIRM_TESTNET=rootstock-testnet node deploy.mjs --set v2 --chain rootstock-testnet --broadcast",
+    "demo:job-escrow": "FOUNDRY_CONFIG=foundry-v2.toml forge build --threads 3 --silent && node demo/job-escrow/run.mjs",
+    "demo:job-escrow:test": "FOUNDRY_CONFIG=foundry-v2.toml forge test --threads 3 --match-path test/foundry-v2/PredgeJobEscrow.t.sol && node --test test/job-escrow-verdict.test.mjs",
+    "job-escrow:keygen": "node demo/job-escrow/cli.mjs keygen"
   },
   "engines": { "node": ">=20" },
   "dependencies": {
