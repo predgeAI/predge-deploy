@@ -1,0 +1,307 @@
+{
+  "chain": "rootstock-testnet",
+  "chainId": 31,
+  "deployer": "0x555F7Db71f5b71A36bD6e5EE4dEba5D784f88a2A",
+  "operator": "0x8A18993b8936F54Bbc6936ba4181Be027acD3528",
+  "owner": "0x395377325C55683D0861C6541513c0E00C4A1B00",
+  "setVersion": "2026-10-23-v2.1",
+  "compiler": {
+    "solc": "v0.8.26+commit.8a97fa7a",
+    "settings": {
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "evmVersion": "cancun"
+    }
+  },
+  "deployedAt": "2026-11-03T10:42:33.000Z",
+  "recordedAt": "2026-11-03T10:48:38.375Z",
+  "recordedFrom": "receipts (--record-only: the broadcast run stopped after the last deploy, before writing this record)",
+  "explorer": "https://explorer.testnet.rootstock.io",
+  "contracts": {
+    "PredgeAgentValidatorV2": {
+      "name": "PredgeAgentValidatorV2",
+      "address": "0xb7A912662E03eEE453204538D5F67880b079A862",
+      "nonce": 0,
+      "args": [
+        "0x395377325C55683D0861C6541513c0E00C4A1B00",
+        "0x8A18993b8936F54Bbc6936ba4181Be027acD3528",
+        "0x0000000000000000000000000000000000000000"
+      ],
+      "constructorArgs": "0x000000000000000000000000395377325c55683d0861c6541513c0e00c4a1b000000000000000000000000008a18993b8936f54bbc6936ba4181be027acd35280000000000000000000000000000000000000000000000000000000000000000",
+      "sourceSha256": "188c8c4f4d75ca748cad006a4b30a825d2bc9e9725e42085685000e3ee0232dd",
+      "txHash": "0xc05972d0c3a97542dfe9810cd2b3e0cbc2484186029b24b781c6f4864b743ddb",
+      "block": 8254116,
+      "gasUsed": "1163999",
+      "effectiveGasPrice": "6812977",
+      "verified": {
+        "ok": true,
+        "via": "https://rootstock-testnet.blockscout.com/api",
+        "guid": "b7a912662e03eee453204538d5f67880b079a8626ae9bbcf"
+      }
+    },
+    "AgentJobV2": {
+      "name": "AgentJobV2",
+      "address": "0x5D6E0290cBA483CE53c834A1783FE1073915235B",
+      "nonce": 1,
+      "args": [
+        "259200"
+      ],
+      "constructorArgs": "0x000000000000000000000000000000000000000000000000000000000003f480",
+      "sourceSha256": "c83bd1c9ce4e8643b39246586619b7a12e203653b3f03386de03ab58b58c4a9a",
+      "txHash": "0xdbbaea9a4694613ea5c6baaf1c207225d43010d8d791e8f605fc0696f93d2ffc",
+      "block": 8254117,
+      "gasUsed": "920066",
+      "effectiveGasPrice": "6809169",
+      "verified": {
+        "ok": true,
+        "via": "https://rootstock-testnet.blockscout.com/api",
+        "guid": "5d6e0290cba483ce53c834a1783fe1073915235b6ae9bbe9"
+      }
+    },
+    "PredgeValidatorBondV2": {
+      "name": "PredgeValidatorBondV2",
+      "address": "0xDf2cf20B011FC8d5df16070c7c25F806C63935fD",
+      "nonce": 2,
+      "args": [
+        "0x395377325C55683D0861C6541513c0E00C4A1B00",
+        "0x8A18993b8936F54Bbc6936ba4181Be027acD3528",
+        "0x5D6E0290cBA483CE53c834A1783FE1073915235B",
+        "60000000000000",
+        "0"
+      ],
+      "constructorArgs": "0x000000000000000000000000395377325c55683d0861c6541513c0e00c4a1b000000000000000000000000008a18993b8936f54bbc6936ba4181be027acd35280000000000000000000000005d6e0290cba483ce53c834a1783fe1073915235b00000000000000000000000000000000000000000000000000003691d6afc0000000000000000000000000000000000000000000000000000000000000000000",
+      "sourceSha256": "0b84858a48a63548f0b889ca451587c6e57c81cf3b239e6521188f58aa8c694d",
+      "txHash": "0xae5aa0f04ca7951f1c02ef38cfe6bcc10b57d4c036cbcc6e24757d17b9d915ac",
+      "block": 8254122,
+      "gasUsed": "1450456",
+      "effectiveGasPrice": "6809169",
+      "verified": {
+        "ok": true,
+        "via": "https://rootstock-testnet.blockscout.com/api",
+        "guid": "df2cf20b011fc8d5df16070c7c25f806c63935fd6ae9bbee"
+      }
+    },
+    "PredgeSettlementV2": {
+      "name": "PredgeSettlementV2",
+      "address": "0x9F0cbf53CCEB9D9474b6802Bb496684D976aD977",
+      "nonce": 3,
+      "args": [
+        "0x395377325C55683D0861C6541513c0E00C4A1B00"
+      ],
+      "constructorArgs": "0x000000000000000000000000395377325c55683d0861c6541513c0e00c4a1b00",
+      "sourceSha256": "fb87e5ef6756eb261c854ccf1f711234a2e657718aecb2e2d116557aa4ab84b7",
+      "txHash": "0x3035236bcbc0cac6fabadfaea0668d804653cf827d08bed91def216b7b817e9f",
+      "block": 8254124,
+      "gasUsed": "367159",
+      "effectiveGasPrice": "6809169",
+      "verified": {
+        "ok": true,
+        "via": "sourcify",
+        "note": "already verified"
+      }
+    },
+    "MockRefundProtocolV2": {
+      "name": "MockRefundProtocolV2",
+      "address": "0x3ffBFcFb6D5621E3A43e22adcBC572824Ae452C5",
+      "nonce": 4,
+      "args": [
+        "0x879D437362022e54d257af68605D53ec52372621"
+      ],
+      "constructorArgs": "0x000000000000000000000000879d437362022e54d257af68605d53ec52372621",
+      "sourceSha256": "e4f170d51e3a526a89bd4c0d1090b1441334fe5a610a0b43fef0dca078d3e66d",
+      "txHash": "0x8d5b5913a0a88facc014021d5bc39377de5815fc7188bc6b912e462e9dc8d9d1",
+      "block": 8254125,
+      "gasUsed": "408763",
+      "effectiveGasPrice": "6809169",
+      "verified": {
+        "ok": true,
+        "via": "sourcify",
+        "match": "exact_match"
+      }
+    },
+    "PredgeRefundArbiterV2": {
+      "name": "PredgeRefundArbiterV2",
+      "address": "0x879D437362022e54d257af68605D53ec52372621",
+      "nonce": 5,
+      "args": [
+        "0x395377325C55683D0861C6541513c0E00C4A1B00",
+        "0x8A18993b8936F54Bbc6936ba4181Be027acD3528",
+        "0x3ffBFcFb6D5621E3A43e22adcBC572824Ae452C5",
+        "86400",
+        "60000000000000",
+        "0"
+      ],
+      "constructorArgs": "0x000000000000000000000000395377325c55683d0861c6541513c0e00c4a1b000000000000000000000000008a18993b8936f54bbc6936ba4181be027acd35280000000000000000000000003ffbfcfb6d5621e3a43e22adcbc572824ae452c5000000000000000000000000000000000000000000000000000000000001518000000000000000000000000000000000000000000000000000003691d6afc0000000000000000000000000000000000000000000000000000000000000000000",
+      "sourceSha256": "b5dc07973805879660216a2047ce1471f6a05abeb49c07466efc77e0c5f56bcf",
+      "txHash": "0xfef29daaaf2e6cc2a47ba3c0fce009df9caf5279323d59eb0ff7d64eda74a37b",
+      "block": 8254127,
+      "gasUsed": "1925407",
+      "effectiveGasPrice": "6812977",
+      "verified": {
+        "ok": true,
+        "via": "sourcify",
+        "match": "exact_match"
+      }
+    }
+  },
+  "erc8004": {
+    "IdentityRegistry": null,
+    "ReputationRegistry": null,
+    "ValidationRegistry": null
+  },
+  "smoke": [
+    {
+      "check": "PredgeAgentValidatorV2 runtime == compiled",
+      "ok": true,
+      "detail": "0xb7A912662E03eEE453204538D5F67880b079A862"
+    },
+    {
+      "check": "AgentJobV2 runtime == compiled",
+      "ok": true,
+      "detail": "0x5D6E0290cBA483CE53c834A1783FE1073915235B"
+    },
+    {
+      "check": "PredgeValidatorBondV2 runtime == compiled",
+      "ok": true,
+      "detail": "0xDf2cf20B011FC8d5df16070c7c25F806C63935fD"
+    },
+    {
+      "check": "PredgeSettlementV2 runtime == compiled",
+      "ok": true,
+      "detail": "0x9F0cbf53CCEB9D9474b6802Bb496684D976aD977"
+    },
+    {
+      "check": "MockRefundProtocolV2 runtime == compiled",
+      "ok": true,
+      "detail": "0x3ffBFcFb6D5621E3A43e22adcBC572824Ae452C5"
+    },
+    {
+      "check": "PredgeRefundArbiterV2 runtime == compiled",
+      "ok": true,
+      "detail": "0x879D437362022e54d257af68605D53ec52372621"
+    },
+    {
+      "check": "registry.owner == owner (not the deployer)",
+      "ok": true,
+      "detail": "0x395377325C55683D0861C6541513c0E00C4A1B00"
+    },
+    {
+      "check": "registry.pendingOwner == 0",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "bond.owner == owner (not the deployer)",
+      "ok": true,
+      "detail": "0x395377325C55683D0861C6541513c0E00C4A1B00"
+    },
+    {
+      "check": "bond.pendingOwner == 0",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "settlement.owner == owner (not the deployer)",
+      "ok": true,
+      "detail": "0x395377325C55683D0861C6541513c0E00C4A1B00"
+    },
+    {
+      "check": "settlement.pendingOwner == 0",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "arbiter.owner == owner (not the deployer)",
+      "ok": true,
+      "detail": "0x395377325C55683D0861C6541513c0E00C4A1B00"
+    },
+    {
+      "check": "arbiter.pendingOwner == 0",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "registry.operator == operator",
+      "ok": true,
+      "detail": "0x8A18993b8936F54Bbc6936ba4181Be027acD3528"
+    },
+    {
+      "check": "bond.operator == operator",
+      "ok": true,
+      "detail": "0x8A18993b8936F54Bbc6936ba4181Be027acD3528"
+    },
+    {
+      "check": "arbiter.operator == operator",
+      "ok": true,
+      "detail": "0x8A18993b8936F54Bbc6936ba4181Be027acD3528"
+    },
+    {
+      "check": "no contract has a renounceOwnership",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "registry.identityRegistry",
+      "ok": true,
+      "detail": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "check": "job.evaluationWindow",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "job.jobCount == 0",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "bond.job == AgentJobV2",
+      "ok": true,
+      "detail": "0x5D6E0290cBA483CE53c834A1783FE1073915235B"
+    },
+    {
+      "check": "bond params",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "bond.verdictFor(no job) == 0",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "bond has no challenge() (v2.1: false verdicts are refused, not slashed)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "arbiter.refundProtocol == mock",
+      "ok": true,
+      "detail": "0x3ffBFcFb6D5621E3A43e22adcBC572824Ae452C5"
+    },
+    {
+      "check": "mock.arbiter == arbiter",
+      "ok": true,
+      "detail": "0x879D437362022e54d257af68605D53ec52372621"
+    },
+    {
+      "check": "arbiter params",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "registry.requestHashFor is domain separated",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "bond.specHashFor is domain separated",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "legacy": null
+}

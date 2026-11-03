@@ -50,6 +50,26 @@ node deploy.mjs --set v2 --chain rootstock-testnet --fork   # anvil fork: deploy
 npm run v2:rsk-testnet:deploy   # after the deployer is funded from https://faucet.rootstock.io (CONFIRM_TESTNET guard)
 ```
 
+Live since 3 Nov 2026 (blocks 8254116..8254127), all six verified on [Blockscout](https://rootstock-testnet.blockscout.com) and
+exact-match on Sourcify. Receipts, constructor args and the 30 read-only smoke checks: [deployments/v2/rootstock-testnet.json](deployments/v2/rootstock-testnet.json).
+
+| Nonce | Contract | Address |
+|---|---|---|
+| 0 | `PredgeAgentValidatorV2` | [0xb7A912662E03eEE453204538D5F67880b079A862](https://rootstock-testnet.blockscout.com/address/0xb7A912662E03eEE453204538D5F67880b079A862) |
+| 1 | `AgentJobV2` | [0x5D6E0290cBA483CE53c834A1783FE1073915235B](https://rootstock-testnet.blockscout.com/address/0x5D6E0290cBA483CE53c834A1783FE1073915235B) |
+| 2 | `PredgeValidatorBondV2` | [0xDf2cf20B011FC8d5df16070c7c25F806C63935fD](https://rootstock-testnet.blockscout.com/address/0xDf2cf20B011FC8d5df16070c7c25F806C63935fD) |
+| 3 | `PredgeSettlementV2` | [0x9F0cbf53CCEB9D9474b6802Bb496684D976aD977](https://rootstock-testnet.blockscout.com/address/0x9F0cbf53CCEB9D9474b6802Bb496684D976aD977) |
+| 4 | `MockRefundProtocolV2` | [0x3ffBFcFb6D5621E3A43e22adcBC572824Ae452C5](https://rootstock-testnet.blockscout.com/address/0x3ffBFcFb6D5621E3A43e22adcBC572824Ae452C5) |
+| 5 | `PredgeRefundArbiterV2` | [0x879D437362022e54d257af68605D53ec52372621](https://rootstock-testnet.blockscout.com/address/0x879D437362022e54d257af68605D53ec52372621) |
+
+The broadcast run stopped after the sixth deploy (the public node answered `eth_getCode` with `0x` for a contract whose receipt
+was already in, and the smoke check crashed on the empty code). The smoke check now waits for the code, and the record was rebuilt
+without sending anything:
+
+```bash
+node deploy.mjs --set v2 --chain rootstock-testnet --record-only --txs <{"<Contract>": "0x<creation tx>"}.json>   # sends nothing, loads no key
+```
+
 ## The set
 
 Order is the deployer's nonce. Contract *i* is created at nonce *i*.
