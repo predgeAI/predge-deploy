@@ -21,7 +21,7 @@ import { resolvePlan } from "./lib/plan.mjs";
 import { maskImmutables, SOLC_VERSION, SETTINGS } from "./lib/compile.mjs";
 import { readOnly, e2e } from "./lib/smoke.mjs";
 import { readOnlyV2, e2eV2 } from "./lib/smoke-v2.mjs";
-import { realRoles, forkRoles, chainParams, anvilWallets, v2KeyFile } from "./lib/v2.mjs";
+import { realRoles, forkRoles, chainParams, anvilWallets, v2KeyFile, testnetSetup } from "./lib/v2.mjs";
 import { verifyStep } from "./lib/verify.mjs";
 import { l1FeeWei } from "./lib/fees.mjs";
 
@@ -123,19 +123,33 @@ async function main() {
 
   const liveUrl = await pickRpc(chain, opt("--rpc"));
   const live = providerFor(liveUrl, chain.chainId);
+  // Testnet chains (config "testnet": true) are v2-only and use throwaway roles + key from the chain's env file, never a mainnet key.
+  if (chain.testnet && !V2) throw new Error(`${chain.name} is a testnet: only --set v2 is wired for it (v1 would load the mainnet v1 key)`);
+  if (chain.testnet && opt("--key-file")) throw new Error(`${chain.name}: --key-file is not used on testnets; the key comes from ${chain.v2?.envFile}`);
+  const TN = V2 && chain.testnet && mode !== "fork" ? testnetSetup(chain, ROOT, live) : null;
   // v1: the one deployer key. v2: roles from config (real runs) or anvil accounts (fork); a v2 key is only loaded to broadcast.
-  const roles = V2 ? (mode === "fork" ? forkRoles() : realRoles()) : null;
+  const roles = V2 ? (mode === "fork" ? forkRoles() : TN ? TN.roles : realRoles()) : null;
   let deployer;
-  if (V2) deployer = mode === "broadcast" ? loadDeployer(live, v2KeyFile(opt("--key-file"))) : { address: roles.deployer };
+  if (TN) deployer = mode === "broadcast" ? TN.loadKey() : { address: roles.deployer };
+  else if (V2) deployer = mode === "broadcast" ? loadDeployer(live, v2KeyFile(opt("--key-file"))) : { address: roles.deployer };
   else deployer = loadDeployer(live);
   if (V2 && mode === "broadcast" && deployer.address !== roles.deployer) throw new Error(`--key-file address ${deployer.address} != config deployer ${roles.deployer}`);
+  // A chain may pin its own nonceBase (a fresh testnet deployer starts at 0); addresses then differ from the mainnet set.
+  const SETV2 = chain.v2?.nonceBase !== undefined ? { ...SET_V2, nonceBase: chain.v2.nonceBase } : SET_V2;
   const plan = V2
-    ? resolvePlan(deployer.address, { owner: roles.owner, operator: roles.operator, ...chainParams(chain.name) }, SET_V2)
+    ? resolvePlan(deployer.address, { owner: roles.owner, operator: roles.operator, ...chainParams(chain.name) }, SETV2)
     : resolvePlan(deployer.address);
   log(`deployer ${deployer.address}  rpc ${liveUrl}${V2 ? `  (v2: owner ${roles.owner}, operator ${roles.operator})` : ""}`);
   for (const s of plan) log(`  nonce ${s.nonce}  ${s.name.padEnd(22)} -> ${s.address}`);
 
-  if (mode === "broadcast") {
+  if (mode === "broadcast" && chain.testnet) {
+    if (process.env.CONFIRM_TESTNET !== chain.name) {
+      console.error(`Refusing to broadcast: set CONFIRM_TESTNET=${chain.name} to deploy to the ${chain.name} testnet.`);
+      process.exit(3);
+    }
+    const id = Number((await live.getNetwork()).chainId);
+    if (id !== chain.chainId) throw new Error(`rpc ${liveUrl} is chainId ${id}, expected testnet ${chain.chainId}`);
+  } else if (mode === "broadcast") {
     if (process.env.CONFIRM_MAINNET !== chain.name) {
       console.error(`Refusing to broadcast: set CONFIRM_MAINNET=${chain.name} to deploy to ${chain.name} mainnet.`);
       process.exit(3);

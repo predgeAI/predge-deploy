@@ -15,7 +15,9 @@
     "v2:test": "FOUNDRY_CONFIG=foundry-v2.toml forge test",
     "v2:coverage": "FOUNDRY_CONFIG=foundry-v2.toml forge coverage --no-match-coverage \"(test/|foundry-lib|contracts/[A-Za-z]+\\.sol)\"",
     "v2:fork": "node deploy.mjs --set v2 --fork --chain",
-    "v2:mutate": "node scripts/mutate-v2.mjs"
+    "v2:mutate": "node scripts/mutate-v2.mjs",
+    "v2:rsk-testnet:dry": "node deploy.mjs --set v2 --chain rootstock-testnet",
+    "v2:rsk-testnet:deploy": "CONFIRM_TESTNET=rootstock-testnet node deploy.mjs --set v2 --chain rootstock-testnet --broadcast"
   },
   "engines": { "node": ">=20" },
   "dependencies": {

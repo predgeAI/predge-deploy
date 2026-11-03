@@ -38,6 +38,18 @@ node scripts/v2-post-deploy.mjs --chains arc,base         # after a v2.1 broadca
 Real v2 runs (`--set v2` without `--fork`) refuse to start until the owner fills `config/v2.config.json` (new deployer address, the Safe, the ops key)
 and, to broadcast, pass `--key-file <the NEW v2 deployer json>`. v2 never reads `~/.predge-deployer`. `--fork` uses throwaway accounts only.
 
+## Rootstock testnet (chainId 31) PoC
+
+The v2.1 set (contracts unchanged since 013ad4c) on Rootstock testnet for the public IBUKI PoC. Testnet only, never a mainnet key:
+roles and the deployer key are throwaway testnet keys in `.env.rsk-testnet` (gitignored, 0600); `config/v2.config.json` is not read.
+The fresh deployer starts at nonce 0 (`v2.nonceBase: 0` in `config/chains.json`), so these addresses differ from the mainnet set.
+
+```bash
+npm run v2:rsk-testnet:dry      # plan, addresses, nonce/balance, gas estimate on the live testnet. Sends nothing.
+node deploy.mjs --set v2 --chain rootstock-testnet --fork   # anvil fork: deploy + 49 honest-path txs + 16 attack sequences
+npm run v2:rsk-testnet:deploy   # after the deployer is funded from https://faucet.rootstock.io (CONFIRM_TESTNET guard)
+```
+
 ## The set
 
 Order is the deployer's nonce. Contract *i* is created at nonce *i*.

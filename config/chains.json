@@ -251,6 +251,25 @@
     },
     "note": "RskJ VM, legacy (type 0) txs only, no baseFee; min gas price ~0.024 gwei. eth_call on init code returns 0x instead of an error on INVALID (REVERT does error), so the probe's INVALID negative control reads as a false NO; PUSH0/MCOPY verified by return data. Explorer for humans: explorer.rootstock.io; verification via rootstock.blockscout.com."
   },
+  "rootstock-testnet": {
+    "chainId": 31,
+    "testnet": true,
+    "rpc": [
+      "https://public-node.testnet.rsk.co"
+    ],
+    "native": "tRBTC",
+    "coingecko": null,
+    "explorer": "https://explorer.testnet.rootstock.io",
+    "verify": {
+      "kind": "blockscout",
+      "api": "https://rootstock-testnet.blockscout.com/api"
+    },
+    "v2": {
+      "nonceBase": 0,
+      "envFile": ".env.rsk-testnet"
+    },
+    "note": "TESTNET (tRBTC, faucet https://faucet.rootstock.io). Same RskJ VM as rootstock: legacy (type 0) txs only, no baseFee. v2 here uses throwaway testnet-only roles from .env.rsk-testnet (gitignored), never config/v2.config.json, and a fresh deployer at nonce 0 (nonceBase 0), so addresses differ from the mainnet v2.1 set. Broadcast needs CONFIRM_TESTNET=rootstock-testnet."
+  },
   "plasma": {
     "chainId": 9745,
     "rpc": [
