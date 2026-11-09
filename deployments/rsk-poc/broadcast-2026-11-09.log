@@ -1,0 +1,48 @@
+Rootstock testnet PoC (broadcast) via https://public-node.testnet.rsk.co, gasPrice 7014609 wei
+  deployer   0x2D34830dF17c92B01b51c1dcF4c29CD8C53BC28b  0.0 tRBTC
+  client     0x6d17113Cb138cb0C8DAb5F8A07a8F2F72a7c7933  0.0 tRBTC
+  contractor 0x28F9eF473879Eec1B2b2FeA570ed98b94D08854b  0.0 tRBTC
+  reviewer   0x2a0cd8CF5d9370E9F994D9202d711502686fF6A9  0.0 tRBTC
+  gasSource  0x555F7Db71f5b71A36bD6e5EE4dEba5D784f88a2A  0.000457527279033302 tRBTC
+  ok  top up new deployer from 03.11 throwaway     https://explorer.testnet.rootstock.io/tx/0xa9029f57546a54fa562c18bbe20708c09272616f8b57d2eb9e7a38205148d4b9
+  ok  fund 0x6d17113C                              https://explorer.testnet.rootstock.io/tx/0x0c1b84ec16fa4e471e06e352790636d60031834c126ef2fe6caad0c529099b9f
+  ok  fund 0x28F9eF47                              https://explorer.testnet.rootstock.io/tx/0x3a04e8bb6932c1944c3c8965e53695305fe7542398f85fb33311379a2e8a3259
+  ok  fund 0x2a0cd8CF                              https://explorer.testnet.rootstock.io/tx/0xb8521aec5375165a7a42f77c0d539750227c39e9a913926ceae18c0b30ef0da6
+  ok  deploy AgentJobV2_poc                        https://explorer.testnet.rootstock.io/tx/0x6b4324c61b290cc93c6e2551d5d67787cc5c6e9de913679cc437573f2403d0dc
+  ok  deploy PredgeNoObjectionEvaluator_poc        https://explorer.testnet.rootstock.io/tx/0x053b66d08ff041f15b5e6867948630aedb046e02e55b44aafac5154b4cd27cda
+  ok  deploy AgentJobV2_smoke                      https://explorer.testnet.rootstock.io/tx/0x743725706dead14c37bd8c09c64868030c6b55c0a0bbb7103cddb451ea67dc28
+  ok  deploy PredgeNoObjectionEvaluator_smoke      https://explorer.testnet.rootstock.io/tx/0x78ddb712f2adfe919fa533a13b51334555dbf33108e88a9e292d8c340d2f60e9
+  PASS poc job.evaluationWindow == 24d
+  PASS poc evaluator.objectionPeriod == 10d
+  PASS poc evaluator.job/reviewer
+  PASS smoke evaluator.objectionPeriod == 180s, window 900s
+Job A: no objection -> release to contractor
+  ok  A: client createJob (escrow 1e12 wei)        https://explorer.testnet.rootstock.io/tx/0xf978c173cb51d56b4a93a2bbae7dfae65090bf0af293dfea08a140f3913e8163
+  ok  A: contractor submit evidence manifest       https://explorer.testnet.rootstock.io/tx/0x65e7bfe6f7fa823dff1ba4cb2e925b7faa497e7665bdffe6721d3587c43d639e
+  PASS A: job 1 Submitted, hashed on-chain, deliverable == sha256(manifest)
+  PASS A: packageComplete(checklist, 6 files)
+  PASS A: release before objection period ends is refused  reverted ObjectionPeriodRunning
+Job B: objection -> hold
+  ok  B: client createJob (escrow 1e12 wei)        https://explorer.testnet.rootstock.io/tx/0xeb6f0eef06418fd15ce476921510c42c6a469cae9ca9cda83b78f92bfa68bf34
+  ok  B: contractor submit evidence manifest       https://explorer.testnet.rootstock.io/tx/0x9799bb924a665dba95331b35fbfd03e219237c947dd233abb18d2c70eb6cfc94
+  PASS B: job 2 Submitted, hashed on-chain, deliverable == sha256(manifest)
+  PASS B: packageComplete(checklist, 6 files)
+  ok  B: client files written objection (hash)     https://explorer.testnet.rootstock.io/tx/0x0a7143895a1b5624f2fce38a64cac7f06e9355fbd2306f5249d62985739e1878
+  PASS B: objection recorded
+  ..  waiting 135s for chain time
+  ..  waiting 82s for chain time
+  ..  waiting 25s for chain time
+  ..  waiting 6s for chain time
+  ok  A: anyone (deployer) releaseOnSilence        https://explorer.testnet.rootstock.io/tx/0x6e43a97db082cceb730d3d66f8370a8f6ef66316dcc002dc2841ca14e4f9a843
+  PASS A: job Completed, contractor credited escrow
+  ok  A: contractor withdraws                      https://explorer.testnet.rootstock.io/tx/0x611eff1207b34513b69201f5433df473b30f5c195f7d1b7d945015edd35f189f
+  PASS A: contractor balance += escrow - gas  847046450755 wei net
+  PASS B: releaseOnSilence refused while on hold  reverted OnHold
+  PASS B: job still Submitted (held in escrow)
+  PASS B: a non-reviewer cannot resolve  reverted NotReviewer
+  ok  B: reviewer resolves -> refund client        https://explorer.testnet.rootstock.io/tx/0xeabd9d93240bd8e3669f41581d409ff2e51d2063f1a6b02410c27590bcdd27d3
+  PASS B: job Rejected, client credited escrow
+  ok  B: client withdraws refund                   https://explorer.testnet.rootstock.io/tx/0xbceb8404a65268219aea37ab5e9daac50672c1bbf655df539b5930214807c489
+  PASS smoke job contract holds nothing
+
+ALL 17 CHECKS PASS. Record: /Users/amir/predge-rsk-poc/deployments/rootstock-testnet.json

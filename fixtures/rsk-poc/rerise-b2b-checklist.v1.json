@@ -1,0 +1,13 @@
+{
+  "id": "rerise-b2b-completion-evidence-checklist-v1",
+  "source": "Re.RISE PREDGE PoC Supporting Documents (testnet sample), Completion & Acceptance Record, section 1; B2B annex section 2",
+  "rule": "If the client makes no specific written objection within ten calendar days after receipt of the complete evidence package, the work is deemed accepted.",
+  "items": [
+    "before-work-photographs",
+    "during-work-photographs",
+    "after-work-photographs",
+    "completion-report",
+    "manifest-copies-or-receiving-facility-receipts",
+    "joint-site-inspection-or-remote-review-record"
+  ]
+}
