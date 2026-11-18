@@ -76,7 +76,7 @@ The grant reviewers raised "one key owns contracts that hold escrowed funds". Th
 - `PredgeAgentValidatorV2` holds no value.
 - Ownership uses a two-step hand-over (`transferOwnership` then `acceptOwnership`) and has no `renounceOwnership`.
 
-Planned change: ownership on Celo moves from a single key to a 2-of-2 Safe. Other chains move to a Safe plus a timelock once escrowed value there exceeds $10k, or before they accept third-party funds above that amount.
+Ownership policy: the contracts currently hold no third-party funds (all v2.1 contract balances on Celo read 0 on 18 Nov 2026). Before escrowed value exceeds $10k, or before the first external escrow above that amount, ownership moves from the single key to a 2-of-2 Safe (an EOA plus a hardware wallet) behind a timelock. The two-step `transferOwnership` / `acceptOwnership` flow already supports this without a redeploy.
 
 ## Earlier reviews
 
