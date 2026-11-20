@@ -1,0 +1,123 @@
+{
+  "title": "IBUKI-POC-001 evidence package (Rootstock testnet, simulated data)",
+  "chainId": 31,
+  "jobContract": "0x5eAe41E4a082e6F5fDda067535757927c2716844",
+  "evaluator": "0xc1e3259a417FD06781941cA973dB6e58274DA683",
+  "jobId": "1",
+  "roles": {
+    "client": "0x6d17113Cb138cb0C8DAb5F8A07a8F2F72a7c7933",
+    "contractor": "0x28F9eF473879Eec1B2b2FeA570ed98b94D08854b",
+    "reviewer": "0x2a0cd8CF5d9370E9F994D9202d711502686fF6A9"
+  },
+  "escrowWei": "1000000000000",
+  "checklist": {
+    "file": "rerise-b2b-checklist.v1.json",
+    "sha256": "0x57c8518cbd51eb8f61fc5e7d3802b54357a941416f28305d60e86b66182647b2",
+    "items": 6
+  },
+  "items": [
+    {
+      "item": "before-work-photographs",
+      "files": [
+        "01-before.jpg"
+      ],
+      "fileSha256": [
+        "0x11fc88503014c42aa94f5be0b2ceebf3e3d9fa65e620bf7be75be00702925d75"
+      ],
+      "itemHash": "0x11fc88503014c42aa94f5be0b2ceebf3e3d9fa65e620bf7be75be00702925d75",
+      "rule": "itemHash = sha256(file)"
+    },
+    {
+      "item": "during-work-photographs",
+      "files": [
+        "02-demolition-start.jpg",
+        "03-in-progress.jpg",
+        "04-foundation-debris.jpg"
+      ],
+      "fileSha256": [
+        "0x0a98fc0da33f05742a647850d2782b99756a0b9ee73b484db18646b1548c3780",
+        "0xff336af3953fb6235382818ac11b0dead751b5d4f237a9bb854f22db012cf545",
+        "0x8efa4bbce5db058b013c4145bfa10fb1d279aec9ab4799de62345e038b81ebd0"
+      ],
+      "itemHash": "0x23d5ba504e1cb9be4aa06b9a3ab8de8914d0bcc9ecbec6d33d3b002339b0f7b1",
+      "rule": "itemHash = sha256(concat(sha256(file_i)))"
+    },
+    {
+      "item": "after-work-photographs",
+      "files": [
+        "05-after-grading.jpg"
+      ],
+      "fileSha256": [
+        "0xd46b899eabee67c6f20c10f01740022c4b76ded485a339b998914c743a51f521"
+      ],
+      "itemHash": "0xd46b899eabee67c6f20c10f01740022c4b76ded485a339b998914c743a51f521",
+      "rule": "itemHash = sha256(file)"
+    },
+    {
+      "item": "completion-report",
+      "files": [
+        "07-completion-report.pdf"
+      ],
+      "fileSha256": [
+        "0x2973831d61fe6a55a600b05f384b763708f62778c01969e2f10a08e131f6361d"
+      ],
+      "itemHash": "0x2973831d61fe6a55a600b05f384b763708f62778c01969e2f10a08e131f6361d",
+      "rule": "itemHash = sha256(file)"
+    },
+    {
+      "item": "manifest-copies-or-receiving-facility-receipts",
+      "files": [
+        "08-manifests.pdf"
+      ],
+      "fileSha256": [
+        "0xfdeca33cfdb924654db7293e8037265a6b9bfa256fb71e521448e3f20bdd14aa"
+      ],
+      "itemHash": "0xfdeca33cfdb924654db7293e8037265a6b9bfa256fb71e521448e3f20bdd14aa",
+      "rule": "itemHash = sha256(file)"
+    },
+    {
+      "item": "joint-site-inspection-or-remote-review-record",
+      "files": [
+        "06-photo-report.pdf"
+      ],
+      "fileSha256": [
+        "0x66228a4d675e97755dd585d2e3831c21711cbe90cd3de7bab667ce44e07d08c4"
+      ],
+      "itemHash": "0x66228a4d675e97755dd585d2e3831c21711cbe90cd3de7bab667ce44e07d08c4",
+      "rule": "itemHash = sha256(file)"
+    }
+  ],
+  "files": {
+    "01-before.jpg": "0x11fc88503014c42aa94f5be0b2ceebf3e3d9fa65e620bf7be75be00702925d75",
+    "02-demolition-start.jpg": "0x0a98fc0da33f05742a647850d2782b99756a0b9ee73b484db18646b1548c3780",
+    "03-in-progress.jpg": "0xff336af3953fb6235382818ac11b0dead751b5d4f237a9bb854f22db012cf545",
+    "04-foundation-debris.jpg": "0x8efa4bbce5db058b013c4145bfa10fb1d279aec9ab4799de62345e038b81ebd0",
+    "05-after-grading.jpg": "0xd46b899eabee67c6f20c10f01740022c4b76ded485a339b998914c743a51f521",
+    "07-completion-report.pdf": "0x2973831d61fe6a55a600b05f384b763708f62778c01969e2f10a08e131f6361d",
+    "08-manifests.pdf": "0xfdeca33cfdb924654db7293e8037265a6b9bfa256fb71e521448e3f20bdd14aa",
+    "06-photo-report.pdf": "0x66228a4d675e97755dd585d2e3831c21711cbe90cd3de7bab667ce44e07d08c4"
+  },
+  "manifestSha256OnChain": "0x5bfd80c7f610e74ff1a5974b1f41f97b34f9b537d0efd16118f501efc9fe2d00",
+  "specHash": "0x472e8523566f8279ff1105c1c949906bf232fb5af3fdb0d2855f302ea695a9c6",
+  "packageComplete": true,
+  "submittedAt": "2026-11-20T22:43:38.000Z",
+  "objectionDeadline": "2026-11-30T22:43:38.000Z",
+  "objectionPeriodDays": 10,
+  "rule": "If the client files no objection by the deadline, anyone can call releaseOnSilence and the escrow is credited to the contractor. An objection holds it for the reviewer.",
+  "transactions": [
+    {
+      "label": "IBUKI-POC-001: client createJob (escrow 0.000001 tRBTC)",
+      "hash": "0x8cdc93f2f784b4636d3f983e18610e4baab0f4f61af39fa1b95a28e5b8d4fce7",
+      "block": 8317192,
+      "url": "https://explorer.testnet.rootstock.io/tx/0x8cdc93f2f784b4636d3f983e18610e4baab0f4f61af39fa1b95a28e5b8d4fce7"
+    },
+    {
+      "label": "IBUKI-POC-001: contractor submits evidence manifest",
+      "hash": "0x2c56287c7826c6e48498cfeae43b7bd62cca4c16658907f3680095255aef773f",
+      "block": 8317194,
+      "url": "https://explorer.testnet.rootstock.io/tx/0x2c56287c7826c6e48498cfeae43b7bd62cca4c16658907f3680095255aef773f"
+    }
+  ],
+  "createdAt": "2026-11-20T22:43:55.328Z",
+  "note": "Testnet only. Files are IBUKI's sample documents; dates and parties are simulated. Only hashes are on-chain."
+}

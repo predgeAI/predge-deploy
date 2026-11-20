@@ -1,0 +1,296 @@
+{
+  "chain": "rootstock-testnet",
+  "chainId": 31,
+  "mode": "broadcast",
+  "rpc": "https://public-node.testnet.rsk.co",
+  "startedAt": "2026-11-09T14:02:25.965Z",
+  "gasPriceWei": "7014609",
+  "roles": {
+    "deployer": "0x2D34830dF17c92B01b51c1dcF4c29CD8C53BC28b",
+    "client": "0x6d17113Cb138cb0C8DAb5F8A07a8F2F72a7c7933",
+    "contractor": "0x28F9eF473879Eec1B2b2FeA570ed98b94D08854b",
+    "reviewer": "0x2a0cd8CF5d9370E9F994D9202d711502686fF6A9",
+    "gasSource": "0x555F7Db71f5b71A36bD6e5EE4dEba5D784f88a2A",
+    "deployerBalanceAfter": "0.000111673086855134",
+    "clientBalanceAfter": "0.000025926528022823",
+    "contractorBalanceAfter": "0.000011992190081143",
+    "reviewerBalanceAfter": "0.00001137738330516",
+    "gasSourceBalanceAfter": "0.000263379972244302"
+  },
+  "contracts": {
+    "AgentJobV2_poc": {
+      "address": "0x5eAe41E4a082e6F5fDda067535757927c2716844",
+      "tx": "0x6b4324c61b290cc93c6e2551d5d67787cc5c6e9de913679cc437573f2403d0dc",
+      "args": [
+        "2073600"
+      ],
+      "explorer": "https://explorer.testnet.rootstock.io/address/0x5eAe41E4a082e6F5fDda067535757927c2716844",
+      "blockscout": "https://rootstock-testnet.blockscout.com/address/0x5eAe41E4a082e6F5fDda067535757927c2716844"
+    },
+    "PredgeNoObjectionEvaluator_poc": {
+      "address": "0xc1e3259a417FD06781941cA973dB6e58274DA683",
+      "tx": "0x053b66d08ff041f15b5e6867948630aedb046e02e55b44aafac5154b4cd27cda",
+      "args": [
+        "0x5eAe41E4a082e6F5fDda067535757927c2716844",
+        "0x2a0cd8CF5d9370E9F994D9202d711502686fF6A9",
+        "864000"
+      ],
+      "explorer": "https://explorer.testnet.rootstock.io/address/0xc1e3259a417FD06781941cA973dB6e58274DA683",
+      "blockscout": "https://rootstock-testnet.blockscout.com/address/0xc1e3259a417FD06781941cA973dB6e58274DA683"
+    },
+    "AgentJobV2_smoke": {
+      "address": "0x9BEef8D301D2C536Fb7c2A62e0156bbCA6A07A56",
+      "tx": "0x743725706dead14c37bd8c09c64868030c6b55c0a0bbb7103cddb451ea67dc28",
+      "args": [
+        "900"
+      ],
+      "explorer": "https://explorer.testnet.rootstock.io/address/0x9BEef8D301D2C536Fb7c2A62e0156bbCA6A07A56",
+      "blockscout": "https://rootstock-testnet.blockscout.com/address/0x9BEef8D301D2C536Fb7c2A62e0156bbCA6A07A56"
+    },
+    "PredgeNoObjectionEvaluator_smoke": {
+      "address": "0xa7004a660Cc1b62bb66a36B8BE591166639CCf15",
+      "tx": "0x78ddb712f2adfe919fa533a13b51334555dbf33108e88a9e292d8c340d2f60e9",
+      "args": [
+        "0x9BEef8D301D2C536Fb7c2A62e0156bbCA6A07A56",
+        "0x2a0cd8CF5d9370E9F994D9202d711502686fF6A9",
+        "180"
+      ],
+      "explorer": "https://explorer.testnet.rootstock.io/address/0xa7004a660Cc1b62bb66a36B8BE591166639CCf15",
+      "blockscout": "https://rootstock-testnet.blockscout.com/address/0xa7004a660Cc1b62bb66a36B8BE591166639CCf15"
+    }
+  },
+  "txs": [
+    {
+      "label": "top up new deployer from 03.11 throwaway",
+      "hash": "0xa9029f57546a54fa562c18bbe20708c09272616f8b57d2eb9e7a38205148d4b9",
+      "block": 8276215,
+      "gasUsed": "21000",
+      "from": "0x555F7Db71f5b71A36bD6e5EE4dEba5D784f88a2A"
+    },
+    {
+      "label": "fund 0x6d17113C",
+      "hash": "0x0c1b84ec16fa4e471e06e352790636d60031834c126ef2fe6caad0c529099b9f",
+      "block": 8276216,
+      "gasUsed": "21000",
+      "from": "0x2D34830dF17c92B01b51c1dcF4c29CD8C53BC28b"
+    },
+    {
+      "label": "fund 0x28F9eF47",
+      "hash": "0x3a04e8bb6932c1944c3c8965e53695305fe7542398f85fb33311379a2e8a3259",
+      "block": 8276217,
+      "gasUsed": "21000",
+      "from": "0x2D34830dF17c92B01b51c1dcF4c29CD8C53BC28b"
+    },
+    {
+      "label": "fund 0x2a0cd8CF",
+      "hash": "0xb8521aec5375165a7a42f77c0d539750227c39e9a913926ceae18c0b30ef0da6",
+      "block": 8276219,
+      "gasUsed": "21000",
+      "from": "0x2D34830dF17c92B01b51c1dcF4c29CD8C53BC28b"
+    },
+    {
+      "label": "deploy AgentJobV2_poc",
+      "hash": "0x6b4324c61b290cc93c6e2551d5d67787cc5c6e9de913679cc437573f2403d0dc",
+      "block": 8276221,
+      "gasUsed": "920054",
+      "from": "0x2D34830dF17c92B01b51c1dcF4c29CD8C53BC28b"
+    },
+    {
+      "label": "deploy PredgeNoObjectionEvaluator_poc",
+      "hash": "0x053b66d08ff041f15b5e6867948630aedb046e02e55b44aafac5154b4cd27cda",
+      "block": 8276223,
+      "gasUsed": "1012587",
+      "from": "0x2D34830dF17c92B01b51c1dcF4c29CD8C53BC28b"
+    },
+    {
+      "label": "deploy AgentJobV2_smoke",
+      "hash": "0x743725706dead14c37bd8c09c64868030c6b55c0a0bbb7103cddb451ea67dc28",
+      "block": 8276225,
+      "gasUsed": "920054",
+      "from": "0x2D34830dF17c92B01b51c1dcF4c29CD8C53BC28b"
+    },
+    {
+      "label": "deploy PredgeNoObjectionEvaluator_smoke",
+      "hash": "0x78ddb712f2adfe919fa533a13b51334555dbf33108e88a9e292d8c340d2f60e9",
+      "block": 8276227,
+      "gasUsed": "1012575",
+      "from": "0x2D34830dF17c92B01b51c1dcF4c29CD8C53BC28b"
+    },
+    {
+      "label": "A: client createJob (escrow 1e12 wei)",
+      "hash": "0xf978c173cb51d56b4a93a2bbae7dfae65090bf0af293dfea08a140f3913e8163",
+      "block": 8276228,
+      "gasUsed": "187985",
+      "from": "0x6d17113Cb138cb0C8DAb5F8A07a8F2F72a7c7933"
+    },
+    {
+      "label": "A: contractor submit evidence manifest",
+      "hash": "0x65e7bfe6f7fa823dff1ba4cb2e925b7faa497e7665bdffe6721d3587c43d639e",
+      "block": 8276230,
+      "gasUsed": "60934",
+      "from": "0x28F9eF473879Eec1B2b2FeA570ed98b94D08854b"
+    },
+    {
+      "label": "B: client createJob (escrow 1e12 wei)",
+      "hash": "0xeb6f0eef06418fd15ce476921510c42c6a469cae9ca9cda83b78f92bfa68bf34",
+      "block": 8276232,
+      "gasUsed": "157985",
+      "from": "0x6d17113Cb138cb0C8DAb5F8A07a8F2F72a7c7933"
+    },
+    {
+      "label": "B: contractor submit evidence manifest",
+      "hash": "0x9799bb924a665dba95331b35fbfd03e219237c947dd233abb18d2c70eb6cfc94",
+      "block": 8276234,
+      "gasUsed": "60934",
+      "from": "0x28F9eF473879Eec1B2b2FeA570ed98b94D08854b"
+    },
+    {
+      "label": "B: client files written objection (hash)",
+      "hash": "0x0a7143895a1b5624f2fce38a64cac7f06e9355fbd2306f5249d62985739e1878",
+      "block": 8276236,
+      "gasUsed": "70378",
+      "from": "0x6d17113Cb138cb0C8DAb5F8A07a8F2F72a7c7933"
+    },
+    {
+      "label": "A: anyone (deployer) releaseOnSilence",
+      "hash": "0x6e43a97db082cceb730d3d66f8370a8f6ef66316dcc002dc2841ca14e4f9a843",
+      "block": 8276246,
+      "gasUsed": "110004",
+      "from": "0x2D34830dF17c92B01b51c1dcF4c29CD8C53BC28b"
+    },
+    {
+      "label": "A: contractor withdraws",
+      "hash": "0x611eff1207b34513b69201f5433df473b30f5c195f7d1b7d945015edd35f189f",
+      "block": 8276249,
+      "gasUsed": "21805",
+      "from": "0x28F9eF473879Eec1B2b2FeA570ed98b94D08854b"
+    },
+    {
+      "label": "B: reviewer resolves -> refund client",
+      "hash": "0xeabd9d93240bd8e3669f41581d409ff2e51d2063f1a6b02410c27590bcdd27d3",
+      "block": 8276251,
+      "gasUsed": "88760",
+      "from": "0x2a0cd8CF5d9370E9F994D9202d711502686fF6A9"
+    },
+    {
+      "label": "B: client withdraws refund",
+      "hash": "0xbceb8404a65268219aea37ab5e9daac50672c1bbf655df539b5930214807c489",
+      "block": 8276253,
+      "gasUsed": "21805",
+      "from": "0x6d17113Cb138cb0C8DAb5F8A07a8F2F72a7c7933"
+    }
+  ],
+  "checks": [
+    {
+      "check": "poc job.evaluationWindow == 24d",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "poc evaluator.objectionPeriod == 10d",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "poc evaluator.job/reviewer",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "smoke evaluator.objectionPeriod == 180s, window 900s",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "A: job 1 Submitted, hashed on-chain, deliverable == sha256(manifest)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "A: packageComplete(checklist, 6 files)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "A: release before objection period ends is refused",
+      "ok": true,
+      "detail": "reverted ObjectionPeriodRunning"
+    },
+    {
+      "check": "B: job 2 Submitted, hashed on-chain, deliverable == sha256(manifest)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "B: packageComplete(checklist, 6 files)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "B: objection recorded",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "A: job Completed, contractor credited escrow",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "A: contractor balance += escrow - gas",
+      "ok": true,
+      "detail": "847046450755 wei net"
+    },
+    {
+      "check": "B: releaseOnSilence refused while on hold",
+      "ok": true,
+      "detail": "reverted OnHold"
+    },
+    {
+      "check": "B: job still Submitted (held in escrow)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "B: a non-reviewer cannot resolve",
+      "ok": true,
+      "detail": "reverted NotReviewer"
+    },
+    {
+      "check": "B: job Rejected, client credited escrow",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "smoke job contract holds nothing",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "evidence": {
+    "checklistFile": "fixtures/rerise-b2b-checklist.v1.json",
+    "checklistDocHash": "0x57c8518cbd51eb8f61fc5e7d3802b54357a941416f28305d60e86b66182647b2",
+    "items": 6,
+    "fileHashes": [
+      "0x5bc8bc89a9b80b9c78e2cd983624ae0419dce24f79514cd97321d8418eb77fb4",
+      "0x38f2498356f4f30284cbf93bf17123a3afb7e84f5222d0a57b5738adcb77e467",
+      "0x2d7b54b8f9d840708980dd5255a07fee7248bbc57fcd9f460d9b02f8add579a6",
+      "0x496bfd56eacd214e84bb70e5e59cd0ef609dc9bcfaa4f5b501b2ab469fbff80f",
+      "0x0b25e047a2d89573959b9431e663c97a2d19e812f46fa914aafe8bf498ab9282",
+      "0xd039aef35aa8d0b11b7ef35ab964a61269fec126f270cfee337f9446dc12f58f"
+    ],
+    "manifestSha256": "0xf0a1529a76c45a791b4c6d716476d7633ab281614aeeb665af2bcc90bfcca1bc",
+    "note": "dummy file hashes; IBUKI's sample files not yet received"
+  },
+  "jobs": {
+    "A": {
+      "jobId": "1",
+      "outcome": "no objection -> released to contractor -> withdrawn"
+    },
+    "B": {
+      "jobId": "2",
+      "outcome": "objection -> held -> reviewer refund -> withdrawn"
+    }
+  },
+  "finishedAt": "2026-11-09T14:15:50.841Z"
+}
