@@ -211,7 +211,9 @@ contract PredgeRefundArbiterV2 is Operated, PullCredit {
         if (r.status != Status.None) revert AlreadyRuled(paymentID);
 
         (address payer, address payee, uint256 amount, uint256 releaseTimestamp) = refundProtocol.paymentInfo(paymentID);
-        if (payee == address(0)) revert UnknownPayment();
+        // F-01: a payment with no payer is malformed: a Release ruling on it could never be disputed and an
+        // overturn would credit the bond to address(0), where nobody can withdraw it.
+        if (payee == address(0) || payer == address(0)) revert UnknownPayment();
         if (msg.sender == payer || msg.sender == payee) revert OperatorIsParty();
         if (evidenceFrom != payer && evidenceFrom != payee) revert NotAParty();
         if (filedEvidence[paymentID][evidenceFrom] != evidenceHash) revert NoEvidenceFiled(paymentID, evidenceFrom);

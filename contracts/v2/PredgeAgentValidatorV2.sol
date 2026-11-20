@@ -208,12 +208,13 @@ contract PredgeAgentValidatorV2 is Operated {
         averageResponse = count == 0 ? 0 : uint8(sum / count);
     }
 
+    /// @dev F-02: a low-level staticcall instead of try/catch. try/catch does not catch a registry with no
+    ///      code (empty return data) or one that returns malformed data: the ABI decode reverts outside the
+    ///      catch. Any such answer, or a revert, now means "not the owner".
     function _isAgentOwner(uint256 agentId) private view returns (bool) {
         if (identityRegistry == address(0)) return false;
-        try IIdentityOwner(identityRegistry).ownerOf(agentId) returns (address o) {
-            return o == msg.sender;
-        } catch {
-            return false;
-        }
+        (bool ok, bytes memory ret) = identityRegistry.staticcall(abi.encodeCall(IIdentityOwner.ownerOf, (agentId)));
+        if (!ok || ret.length < 32) return false;
+        return abi.decode(ret, (uint256)) == uint256(uint160(msg.sender));
     }
 }
