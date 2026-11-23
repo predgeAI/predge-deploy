@@ -278,5 +278,20 @@
       "kind": "etherscan-v2"
     },
     "note": "Tether stablechain. The native gas token IS USDT0: eth_getBalance (18 dp) and USDT0 0x779Ded0c9e1022225f8E0630b35a9b54bE713736 balanceOf (6 dp) are one ledger, so funding the deployer = sending it USDT0. baseFee 1 gwei."
+  },
+  "whitechain": {
+    "chainId": 1875,
+    "rpc": [
+      "https://rpc.whitechain.io"
+    ],
+    "native": "WBT",
+    "coingecko": "whitebit",
+    "explorer": "https://explorer.whitechain.io",
+    "verify": {
+      "kind": "blockscout",
+      "api": "https://explorer.whitechain.io/api"
+    },
+    "l1fee": "op-stack",
+    "note": "OP Stack L2 settling on Ethereum (migrated from the legacy PoA L1, same chainId 1875); native gas token WBT. Blockscout explorer."
   }
 }
