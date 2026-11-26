@@ -1,0 +1,7 @@
+{
+  "alg": "ed25519",
+  "signs": "evidence-package.json (exact bytes)",
+  "publicKeyHex": "afd86a0716b1b2b425c5ab314122f43b6542c50843360a39b78d8a135e61a655",
+  "signatureBase64": "gYwuQbfabvQSwipymdK3LQ+e57Y+U/daLIiEEf2Alk8yQPpBfooKlB5OEdy2jvPQtmC0SUbWrYxhKYMYeaYVDQ==",
+  "note": "Predge TESTNET signing key for the IBUKI PoC"
+}
